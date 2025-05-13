@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import Stripe from "stripe";
 import express from "express";
 import { createFirebaseUser, generatePasswordResetLink } from "./firebase";
+import nodemailer from "nodemailer";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -39,10 +40,111 @@ function getPriceId(planType: string): string {
   throw new Error(`Tipo de plano inválido: ${planType}`);
 }
 
+// Função para enviar e-mail de boas-vindas
+async function sendWelcomeEmail(email: string, resetLink: string) {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.log("⚠️ Credenciais SMTP não configuradas. E-mail simulado:");
+      console.log("📧 Para:", email);
+      console.log("📧 Assunto: Bem-vindo ao PlannerPro Organizer");
+      console.log("📧 Link para definir senha:", resetLink);
+      return;
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp-relay.sendinblue.com", // Usando Brevo (Sendinblue)
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER, // Seu usuário SMTP do Brevo
+        pass: process.env.SMTP_PASS, // Sua senha SMTP do Brevo
+      },
+    });
+
+    await transporter.sendMail({
+      from: 'suporte@plannerpro.com', // Substitua pelo seu domínio
+      to: email,
+      subject: "Bem-vindo ao PlannerPro Organizer",
+      text: `Olá,\n\nObrigado por se inscrever! Use o link abaixo para definir sua senha:\n\n${resetLink}\n\nSe você não realizou essa inscrição, por favor ignore este email.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+          <div style="background-color: #4a6cf7; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+            <h1 style="margin: 0;">Bem-vindo ao PlannerPro Organizer</h1>
+          </div>
+          <div style="padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 5px 5px;">
+            <p>Olá,</p>
+            <p>Obrigado por se inscrever para o PlannerPro Organizer! Estamos animados para ajudá-lo a organizar sua vida e aumentar sua produtividade.</p>
+            <p>Para começar a usar sua conta, defina sua senha clicando no botão abaixo:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" style="background-color: #4a6cf7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Definir minha senha</a>
+            </div>
+            <p>Se o botão acima não funcionar, copie e cole o link abaixo em seu navegador:</p>
+            <p style="word-break: break-all; font-size: 14px; color: #666;">${resetLink}</p>
+            <p>Se você não realizou essa inscrição, por favor ignore este email.</p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
+              <p>Este é um email automático, por favor não responda.</p>
+              <p>&copy; ${new Date().getFullYear()} PlannerPro Organizer. Todos os direitos reservados.</p>
+            </div>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log("✅ E-mail de boas-vindas enviado para:", email);
+  } catch (error) {
+    console.error("❌ Erro ao enviar e-mail:", error);
+  }
+}
+
+async function createOrUpdateUser(email: string) {
+  try {
+    const user = await storage.getUserByEmail(email);
+    if (!user) {
+      console.log("✅ Criando usuário no banco de dados para:", email);
+      
+      // Criar usuário no banco de dados local
+      const newUser = await storage.createUser({
+        email,
+        name: email.split('@')[0], // Nome provisório baseado no email
+        password: 'senha_gerenciada_pelo_firebase', // Não usamos diretamente, pois o Firebase gerencia a autenticação
+        firebaseUid: '' // Será atualizado quando o usuário fizer login com Firebase
+      });
+      console.log("✅ Usuário criado no banco de dados:", newUser.id);
+      return newUser;
+    } else {
+      console.log("✅ Usuário já existe no sistema:", email);
+      return user;
+    }
+  } catch (error) {
+    console.error("❌ Erro ao criar/atualizar usuário:", error);
+    throw error;
+  }
+}
+
+async function createSubscription(session: any) {
+  try {
+    const userEmail = session.customer_email;
+    const planMode = session.mode;
+    const subscriptionId = session.subscription;
+    const metadata = session.metadata || {};
+    const planType = metadata.plan_type || (planMode === 'subscription' ? 'mensal' : 'vitalicio');
+
+    if (userEmail) {
+      const user = await storage.getUserByEmail(userEmail);
+      if (user) {
+        await storage.createSubscription(user.id, planType);
+        console.log("✅ Assinatura criada/atualizada para o usuário:", user.email);
+      }
+    }
+  } catch (error) {
+    console.error("❌ Erro ao criar assinatura:", error);
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook do Stripe para processar eventos de pagamento
-  app.post("/api/webhooks/stripe", async (req: any, res: Response) => {
-    const sig = req.headers['stripe-signature'] as string;
+  app.post("/api/webhooks/stripe", async (req: Request, res: Response) => {
+    const sig = req.headers["stripe-signature"] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!endpointSecret) {
@@ -51,36 +153,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      let event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
       console.log("✅ Webhook Recebido:", event.type);
 
-      if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
+      if (event.type === "checkout.session.completed") {
+        const session = event.data.object as any;
         const userEmail = session.customer_email;
         console.log("✅ Pagamento confirmado:", session);
 
         if (userEmail) {
-          await createOrUpdateUser(userEmail);
-          await createSubscription(session);
+          console.log("✅ Criando usuário no Firebase para:", userEmail);
+
+          // Gerando uma senha segura automaticamente
+          const tempPassword = Math.random().toString(36).slice(-8) + "Aa1!";
+          await createFirebaseUser(userEmail, tempPassword);
           
-          // Gerar link de redefinição de senha e enviar para o e-mail do usuário
-          try {
-            const resetLink = await generatePasswordResetLink(userEmail);
-            console.log("✅ Link de redefinição de senha gerado:", resetLink);
-            
-            // Aqui você poderia integrar com um serviço de email como Nodemailer
-            console.log("📧 E-mail de definição de senha seria enviado para:", userEmail);
-            console.log("📧 Link:", resetLink);
-          } catch (resetError) {
-            console.error("❌ Erro ao gerar link de redefinição de senha:", resetError);
-            // Continuamos mesmo se houver erro na geração do link, pois o usuário já foi criado
-          }
+          // Criar usuário no banco de dados local
+          const user = await createOrUpdateUser(userEmail);
+          
+          // Criar assinatura
+          await createSubscription(session);
+
+          // Envio de email com link de redefinição de senha
+          const resetLink = await generatePasswordResetLink(userEmail);
+          await sendWelcomeEmail(userEmail, resetLink);
         }
       }
 
       res.status(200).json({ received: true });
     } catch (error: any) {
-      console.error('❌ Erro no webhook:', error);
+      console.error("❌ Erro no webhook:", error);
       res.status(400).send(`Webhook Error: ${error.message}`);
     }
   });
@@ -195,55 +297,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Webhook já foi registrado no início do arquivo
-
   const httpServer = createServer(app);
   return httpServer;
-}
-
-async function createOrUpdateUser(email: string) {
-  try {
-    const user = await storage.getUserByEmail(email);
-    if (!user) {
-      console.log("✅ Criando usuário no Firebase para:", email);
-      
-      // Criar o usuário no Firebase
-      const firebaseUser = await createFirebaseUser(email, 'senhaSegura123!');
-      console.log("✅ Usuário criado no Firebase:", email);
-      
-      // Criar usuário no banco de dados local
-      const newUser = await storage.createUser({
-        email,
-        name: email.split('@')[0], // Nome provisório baseado no email
-        password: 'senha_gerenciada_pelo_firebase', // Não usamos diretamente, pois o Firebase gerencia a autenticação
-        firebaseUid: firebaseUser.uid
-      });
-      console.log("✅ Usuário criado no banco de dados:", newUser.id);
-      return newUser;
-    } else {
-      console.log("✅ Usuário já existe no sistema:", email);
-      return user;
-    }
-  } catch (error) {
-    console.error("❌ Erro ao criar/atualizar usuário:", error);
-    throw error;
-  }
-}
-
-async function createSubscription(session: any) {
-  try {
-    const userEmail = session.customer_email;
-    const planMode = session.mode;
-    const subscriptionId = session.subscription;
-
-    if (userEmail && subscriptionId) {
-      const user = await storage.getUserByEmail(userEmail);
-      if (user) {
-        await storage.createSubscription(user.id, planMode === 'subscription' ? 'annual' : 'lifetime');
-        console.log("✅ Assinatura criada/atualizada para o usuário:", user.email);
-      }
-    }
-  } catch (error) {
-    console.error("❌ Erro ao criar assinatura:", error);
-  }
 }

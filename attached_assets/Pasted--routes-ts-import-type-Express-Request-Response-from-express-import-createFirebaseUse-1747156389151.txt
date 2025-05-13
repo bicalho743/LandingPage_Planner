@@ -1,0 +1,64 @@
+// routes.ts
+import type { Express, Request, Response } from "express";
+import { createFirebaseUser, generatePasswordResetLink } from "./firebase";
+import Stripe from "stripe";
+import nodemailer from "nodemailer";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2022-11-15" });
+
+export async function registerRoutes(app: Express) {
+  app.post("/api/webhooks/stripe", express.raw({ type: "application/json" }), async (req: Request, res: Response) => {
+    const sig = req.headers["stripe-signature"] as string;
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    try {
+      const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret!);
+      console.log("✅ Webhook Recebido:", event.type);
+
+      if (event.type === "checkout.session.completed") {
+        const session = event.data.object as any;
+        const userEmail = session.customer_email;
+        console.log("✅ Pagamento confirmado:", session);
+
+        if (userEmail) {
+          console.log("✅ Criando usuário no Firebase para:", userEmail);
+
+          // Gerando uma senha segura automaticamente
+          const tempPassword = Math.random().toString(36).slice(-8) + "Aa1!";
+          await createFirebaseUser(userEmail, tempPassword);
+
+          // Envio de email com link de redefinição de senha
+          const resetLink = await generatePasswordResetLink(userEmail);
+          await sendWelcomeEmail(userEmail, resetLink);
+        }
+      }
+
+      res.status(200).json({ received: true });
+    } catch (error: any) {
+      console.error("❌ Erro no webhook:", error);
+      res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+  });
+}
+
+// Função para enviar e-mail de boas-vindas
+async function sendWelcomeEmail(email: string, resetLink: string) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp-relay.sendinblue.com", // Usando Brevo (Sendinblue)
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER, // Seu usuário SMTP do Brevo
+      pass: process.env.SMTP_PASS, // Sua senha SMTP do Brevo
+    },
+  });
+
+  await transporter.sendMail({
+    from: 'suporte@seudominio.com',
+    to: email,
+    subject: "Bem-vindo ao PlannerPro Organizer",
+    text: `Olá,\n\nObrigado por se inscrever! Use o link abaixo para definir sua senha:\n\n${resetLink}\n\nSe você não realizou essa inscrição, por favor ignore este email.`,
+  });
+
+  console.log("✅ E-mail de boas-vindas enviado para:", email);
+}
