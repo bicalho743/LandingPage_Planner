@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/router";
 import { useLocation } from "wouter";
+import LeadForm from "../components/LeadForm";
 
 export default function LandingPage() {
   // Usando o router do Next.js de forma compatível com wouter
@@ -41,10 +41,18 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="my-8 text-center">
-          <Button className="bg-blue-800 text-white px-6 py-3 rounded-md hover:bg-blue-900" onClick={handleGetStarted}>
-            Experimente Grátis
-          </Button>
+        <section className="my-8 flex flex-col md:flex-row gap-8 items-center justify-center">
+          <div className="md:w-1/2">
+            <Button className="bg-blue-800 text-white px-6 py-3 rounded-md hover:bg-blue-900" onClick={handleGetStarted}>
+              Experimente Grátis
+            </Button>
+          </div>
+          <div className="md:w-1/2 max-w-md">
+            <div className="bg-white shadow-lg rounded-lg p-6">
+              <h3 className="text-2xl font-semibold mb-4 text-center">Quer saber mais?</h3>
+              <LeadForm />
+            </div>
+          </div>
         </section>
       </main>
 

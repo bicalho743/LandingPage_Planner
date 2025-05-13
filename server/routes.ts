@@ -260,8 +260,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Salvar o lead no banco de dados local
       await storage.createLead({
         name,
-        email,
-        createdAt: new Date()
+        email
       });
 
       console.log(`✅ Lead capturado com sucesso: ${name} (${email})`);
