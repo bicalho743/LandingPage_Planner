@@ -3,11 +3,13 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "./lib/AuthContext";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import LandingPage from "@/pages/LandingPage";
 import Planos from "@/pages/Planos";
 import { lazy, Suspense } from "react";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Importação lazy para páginas de checkout
 const Checkout = lazy(() => import("@/pages/checkout"));
@@ -34,7 +36,11 @@ function Router() {
         <Route path="/sucesso" component={Sucesso}/>
         <Route path="/cancelado" component={Cancelado}/>
         <Route path="/login" component={Login}/>
-        <Route path="/dashboard" component={Dashboard}/>
+        <Route path="/dashboard">
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </Suspense>
@@ -44,10 +50,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

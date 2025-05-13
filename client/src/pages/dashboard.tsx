@@ -1,9 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
+import { useAuth } from "@/lib/AuthContext";
+import { logout } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const [_, setLocation] = useLocation();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await logout();
+      toast({
+        title: "Logout bem-sucedido",
+        description: "Você foi desconectado com sucesso.",
+      });
+      setLocation("/");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao tentar sair. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="bg-gray-100 text-gray-800 font-sans min-h-screen">
