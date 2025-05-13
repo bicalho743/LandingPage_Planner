@@ -53,6 +53,17 @@ export default function Login() {
         <div className="bg-white rounded-lg shadow-md p-8">
           <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
           
+          <div className="p-4 bg-blue-50 rounded-lg mb-6">
+            <p className="text-sm text-blue-700 mb-2">
+              <strong>Após pagar pelo plano:</strong>
+            </p>
+            <ul className="text-sm text-blue-600 list-disc pl-5 space-y-1">
+              <li>Você receberá um e-mail para definir sua senha</li>
+              <li>Use o mesmo e-mail fornecido durante o checkout</li>
+              <li>Caso não receba o e-mail, clique em "Esqueceu a senha?" abaixo</li>
+            </ul>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -74,9 +85,17 @@ export default function Login() {
                   className="text-sm text-blue-600 hover:underline"
                   onClick={(e) => {
                     e.preventDefault();
+                    if (!email) {
+                      toast({
+                        title: "Digite seu e-mail",
+                        description: "Por favor, preencha o campo de e-mail antes de solicitar a recuperação de senha.",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
                     toast({
                       title: "Recuperação de senha",
-                      description: "Um link de recuperação de senha foi enviado para seu email.",
+                      description: `Um link de recuperação de senha será enviado para ${email}.`,
                     });
                   }}
                 >

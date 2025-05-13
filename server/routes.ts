@@ -260,6 +260,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ===== Webhook for Stripe =====
+
   app.post("/api/webhooks/stripe", 
     express.raw({type: 'application/json'}), 
     async (req: any, res: Response) => {

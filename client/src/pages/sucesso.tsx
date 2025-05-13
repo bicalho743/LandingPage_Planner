@@ -16,8 +16,10 @@ export default function Sucesso() {
 
   useEffect(() => {
     // Obter informações do plano da URL ou definir um padrão
-    const urlParams = new URLSearchParams(search);
+    const urlParams = new URLSearchParams(window.location.search);
     const planType = urlParams.get('plan') || 'unknown';
+    console.log('Parâmetros da URL:', window.location.search);
+    console.log('Tipo de plano detectado:', planType);
     
     // Definir informações do plano com base no parâmetro
     if (planType === 'mensal') {
@@ -98,9 +100,21 @@ export default function Sucesso() {
           <div className="bg-yellow-50 p-4 rounded-lg mb-6">
             <div className="flex items-start">
               <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
-              <p className="text-sm">
-                Seu acesso já está liberado. Verifique seu e-mail para mais detalhes e instruções para definir sua senha.
-              </p>
+              <div className="text-sm">
+                <p className="mb-2">
+                  <strong>Importante:</strong> Para completar seu registro, siga estas etapas:
+                </p>
+                <ol className="list-decimal pl-5 space-y-1">
+                  <li>Você receberá um e-mail de confirmação com um link para definir sua senha</li>
+                  <li>Se não receber o e-mail em alguns minutos, verifique sua pasta de spam</li>
+                  <li>Na tela de login, use o e-mail que você forneceu durante o checkout</li>
+                </ol>
+                <p className="mt-2 text-xs text-gray-600">
+                  <strong>Nota:</strong> Em ambiente de desenvolvimento, os e-mails podem não ser enviados automaticamente. 
+                  A criação da conta ocorre quando o Stripe notifica nosso servidor através de um webhook, o que requer 
+                  configurações adicionais em ambiente local.
+                </p>
+              </div>
             </div>
           </div>
           
