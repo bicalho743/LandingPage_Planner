@@ -1,422 +1,89 @@
-import type { Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { contactSchema, leadSchema, insertUserSchema } from "@shared/schema";
-import { ZodError } from "zod";
-import { fromZodError } from "zod-validation-error";
 import Stripe from "stripe";
 import express from "express";
 import { createFirebaseUser, generatePasswordResetLink } from "./firebase";
 
-// Inicializa o Stripe com a chave secreta (suporte a ambiente de teste e produção)
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 
-// Determina qual chave usar baseado no ambiente
 const isProduction = process.env.NODE_ENV === 'production';
 const stripeKey = isProduction 
   ? process.env.STRIPE_SECRET_KEY 
   : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
 
-// Log da inicialização
 console.log(`Iniciando Stripe no modo ${isProduction ? 'PRODUÇÃO' : 'DESENVOLVIMENTO'}`);
 console.log(`Usando chave ${isProduction ? 'de produção' : 'de teste'}`);
 
 const stripe = new Stripe(stripeKey);
 
-// Import error handling function for consistent error responses
-const handleError = (error: any, res: Response) => {
-  if (error instanceof ZodError) {
-    // Handle validation errors
-    const validationError = fromZodError(error);
-    res.status(400).json({ 
-      success: false, 
-      message: "Validation error", 
-      errors: validationError.message 
-    });
-  } else {
-    // Handle other errors
-    console.error("API error:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: error.message || "Failed to process your request" 
-    });
-  }
-};
-
 export async function registerRoutes(app: Express): Promise<Server> {
-  // ===== Contact form API route =====
-  app.post("/api/contact", async (req: Request, res: Response) => {
-    try {
-      // Validate request body
-      const validatedData = contactSchema.parse(req.body);
-      
-      // Store contact form submission
-      const contact = await storage.createContact(validatedData);
-      
-      // Return success response
-      res.status(201).json({ 
-        success: true, 
-        message: "Contact form submitted successfully", 
-        data: contact 
-      });
-    } catch (error) {
-      handleError(error, res);
+  app.post("/api/webhooks/stripe", express.raw({type: 'application/json'}), async (req: any, res: Response) => {
+    const sig = req.headers['stripe-signature'] as string;
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!endpointSecret) {
+      console.error("❌ Segredo do Webhook não configurado.");
+      return res.status(400).send("Webhook não autorizado.");
     }
-  });
 
-  // ===== Lead capture API route =====
-  app.post("/api/leads", async (req: Request, res: Response) => {
     try {
-      // Validate request body
-      const validatedData = leadSchema.parse(req.body);
-      
-      // Store lead form submission
-      const lead = await storage.createLead(validatedData);
-      
-      // Return success response
-      res.status(201).json({ 
-        success: true, 
-        message: "Thank you for your interest! We'll be in touch soon.", 
-        data: lead 
-      });
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
+      let event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      console.log("✅ Webhook Recebido:", event.type);
 
-  // ===== User registration API route =====
-  app.post("/api/users", async (req: Request, res: Response) => {
-    try {
-      // Validate request body
-      const validatedData = insertUserSchema.parse(req.body);
-      
-      // Check if user already exists with this email
-      const existingUser = await storage.getUserByEmail(validatedData.email);
-      if (existingUser) {
-        return res.status(409).json({
-          success: false,
-          message: "A user with this email already exists"
-        });
-      }
-      
-      // Create new user
-      const user = await storage.createUser(validatedData);
-      
-      // Convert lead to user if email exists in leads
-      await storage.convertLeadToUser(validatedData.email);
-      
-      // Return success response (excluding password)
-      const { password, ...userWithoutPassword } = user;
-      res.status(201).json({ 
-        success: true, 
-        message: "User registered successfully", 
-        data: userWithoutPassword 
-      });
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const userEmail = session.customer_email;
+        console.log("✅ Pagamento confirmado:", session);
 
-  // ===== Subscription API routes =====
-  app.post("/api/subscriptions", async (req: Request, res: Response) => {
-    try {
-      const { userId, planType } = req.body;
-      
-      if (!userId || !planType) {
-        return res.status(400).json({
-          success: false,
-          message: "Missing required fields: userId and planType"
-        });
-      }
-      
-      // Check if user exists
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found"
-        });
-      }
-      
-      // Check if subscription already exists
-      const existingSubscription = await storage.getSubscriptionByUserId(userId);
-      if (existingSubscription) {
-        return res.status(409).json({
-          success: false,
-          message: "User already has an active subscription"
-        });
-      }
-      
-      // Create subscription
-      const subscription = await storage.createSubscription(userId, planType);
-      
-      res.status(201).json({
-        success: true,
-        message: "Subscription created successfully",
-        data: subscription
-      });
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
-  // ===== Checkout with Stripe =====
-  app.post("/api/checkout", async (req: Request, res: Response) => {
-    try {
-      const { plan } = req.body;
-      let priceId: string = '';
-      let mode: 'payment' | 'subscription' = 'subscription';
-
-      // Seleciona o ID de preço adequado para o ambiente (teste ou produção)
-      console.log(`Iniciando checkout para plano: ${plan}`);
-      
-      // Determina se estamos usando o ambiente de teste ou produção
-      const useLiveMode = !process.env.STRIPE_TEST_SECRET_KEY || isProduction;
-      console.log(`Usando modo: ${useLiveMode ? 'PRODUÇÃO' : 'TESTE'}`);
-      
-      // Logs detalhados para debugging
-      console.log('Variáveis de ambiente disponíveis:');
-      console.log(`STRIPE_TEST_SECRET_KEY presente: ${process.env.STRIPE_TEST_SECRET_KEY ? 'Sim' : 'Não'}`);
-      console.log(`STRIPE_PRICE_MONTHLY_TEST: ${process.env.STRIPE_PRICE_MONTHLY_TEST || 'não definido'}`);
-      console.log(`STRIPE_PRICE_ANNUAL_TEST: ${process.env.STRIPE_PRICE_ANNUAL_TEST || 'não definido'}`);
-      console.log(`STRIPE_PRICE_LIFETIME_TEST: ${process.env.STRIPE_PRICE_LIFETIME_TEST || 'não definido'}`);
-      console.log(`isProduction: ${isProduction}`);
-      console.log(`useLiveMode: ${useLiveMode}`);
-      
-      // Função para obter o ID de preço correto com base no ambiente
-      const getPriceId = (liveId: string | undefined, testId: string | undefined): string => {
-        if (isProduction) {
-          // Em produção, sempre usa a chave de produção
-          return liveId || '';
-        } else {
-          // Em desenvolvimento, prioriza a chave de teste se disponível
-          return testId || liveId || '';
+        if (userEmail) {
+          await createOrUpdateUser(userEmail);
+          await createSubscription(session);
         }
-      };
-      
-      // Seleciona o ID de preço apropriado com base no plano
-      switch (plan) {
-        case 'mensal':
-          priceId = getPriceId(
-            process.env.STRIPE_PRICE_MONTHLY,
-            process.env.STRIPE_PRICE_MONTHLY_TEST
-          );
-          break;
-        case 'anual':
-          priceId = getPriceId(
-            process.env.STRIPE_PRICE_ANNUAL,
-            process.env.STRIPE_PRICE_ANNUAL_TEST
-          );
-          break;
-        case 'vitalicio':
-          priceId = getPriceId(
-            process.env.STRIPE_PRICE_LIFETIME,
-            process.env.STRIPE_PRICE_LIFETIME_TEST
-          );
-          mode = 'payment'; // Plano vitalício é pagamento único
-          break;
-        default:
-          return res.status(400).json({ 
-            success: false, 
-            message: 'Plano inválido' 
-          });
-      }
-      
-      // Verificação extra para garantir que temos um ID de preço válido
-      if (!priceId) {
-        return res.status(400).json({
-          success: false,
-          message: `ID de preço para o plano '${plan}' não configurado. Configure o preço no painel do Stripe e defina a variável de ambiente correspondente.`
-        });
       }
 
-      // Logs detalhados para debug
-      console.log('------------------------------');
-      console.log(`Plano: ${plan}`);
-      console.log(`ID de preço selecionado: ${priceId}`);
-      console.log(`Modo de pagamento: ${mode}`);
-      console.log('------------------------------');
-      
-      // Cria uma sessão de checkout
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode,
-        line_items: [{ price: priceId, quantity: 1 }],
-        ...(mode === 'subscription' && { subscription_data: { trial_period_days: 7 } }),
-        success_url: `${req.headers.origin}/sucesso?plan=${plan}`,
-        cancel_url: `${req.headers.origin}/cancelado`,
-      });
-
-      res.json({ 
-        success: true,
-        url: session.url 
-      });
-    } catch (error) {
-      console.error('Erro ao criar sessão de checkout:', error);
-      handleError(error, res);
+      res.status(200).json({ received: true });
+    } catch (error: any) {
+      console.error('❌ Erro no webhook:', error);
+      res.status(400).send(`Webhook Error: ${error.message}`);
     }
   });
-
-  // ===== Webhook for Stripe =====
-
-  app.post("/api/webhooks/stripe", 
-    express.raw({type: 'application/json'}), 
-    async (req: any, res: Response) => {
-      const sig = req.headers['stripe-signature'] as string;
-      
-      try {
-        const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-        let event;
-        
-        if (endpointSecret && sig) {
-          // Verifica a assinatura do webhook
-          event = stripe.webhooks.constructEvent(
-            req.body,
-            sig,
-            endpointSecret
-          );
-        } else {
-          // Para desenvolvimento, aceita eventos sem verificação
-          event = req.body;
-        }
-        
-        // Log the event for debugging
-        console.log("Received Stripe webhook event:", event.type);
-        
-        // Process based on event type
-        switch (event.type) {
-          case 'checkout.session.completed':
-            const session = event.data.object;
-            console.log('Checkout completed:', session);
-            
-            try {
-              // Capturar informações importantes da sessão
-              const userEmail = session.customer_email;
-              const planMode = session.mode;
-              const subscriptionId = session.subscription;
-              
-              if (userEmail) {
-                // Verificar se o usuário já existe no sistema
-                const existingUser = await storage.getUserByEmail(userEmail);
-                let userId;
-                let firebaseUid;
-                
-                if (!existingUser) {
-                  try {
-                    // Criar usuário no Firebase
-                    console.log(`Criando usuário no Firebase para: ${userEmail}`);
-                    const tempPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
-                    const firebaseUser = await createFirebaseUser(userEmail, tempPassword);
-                    firebaseUid = firebaseUser.uid;
-                    
-                    // Gerar link de redefinição de senha
-                    const resetLink = await generatePasswordResetLink(userEmail);
-                    console.log(`Link de redefinição de senha: ${resetLink}`);
-                    
-                    // Criar um novo usuário no banco de dados local
-                    const newUser = await storage.createUser({
-                      email: userEmail,
-                      name: userEmail.split('@')[0],
-                      password: 'firebase-managed', // A senha é gerenciada pelo Firebase
-                      firebaseUid: firebaseUid
-                    });
-                    
-                    userId = newUser.id;
-                    console.log('Novo usuário criado após pagamento:', userId);
-                    console.log('Firebase UID:', firebaseUid);
-                    
-                    // Aqui você poderia enviar um email com o link de redefinição de senha
-                    // usando um serviço de email como SendGrid, Mailgun, etc.
-                    
-                  } catch (firebaseError) {
-                    console.error('Erro ao criar usuário no Firebase:', firebaseError);
-                    
-                    // Fallback para criar apenas no banco de dados local se o Firebase falhar
-                    const newUser = await storage.createUser({
-                      email: userEmail,
-                      name: userEmail.split('@')[0],
-                      password: 'tempHash',
-                      firebaseUid: null
-                    });
-                    
-                    userId = newUser.id;
-                    console.log('Usuário criado apenas no banco local (Firebase falhou):', userId);
-                  }
-                } else {
-                  // Atualizar usuário existente com dados da assinatura
-                  userId = existingUser.id;
-                  console.log('Usuário existente atualizado após pagamento:', userId);
-                }
-                
-                // Criar uma assinatura no banco de dados
-                if (subscriptionId) {
-                  const planType = planMode === 'subscription' 
-                    ? (session.amount_total > 20000 ? 'annual' : 'monthly')
-                    : 'lifetime';
-                  
-                  // Verifique se o usuário existe antes de criar a assinatura
-                  const user = existingUser || await storage.getUserByEmail(userEmail);
-                  
-                  if (user) {
-                    await storage.createSubscription(user.id, planType);
-                    console.log(`Assinatura ${planType} criada para o usuário ${user.id}`);
-                  }
-                }
-              } else {
-                console.log('Sessão de checkout sem email do usuário:', session.id);
-              }
-            } catch (error) {
-              console.error('Erro ao processar checkout.session.completed:', error);
-            }
-            break;
-            
-          case 'customer.subscription.updated':
-            const updatedSubscription = event.data.object;
-            console.log('Subscription updated:', updatedSubscription);
-            
-            try {
-              // Atualizar status da assinatura no banco de dados
-              const customerId = updatedSubscription.customer;
-              const status = updatedSubscription.status;
-              
-              // Aqui precisaríamos buscar o usuário pelo customer ID do Stripe
-              // e então atualizar o status da assinatura
-              console.log(`Assinatura atualizada para: ${status}`);
-            } catch (error) {
-              console.error('Erro ao processar customer.subscription.updated:', error);
-            }
-            break;
-            
-          case 'customer.subscription.deleted':
-            const deletedSubscription = event.data.object;
-            console.log('Subscription canceled:', deletedSubscription);
-            
-            try {
-              // Marcar assinatura como cancelada no banco de dados
-              const customerId = deletedSubscription.customer;
-              
-              // Aqui precisaríamos buscar o usuário pelo customer ID do Stripe
-              // e então marcar a assinatura como cancelada
-              console.log('Assinatura cancelada');
-            } catch (error) {
-              console.error('Erro ao processar customer.subscription.deleted:', error);
-            }
-            break;
-            
-          default:
-            console.log(`Unhandled event type: ${event.type}`);
-        }
-        
-        res.json({ received: true });
-      } catch (error: any) {
-        console.error('Erro no webhook:', error);
-        res.status(400).send(`Webhook Error: ${error.message}`);
-      }
-    });
 
   const httpServer = createServer(app);
-
   return httpServer;
+}
+
+async function createOrUpdateUser(email: string) {
+  try {
+    const user = await storage.getUserByEmail(email);
+    if (!user) {
+      console.log("✅ Criando usuário no Firebase para:", email);
+      await createFirebaseUser(email, 'senhaSegura123!');
+      console.log("✅ Usuário criado no Firebase:", email);
+    } else {
+      console.log("✅ Usuário já existe no sistema:", email);
+    }
+  } catch (error) {
+    console.error("❌ Erro ao criar/atualizar usuário:", error);
+  }
+}
+
+async function createSubscription(session: any) {
+  try {
+    const userEmail = session.customer_email;
+    const planMode = session.mode;
+    const subscriptionId = session.subscription;
+
+    if (userEmail && subscriptionId) {
+      const user = await storage.getUserByEmail(userEmail);
+      if (user) {
+        await storage.createSubscription(user.id, planMode === 'subscription' ? 'annual' : 'lifetime');
+        console.log("✅ Assinatura criada/atualizada para o usuário:", user.email);
+      }
+    }
+  } catch (error) {
+    console.error("❌ Erro ao criar assinatura:", error);
+  }
 }
