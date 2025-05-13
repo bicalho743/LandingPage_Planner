@@ -154,20 +154,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/checkout", async (req: Request, res: Response) => {
     try {
       const { plan } = req.body;
-      let priceId = '';
+      let priceId: string = '';
       let mode: 'payment' | 'subscription' = 'subscription';
 
-      // Definição dos preços baseados no plano
-      // Nota: Estes IDs precisam ser definidos no painel do Stripe
+      // Agora que temos as chaves configuradas, podemos usar o Stripe real
+      console.log(`Iniciando checkout para plano: ${plan}`);
+      
+      // Código real para quando tivermos preços configurados no Stripe
       switch (plan) {
         case 'mensal':
-          priceId = process.env.STRIPE_PRICE_MONTHLY || 'price_monthly';
+          priceId = process.env.STRIPE_PRICE_MONTHLY || '';
           break;
         case 'anual':
-          priceId = process.env.STRIPE_PRICE_ANNUAL || 'price_annual';
+          priceId = process.env.STRIPE_PRICE_ANNUAL || '';
           break;
         case 'vitalicio':
-          priceId = process.env.STRIPE_PRICE_LIFETIME || 'price_lifetime';
+          priceId = process.env.STRIPE_PRICE_LIFETIME || '';
           mode = 'payment'; // Plano vitalício é pagamento único
           break;
         default:
@@ -175,6 +177,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             success: false, 
             message: 'Plano inválido' 
           });
+      }
+      
+      // Verificação extra para garantir que temos um ID de preço válido
+      if (!priceId) {
+        return res.status(400).json({
+          success: false,
+          message: `ID de preço para o plano '${plan}' não configurado. Configure o preço no painel do Stripe e defina a variável de ambiente correspondente.`
+        });
       }
 
       // Cria uma sessão de checkout
@@ -242,13 +252,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   // Criar um novo usuário com base nos dados da assinatura
                   const newUser = await storage.createUser({
                     email: userEmail,
-                    username: userEmail.split('@')[0],
                     name: userEmail.split('@')[0],
-                    role: 'user',
-                    passwordHash: 'tempHash', // Idealmente, usaríamos um sistema de reset de senha aqui
-                    firebaseUid: null,
-                    stripeCustomerId: session.customer,
-                    stripeSubscriptionId: subscriptionId
+                    password: 'tempHash', // Idealmente, usaríamos um sistema de reset de senha aqui
+                    firebaseUid: null
                   });
                   
                   console.log('Novo usuário criado após pagamento:', newUser.id);
