@@ -40,6 +40,60 @@ function getPriceId(planType: string): string {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Endpoint para obter informações do usuário atual
+  app.get('/api/user/subscription', async (req: Request, res: Response) => {
+    try {
+      // Em uma implementação real, verificaríamos a autenticação do usuário
+      // e buscaríamos as informações com base no ID do usuário autenticado
+      const { email } = req.query;
+      
+      if (!email) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'Email não fornecido'
+        });
+      }
+      
+      // Buscar o usuário pelo email
+      const user = await storage.getUserByEmail(email as string);
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Usuário não encontrado'
+        });
+      }
+      
+      // Buscar informações da assinatura
+      const subscription = await storage.getSubscriptionByUserId(user.id);
+      
+      if (!subscription) {
+        return res.status(200).json({
+          success: true,
+          hasSubscription: false,
+          message: 'Usuário não possui assinatura'
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        hasSubscription: true,
+        subscription: {
+          planType: subscription.planType,
+          status: subscription.status,
+          currentPeriodEnd: subscription.currentPeriodEnd,
+          isActive: subscription.status === 'active'
+        }
+      });
+    } catch (error: any) {
+      console.error('Erro ao buscar informações da assinatura:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar informações da assinatura'
+      });
+    }
+  });
+  
   // Endpoint para iniciar o processo de checkout
   app.post("/api/checkout", async (req: Request, res: Response) => {
     try {
