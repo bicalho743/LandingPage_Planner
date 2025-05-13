@@ -12,7 +12,7 @@ import {
   type LeadFormData,
   type InsertLead
 } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq } from "drizzle-orm";
 
 // Storage interface for CRUD operations
@@ -39,32 +39,79 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations
+  // User operations usando consultas SQL diretas (para Render)
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    try {
+      const query = `SELECT * FROM users WHERE id = $1;`;
+      const result = await pool.query(query, [id]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao buscar usuário por ID:", error);
+      // Fallback para Drizzle se necessário
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
+    try {
+      const query = `SELECT * FROM users WHERE email = $1;`;
+      const result = await pool.query(query, [email]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao buscar usuário por email:", error);
+      // Fallback para Drizzle se necessário
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      return user;
+    }
   }
   
   async getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.firebaseUid, firebaseUid));
-    return user;
+    try {
+      const query = `SELECT * FROM users WHERE firebase_uid = $1;`;
+      const result = await pool.query(query, [firebaseUid]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao buscar usuário por Firebase UID:", error);
+      // Fallback para Drizzle
+      const [user] = await db.select().from(users).where(eq(users.firebaseUid, firebaseUid));
+      return user;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values({
-        ...insertUser,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      })
-      .returning();
-    return user;
+    try {
+      // Usando consulta SQL direta para compatibilidade com Render
+      const query = `
+        INSERT INTO users (email, name, firebase_uid, password, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *;
+      `;
+      const now = new Date();
+      const values = [
+        insertUser.email, 
+        insertUser.name, 
+        insertUser.firebaseUid, 
+        insertUser.password,
+        now,
+        now
+      ];
+      
+      const result = await pool.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao criar usuário com SQL:", error);
+      // Fallback para o Drizzle
+      const [user] = await db
+        .insert(users)
+        .values({
+          ...insertUser,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return user;
+    }
   }
   
   // Lead operations
@@ -118,37 +165,73 @@ export class DatabaseStorage implements IStorage {
   
   // Subscription operations
   async createSubscription(userId: number, planType: string): Promise<any> {
-    const [subscription] = await db
-      .insert(subscriptions)
-      .values({
-        userId,
-        planType: planType as any,
-        status: 'active' as any,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      })
-      .returning();
-    
-    return subscription;
+    try {
+      // Usando consulta SQL direta para compatibilidade com Render
+      const query = `
+        INSERT INTO subscriptions (user_id, plan_type, status, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *;
+      `;
+      const now = new Date();
+      const values = [userId, planType, 'active', now, now];
+      
+      const result = await pool.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao criar assinatura com SQL:", error);
+      // Fallback para o Drizzle
+      const [subscription] = await db
+        .insert(subscriptions)
+        .values({
+          userId,
+          planType: planType as any,
+          status: 'active' as any,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      return subscription;
+    }
   }
   
   async getSubscriptionByUserId(userId: number): Promise<any> {
-    const [subscription] = await db
-      .select()
-      .from(subscriptions)
-      .where(eq(subscriptions.userId, userId));
-    
-    return subscription;
+    try {
+      const query = `SELECT * FROM subscriptions WHERE user_id = $1;`;
+      const result = await pool.query(query, [userId]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Erro ao buscar assinatura por ID de usuário:", error);
+      // Fallback para Drizzle
+      const [subscription] = await db
+        .select()
+        .from(subscriptions)
+        .where(eq(subscriptions.userId, userId));
+      
+      return subscription;
+    }
   }
   
   async updateSubscriptionStatus(userId: number, status: string): Promise<void> {
-    await db
-      .update(subscriptions)
-      .set({ 
-        status: status as any,
-        updatedAt: new Date()
-      })
-      .where(eq(subscriptions.userId, userId));
+    try {
+      const now = new Date();
+      const query = `
+        UPDATE subscriptions 
+        SET status = $1, updated_at = $2
+        WHERE user_id = $3;
+      `;
+      await pool.query(query, [status, now, userId]);
+    } catch (error) {
+      console.error("Erro ao atualizar status da assinatura:", error);
+      // Fallback para Drizzle
+      await db
+        .update(subscriptions)
+        .set({ 
+          status: status as any,
+          updatedAt: new Date()
+        })
+        .where(eq(subscriptions.userId, userId));
+    }
   }
 }
 
