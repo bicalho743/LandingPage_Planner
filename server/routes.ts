@@ -168,19 +168,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let priceId: string = '';
       let mode: 'payment' | 'subscription' = 'subscription';
 
-      // Usando os IDs de preço reais do Stripe
+      // Seleciona o ID de preço adequado para o ambiente (teste ou produção)
       console.log(`Iniciando checkout para plano: ${plan}`);
       
-      // Código real para quando tivermos preços configurados no Stripe
+      // Determina se estamos usando o ambiente de teste ou produção
+      const useLiveMode = !process.env.STRIPE_TEST_SECRET_KEY || isProduction;
+      console.log(`Usando modo: ${useLiveMode ? 'PRODUÇÃO' : 'TESTE'}`);
+      
+      // Seleciona o ID de preço apropriado com base no plano e no ambiente
       switch (plan) {
         case 'mensal':
-          priceId = process.env.STRIPE_PRICE_MONTHLY || '';
+          priceId = useLiveMode 
+            ? process.env.STRIPE_PRICE_MONTHLY || ''
+            : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
           break;
         case 'anual':
-          priceId = process.env.STRIPE_PRICE_ANNUAL || '';
+          priceId = useLiveMode 
+            ? process.env.STRIPE_PRICE_ANNUAL || ''
+            : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
           break;
         case 'vitalicio':
-          priceId = process.env.STRIPE_PRICE_LIFETIME || '';
+          priceId = useLiveMode 
+            ? process.env.STRIPE_PRICE_LIFETIME || ''
+            : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
           mode = 'payment'; // Plano vitalício é pagamento único
           break;
         default:
