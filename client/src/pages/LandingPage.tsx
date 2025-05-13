@@ -29,20 +29,20 @@ export default function LandingPage() {
       <main className="container mx-auto px-4 py-8">
         <section className="my-8 text-center">
           <h2 className="text-3xl font-semibold">Benefícios do Sistema</h2>
-          <ul className="list-none mt-4 space-y-2">
-            <li>✅ Quero uma Base de Clientes Fiéis e Lucrativos!</li>
-            <li>✅ Não Quero Mais Esquecer Datas Importantes!</li>
-            <li>✅ Quero Controlar Minhas Finanças com Facilidade!</li>
-            <li>✅ Quero Simplificar Minha Rotina e Crescer!</li>
-            <li>✅ Quero Enviar Propostas Profissionais em Segundos!</li>
-            <li>✅ Não Vou Mais Perder Oportunidades de Vendas!</li>
-            <li>✅ Quero Ter Relatórios Claros e Precisos!</li>
-            <li>✅ Não Quero Mais Planilhas Confusas!</li>
-          </ul>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Quero uma Base de Clientes Fiéis e Lucrativos!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Não Quero Mais Esquecer Datas Importantes!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Quero Controlar Minhas Finanças com Facilidade!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Quero Simplificar Minha Rotina e Crescer!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Quero Enviar Propostas Profissionais em Segundos!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Não Vou Mais Perder Oportunidades de Vendas!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Quero Ter Relatórios Claros e Precisos!</Button>
+            <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>✅ Não Quero Mais Planilhas Confusas!</Button>
+          </div>
         </section>
 
         <section className="my-8 text-center">
-          <Button className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700" onClick={handleGetStarted}>
+          <Button className="bg-blue-800 text-white px-6 py-3 rounded-md hover:bg-blue-900" onClick={handleGetStarted}>
             Experimente Grátis
           </Button>
         </section>
