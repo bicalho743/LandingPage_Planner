@@ -1,14 +1,20 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/router";
 import { useLocation } from "wouter";
 
 export default function LandingPage() {
-  // Adaptação: usando useLocation de wouter em vez de useRouter de next/router
-  // mas mantendo a mesma funcionalidade
+  // Usando o router do Next.js de forma compatível com wouter
+  const router = {
+    push: (path: string) => {
+      setLocation(path);
+    }
+  } as any;
+  
   const [_, setLocation] = useLocation();
 
   const handleGetStarted = () => {
-    setLocation("/planos");
+    router.push("/planos");
   };
 
   return (
