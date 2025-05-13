@@ -242,6 +242,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Endpoint para captura de leads
+  app.post("/api/leads", express.json(), async (req: Request, res: Response) => {
+    try {
+      const { name, email } = req.body;
+
+      if (!name || !email) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Nome e e-mail são obrigatórios." 
+        });
+      }
+
+      // Adicionar o lead à lista do Brevo
+      await addContactToBrevo(name, email);
+      
+      // Salvar o lead no banco de dados local
+      await storage.createLead({
+        name,
+        email,
+        createdAt: new Date()
+      });
+
+      console.log(`✅ Lead capturado com sucesso: ${name} (${email})`);
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: "Lead capturado com sucesso!" 
+      });
+    } catch (error: any) {
+      console.error("❌ Erro ao capturar lead:", error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Erro ao processar sua solicitação." 
+      });
+    }
+  });
+
   // Endpoint para iniciar o processo de checkout
   app.post("/api/checkout", express.json(), async (req: Request, res: Response) => {
     try {

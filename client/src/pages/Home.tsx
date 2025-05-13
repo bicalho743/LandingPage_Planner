@@ -1,11 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
+import { Link } from "wouter";
 import LeadForm from "../components/LeadForm";
 
 export default function Home() {
-  const [_, setLocation] = useLocation();
-
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
       <section className="py-12 md:py-24 flex flex-col items-center text-center">
@@ -16,16 +14,22 @@ export default function Home() {
           A solução completa para organizar sua vida, tarefas e projetos em um só lugar.
         </p>
         <div className="flex flex-col md:flex-row gap-4">
-          <Button 
-            onClick={() => navigate("/planos")}
-            size="lg" 
-            className="bg-primary text-white hover:bg-primary/90"
-          >
-            Ver Planos
-          </Button>
-          <Button variant="outline" size="lg" onClick={() => navigate("/login")}>
-            Entrar
-          </Button>
+          <Link href="/planos">
+            <Button 
+              size="lg" 
+              className="bg-primary text-white hover:bg-primary/90"
+            >
+              Ver Planos
+            </Button>
+          </Link>
+          <Link href="/login">
+            <Button 
+              variant="outline" 
+              size="lg"
+            >
+              Entrar
+            </Button>
+          </Link>
         </div>
       </section>
 
