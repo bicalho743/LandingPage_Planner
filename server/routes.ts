@@ -40,6 +40,39 @@ function getPriceId(planType: string): string {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Webhook do Stripe para processar eventos de pagamento
+  // IMPORTANTE: Esta rota DEVE ser registrada antes de qualquer middleware que analisa o corpo da requisição
+  app.post("/api/webhooks/stripe", express.raw({type: 'application/json'}), async (req: any, res: Response) => {
+    const sig = req.headers['stripe-signature'] as string;
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!endpointSecret) {
+      console.error("❌ Segredo do Webhook não configurado.");
+      return res.status(400).send("Webhook não autorizado.");
+    }
+
+    try {
+      let event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      console.log("✅ Webhook Recebido:", event.type);
+
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const userEmail = session.customer_email;
+        console.log("✅ Pagamento confirmado:", session);
+
+        if (userEmail) {
+          await createOrUpdateUser(userEmail);
+          await createSubscription(session);
+        }
+      }
+
+      res.status(200).json({ received: true });
+    } catch (error: any) {
+      console.error('❌ Erro no webhook:', error);
+      res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+  });
+
   // Endpoint para obter informações do usuário atual
   app.get('/api/user/subscription', async (req: Request, res: Response) => {
     try {
@@ -149,37 +182,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Webhook do Stripe para processar eventos de pagamento
-  app.post("/api/webhooks/stripe", express.raw({type: 'application/json'}), async (req: any, res: Response) => {
-    const sig = req.headers['stripe-signature'] as string;
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-    if (!endpointSecret) {
-      console.error("❌ Segredo do Webhook não configurado.");
-      return res.status(400).send("Webhook não autorizado.");
-    }
-
-    try {
-      let event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-      console.log("✅ Webhook Recebido:", event.type);
-
-      if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        const userEmail = session.customer_email;
-        console.log("✅ Pagamento confirmado:", session);
-
-        if (userEmail) {
-          await createOrUpdateUser(userEmail);
-          await createSubscription(session);
-        }
-      }
-
-      res.status(200).json({ received: true });
-    } catch (error: any) {
-      console.error('❌ Erro no webhook:', error);
-      res.status(400).send(`Webhook Error: ${error.message}`);
-    }
-  });
+  // Webhook já foi registrado no início do arquivo
 
   const httpServer = createServer(app);
   return httpServer;
