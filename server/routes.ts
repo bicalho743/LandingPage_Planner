@@ -175,22 +175,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const useLiveMode = !process.env.STRIPE_TEST_SECRET_KEY || isProduction;
       console.log(`Usando modo: ${useLiveMode ? 'PRODUÇÃO' : 'TESTE'}`);
       
-      // Seleciona o ID de preço apropriado com base no plano e no ambiente
+      // Logs detalhados para debugging
+      console.log('Variáveis de ambiente disponíveis:');
+      console.log(`STRIPE_TEST_SECRET_KEY presente: ${process.env.STRIPE_TEST_SECRET_KEY ? 'Sim' : 'Não'}`);
+      console.log(`STRIPE_PRICE_MONTHLY_TEST: ${process.env.STRIPE_PRICE_MONTHLY_TEST || 'não definido'}`);
+      console.log(`STRIPE_PRICE_ANNUAL_TEST: ${process.env.STRIPE_PRICE_ANNUAL_TEST || 'não definido'}`);
+      console.log(`STRIPE_PRICE_LIFETIME_TEST: ${process.env.STRIPE_PRICE_LIFETIME_TEST || 'não definido'}`);
+      console.log(`isProduction: ${isProduction}`);
+      console.log(`useLiveMode: ${useLiveMode}`);
+      
+      // Função para obter o ID de preço correto com base no ambiente
+      const getPriceId = (liveId: string | undefined, testId: string | undefined): string => {
+        if (isProduction) {
+          // Em produção, sempre usa a chave de produção
+          return liveId || '';
+        } else {
+          // Em desenvolvimento, prioriza a chave de teste se disponível
+          return testId || liveId || '';
+        }
+      };
+      
+      // Seleciona o ID de preço apropriado com base no plano
       switch (plan) {
         case 'mensal':
-          priceId = useLiveMode 
-            ? process.env.STRIPE_PRICE_MONTHLY || ''
-            : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
+          priceId = getPriceId(
+            process.env.STRIPE_PRICE_MONTHLY,
+            process.env.STRIPE_PRICE_MONTHLY_TEST
+          );
           break;
         case 'anual':
-          priceId = useLiveMode 
-            ? process.env.STRIPE_PRICE_ANNUAL || ''
-            : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
+          priceId = getPriceId(
+            process.env.STRIPE_PRICE_ANNUAL,
+            process.env.STRIPE_PRICE_ANNUAL_TEST
+          );
           break;
         case 'vitalicio':
-          priceId = useLiveMode 
-            ? process.env.STRIPE_PRICE_LIFETIME || ''
-            : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
+          priceId = getPriceId(
+            process.env.STRIPE_PRICE_LIFETIME,
+            process.env.STRIPE_PRICE_LIFETIME_TEST
+          );
           mode = 'payment'; // Plano vitalício é pagamento único
           break;
         default:
@@ -208,8 +231,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Adiciona logs para debug
-      console.log(`Plano: ${plan}, ID de preço: ${priceId}, Modo: ${mode}`);
+      // Logs detalhados para debug
+      console.log('------------------------------');
+      console.log(`Plano: ${plan}`);
+      console.log(`ID de preço selecionado: ${priceId}`);
+      console.log(`Modo de pagamento: ${mode}`);
+      console.log('------------------------------');
       
       // Cria uma sessão de checkout
       const session = await stripe.checkout.sessions.create({
