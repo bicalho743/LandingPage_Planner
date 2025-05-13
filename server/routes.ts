@@ -7,11 +7,22 @@ import { fromZodError } from "zod-validation-error";
 import Stripe from "stripe";
 import express from "express";
 
-// Inicializa o Stripe com a chave secreta
+// Inicializa o Stripe com a chave secreta (suporte a ambiente de teste e produção)
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Determina qual chave usar baseado no ambiente
+const isProduction = process.env.NODE_ENV === 'production';
+const stripeKey = isProduction 
+  ? process.env.STRIPE_SECRET_KEY 
+  : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
+
+// Log da inicialização
+console.log(`Iniciando Stripe no modo ${isProduction ? 'PRODUÇÃO' : 'DESENVOLVIMENTO'}`);
+console.log(`Usando chave ${isProduction ? 'de produção' : 'de teste'}`);
+
+const stripe = new Stripe(stripeKey);
 
 // Import error handling function for consistent error responses
 const handleError = (error: any, res: Response) => {
