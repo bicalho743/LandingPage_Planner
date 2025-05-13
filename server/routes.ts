@@ -5,6 +5,7 @@ import Stripe from "stripe";
 import express from "express";
 import { createFirebaseUser, generatePasswordResetLink } from "./firebase";
 import nodemailer from "nodemailer";
+import { addContactToBrevo } from "./brevo";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
