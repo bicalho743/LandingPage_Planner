@@ -74,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint para obter informações do usuário atual
-  app.get('/api/user/subscription', async (req: Request, res: Response) => {
+  app.get('/api/user/subscription', express.json(), async (req: Request, res: Response) => {
     try {
       // Em uma implementação real, verificaríamos a autenticação do usuário
       // e buscaríamos as informações com base no ID do usuário autenticado
@@ -128,8 +128,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Endpoint para iniciar o processo de checkout
-  app.post("/api/checkout", async (req: Request, res: Response) => {
+  app.post("/api/checkout", express.json(), async (req: Request, res: Response) => {
     try {
+      console.log("Corpo da requisição recebido:", req.body);
       const { plan } = req.body;
       
       if (!plan || !['mensal', 'anual', 'vitalicio'].includes(plan)) {

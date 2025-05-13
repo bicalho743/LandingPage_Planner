@@ -14,8 +14,15 @@ export default function Planos() {
     try {
       setLoadingPlan(plan);
       
+      console.log("Enviando requisição para checkout com plano:", plan);
       // Fazer requisição direta para a API de checkout
-      const response = await apiRequest("POST", "/api/checkout", { plan });
+      const response = await fetch("/api/checkout", {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ plan })
+      });
       const data = await response.json();
       
       if (data.success && data.url) {
