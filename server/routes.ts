@@ -227,19 +227,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
           case 'checkout.session.completed':
             const session = event.data.object;
             console.log('Checkout completed:', session);
-            // Aqui você atualizaria o status da assinatura do usuário
+            
+            try {
+              // Capturar informações importantes da sessão
+              const userEmail = session.customer_email;
+              const planMode = session.mode;
+              const subscriptionId = session.subscription;
+              
+              if (userEmail) {
+                // Verificar se o usuário já existe no sistema
+                const existingUser = await storage.getUserByEmail(userEmail);
+                
+                if (!existingUser) {
+                  // Criar um novo usuário com base nos dados da assinatura
+                  const newUser = await storage.createUser({
+                    email: userEmail,
+                    username: userEmail.split('@')[0],
+                    name: userEmail.split('@')[0],
+                    role: 'user',
+                    passwordHash: 'tempHash', // Idealmente, usaríamos um sistema de reset de senha aqui
+                    firebaseUid: null,
+                    stripeCustomerId: session.customer,
+                    stripeSubscriptionId: subscriptionId
+                  });
+                  
+                  console.log('Novo usuário criado após pagamento:', newUser.id);
+                } else {
+                  // Atualizar usuário existente com dados da assinatura
+                  console.log('Usuário existente atualizado após pagamento:', existingUser.id);
+                }
+                
+                // Criar uma assinatura no banco de dados
+                if (subscriptionId) {
+                  const planType = planMode === 'subscription' 
+                    ? (session.amount_total > 20000 ? 'annual' : 'monthly')
+                    : 'lifetime';
+                  
+                  // Verifique se o usuário existe antes de criar a assinatura
+                  const user = existingUser || await storage.getUserByEmail(userEmail);
+                  
+                  if (user) {
+                    await storage.createSubscription(user.id, planType);
+                    console.log(`Assinatura ${planType} criada para o usuário ${user.id}`);
+                  }
+                }
+              } else {
+                console.log('Sessão de checkout sem email do usuário:', session.id);
+              }
+            } catch (error) {
+              console.error('Erro ao processar checkout.session.completed:', error);
+            }
             break;
             
           case 'customer.subscription.updated':
             const updatedSubscription = event.data.object;
             console.log('Subscription updated:', updatedSubscription);
-            // Atualizar status da assinatura
+            
+            try {
+              // Atualizar status da assinatura no banco de dados
+              const customerId = updatedSubscription.customer;
+              const status = updatedSubscription.status;
+              
+              // Aqui precisaríamos buscar o usuário pelo customer ID do Stripe
+              // e então atualizar o status da assinatura
+              console.log(`Assinatura atualizada para: ${status}`);
+            } catch (error) {
+              console.error('Erro ao processar customer.subscription.updated:', error);
+            }
             break;
             
           case 'customer.subscription.deleted':
             const deletedSubscription = event.data.object;
             console.log('Subscription canceled:', deletedSubscription);
-            // Marcar assinatura como cancelada
+            
+            try {
+              // Marcar assinatura como cancelada no banco de dados
+              const customerId = deletedSubscription.customer;
+              
+              // Aqui precisaríamos buscar o usuário pelo customer ID do Stripe
+              // e então marcar a assinatura como cancelada
+              console.log('Assinatura cancelada');
+            } catch (error) {
+              console.error('Erro ao processar customer.subscription.deleted:', error);
+            }
             break;
             
           default:
