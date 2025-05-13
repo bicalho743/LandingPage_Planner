@@ -13,15 +13,20 @@ export default function Sucesso() {
     period: '',
     features: [] as string[]
   });
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     // Obter informações do plano e email da URL ou definir um padrão
     const urlParams = new URLSearchParams(window.location.search);
     const planType = urlParams.get('plan') || 'unknown';
-    const email = urlParams.get('email') || '';
+    const emailFromUrl = urlParams.get('email') || '';
     console.log('Parâmetros da URL:', window.location.search);
     console.log('Tipo de plano detectado:', planType);
-    console.log('Email detectado:', email);
+    console.log('Email detectado:', emailFromUrl);
+    
+    if (emailFromUrl) {
+      setEmail(emailFromUrl);
+    }
     
     // Definir informações do plano com base no parâmetro
     if (planType === 'mensal') {
@@ -109,7 +114,7 @@ export default function Sucesso() {
                 <ol className="list-decimal pl-5 space-y-1">
                   <li>Você receberá um e-mail de confirmação com um link para definir sua senha</li>
                   <li>Se não receber o e-mail em alguns minutos, verifique sua pasta de spam</li>
-                  <li>Na tela de login, use o e-mail que você forneceu durante o checkout</li>
+                  <li>Na tela de login, use o e-mail <strong>{email}</strong> que você forneceu durante o checkout</li>
                 </ol>
                 <p className="mt-2 text-xs text-gray-600">
                   <strong>Nota:</strong> Em ambiente de desenvolvimento, os e-mails podem não ser enviados automaticamente. 
