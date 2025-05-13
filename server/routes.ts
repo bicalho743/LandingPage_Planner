@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
@@ -19,7 +19,83 @@ console.log(`Usando chave ${isProduction ? 'de produção' : 'de teste'}`);
 
 const stripe = new Stripe(stripeKey);
 
+// Obter o ID do preço com base no tipo de plano e ambiente
+function getPriceId(planType: string): string {
+  // Usar os IDs de preço do ambiente de teste ou produção com base no modo atual
+  if (planType === 'mensal') {
+    return isProduction 
+      ? process.env.STRIPE_PRICE_MONTHLY || ''
+      : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
+  } else if (planType === 'anual') {
+    return isProduction 
+      ? process.env.STRIPE_PRICE_ANNUAL || ''
+      : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
+  } else if (planType === 'vitalicio') {
+    return isProduction 
+      ? process.env.STRIPE_PRICE_LIFETIME || ''
+      : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
+  }
+  
+  throw new Error(`Tipo de plano inválido: ${planType}`);
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Endpoint para iniciar o processo de checkout
+  app.post("/api/checkout", async (req: Request, res: Response) => {
+    try {
+      const { plan } = req.body;
+      
+      if (!plan || !['mensal', 'anual', 'vitalicio'].includes(plan)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Plano inválido ou não especificado." 
+        });
+      }
+
+      const priceId = getPriceId(plan);
+      
+      if (!priceId) {
+        console.error(`ID de preço não encontrado para o plano: ${plan}`);
+        return res.status(500).json({
+          success: false,
+          message: "Erro na configuração do plano. Por favor, contate o suporte."
+        });
+      }
+
+      // Configurando o modo de pagamento com base no tipo de plano
+      const mode = plan === 'vitalicio' ? 'payment' : 'subscription';
+      
+      // Criando a sessão de checkout
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: mode,
+        success_url: `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}`,
+        cancel_url: `${req.protocol}://${req.headers.host}/cancelado`,
+        metadata: {
+          plan_type: plan
+        }
+      });
+
+      res.json({
+        success: true,
+        url: session.url
+      });
+    } catch (error: any) {
+      console.error("Erro ao criar sessão de checkout:", error);
+      res.status(500).json({
+        success: false,
+        message: `Falha ao processar o checkout: ${error.message}`
+      });
+    }
+  });
+
+  // Webhook do Stripe para processar eventos de pagamento
   app.post("/api/webhooks/stripe", express.raw({type: 'application/json'}), async (req: any, res: Response) => {
     const sig = req.headers['stripe-signature'] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -60,8 +136,31 @@ async function createOrUpdateUser(email: string) {
     const user = await storage.getUserByEmail(email);
     if (!user) {
       console.log("✅ Criando usuário no Firebase para:", email);
-      await createFirebaseUser(email, 'senhaSegura123!');
+      
+      // Criar o usuário no Firebase
+      const firebaseUser = await createFirebaseUser(email, 'senhaSegura123!');
       console.log("✅ Usuário criado no Firebase:", email);
+      
+      // Criar usuário no banco de dados local
+      const newUser = await storage.createUser({
+        email,
+        firebaseUid: firebaseUser.uid
+      });
+      console.log("✅ Usuário criado no banco de dados:", newUser.id);
+      
+      try {
+        // Gerar link de redefinição de senha e enviar para o e-mail do usuário
+        const resetLink = await generatePasswordResetLink(email);
+        console.log("✅ Link de redefinição de senha gerado:", resetLink);
+        
+        // Aqui você poderia enviar o e-mail com o link usando um serviço de e-mail
+        // No ambiente de desenvolvimento, apenas mostraremos o link no console
+        console.log("📧 E-mail de definição de senha seria enviado para:", email);
+        console.log("📧 Link:", resetLink);
+      } catch (resetError) {
+        console.error("❌ Erro ao gerar link de redefinição de senha:", resetError);
+        // Continuamos mesmo se houver erro na geração do link, pois o usuário já foi criado
+      }
     } else {
       console.log("✅ Usuário já existe no sistema:", email);
     }
