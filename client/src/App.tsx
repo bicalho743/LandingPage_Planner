@@ -7,15 +7,31 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import LandingPage from "@/pages/LandingPage";
 import Planos from "@/pages/Planos";
+import { lazy, Suspense } from "react";
+
+// Importação lazy para páginas de checkout
+const Checkout = lazy(() => import("@/pages/checkout"));
+const Sucesso = lazy(() => import("@/pages/sucesso"));
+
+// Componente de loading para Suspense
+const PageLoading = () => (
+  <div className="h-screen flex items-center justify-center">
+    <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+  </div>
+);
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={LandingPage}/>
-      <Route path="/home" component={Home}/>
-      <Route path="/planos" component={Planos}/>
-      <Route component={NotFound} />
-    </Switch>
+    <Suspense fallback={<PageLoading />}>
+      <Switch>
+        <Route path="/" component={LandingPage}/>
+        <Route path="/home" component={Home}/>
+        <Route path="/planos" component={Planos}/>
+        <Route path="/checkout" component={Checkout}/>
+        <Route path="/sucesso" component={Sucesso}/>
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
