@@ -144,6 +144,7 @@ async function createSubscription(session: any) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook do Stripe para processar eventos de pagamento
+  // IMPORTANTE: O middleware express.raw() já está configurado no index.ts
   app.post("/api/webhooks/stripe", async (req: Request, res: Response) => {
     const sig = req.headers["stripe-signature"] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -182,23 +183,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         try {
+          console.log("✅ Iniciando processo de criação do usuário...");
+          
           // Gerando uma senha segura automaticamente
           const tempPassword = Math.random().toString(36).slice(-8) + "Aa1!";
-          await createFirebaseUser(userEmail, tempPassword);
           
-          // Criar usuário no banco de dados local
-          const user = await createOrUpdateUser(userEmail);
+          try {
+            const firebaseUser = await createFirebaseUser(userEmail, tempPassword);
+            console.log("✅ Usuário criado no Firebase:", firebaseUser.uid);
+          } catch (firebaseError) {
+            console.error("❌ Erro ao criar usuário no Firebase:", firebaseError);
+            // Não interrompe o fluxo pois pode ser que o usuário já exista no Firebase
+          }
           
-          // Criar assinatura
-          await createSubscription(session);
+          try {
+            // Criar usuário no banco de dados local
+            const user = await createOrUpdateUser(userEmail);
+            console.log("✅ Usuário criado/atualizado no PostgreSQL:", user);
+            
+            // Criar assinatura
+            try {
+              await createSubscription(session);
+              console.log("✅ Assinatura criada com sucesso para o plano:", session.mode);
+            } catch (subscriptionError) {
+              console.error("❌ Erro ao criar assinatura:", subscriptionError);
+            }
+          } catch (dbError) {
+            console.error("❌ Erro ao criar usuário no PostgreSQL:", dbError);
+          }
 
-          // Envio de email com link de redefinição de senha
-          const resetLink = await generatePasswordResetLink(userEmail);
-          await sendWelcomeEmail(userEmail, resetLink);
+          try {
+            // Envio de email com link de redefinição de senha
+            const resetLink = await generatePasswordResetLink(userEmail);
+            console.log("✅ Link de redefinição de senha gerado:", resetLink.substring(0, 50) + "...");
+            
+            await sendWelcomeEmail(userEmail, resetLink);
+            console.log("✅ Email de boas-vindas enviado para:", userEmail);
+          } catch (emailError) {
+            console.error("❌ Erro ao gerar link/enviar email:", emailError);
+          }
           
-          console.log("✅ Conta criada com sucesso para:", userEmail);
+          console.log("✅ Processamento do usuário concluído para:", userEmail);
         } catch (error) {
-          console.error("❌ Erro ao processar novo usuário:", error);
+          console.error("❌ Erro geral ao processar novo usuário:", error);
         }
       }
 
