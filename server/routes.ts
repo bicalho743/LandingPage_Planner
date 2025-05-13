@@ -41,8 +41,7 @@ function getPriceId(planType: string): string {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook do Stripe para processar eventos de pagamento
-  // IMPORTANTE: Esta rota DEVE ser registrada antes de qualquer middleware que analisa o corpo da requisição
-  app.post("/api/webhooks/stripe", express.raw({type: 'application/json'}), async (req: any, res: Response) => {
+  app.post("/api/webhooks/stripe", async (req: any, res: Response) => {
     const sig = req.headers['stripe-signature'] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -63,6 +62,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (userEmail) {
           await createOrUpdateUser(userEmail);
           await createSubscription(session);
+          
+          // Gerar link de redefinição de senha e enviar para o e-mail do usuário
+          try {
+            const resetLink = await generatePasswordResetLink(userEmail);
+            console.log("✅ Link de redefinição de senha gerado:", resetLink);
+            
+            // Aqui você poderia integrar com um serviço de email como Nodemailer
+            console.log("📧 E-mail de definição de senha seria enviado para:", userEmail);
+            console.log("📧 Link:", resetLink);
+          } catch (resetError) {
+            console.error("❌ Erro ao gerar link de redefinição de senha:", resetError);
+            // Continuamos mesmo se houver erro na geração do link, pois o usuário já foi criado
+          }
         }
       }
 
@@ -207,25 +219,14 @@ async function createOrUpdateUser(email: string) {
         firebaseUid: firebaseUser.uid
       });
       console.log("✅ Usuário criado no banco de dados:", newUser.id);
-      
-      try {
-        // Gerar link de redefinição de senha e enviar para o e-mail do usuário
-        const resetLink = await generatePasswordResetLink(email);
-        console.log("✅ Link de redefinição de senha gerado:", resetLink);
-        
-        // Aqui você poderia enviar o e-mail com o link usando um serviço de e-mail
-        // No ambiente de desenvolvimento, apenas mostraremos o link no console
-        console.log("📧 E-mail de definição de senha seria enviado para:", email);
-        console.log("📧 Link:", resetLink);
-      } catch (resetError) {
-        console.error("❌ Erro ao gerar link de redefinição de senha:", resetError);
-        // Continuamos mesmo se houver erro na geração do link, pois o usuário já foi criado
-      }
+      return newUser;
     } else {
       console.log("✅ Usuário já existe no sistema:", email);
+      return user;
     }
   } catch (error) {
     console.error("❌ Erro ao criar/atualizar usuário:", error);
+    throw error;
   }
 }
 

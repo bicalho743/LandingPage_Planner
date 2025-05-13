@@ -4,8 +4,12 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Não aplicar express.json() globalmente, pois isto interfere com o webhook do Stripe
-// Os middlewares de parsing serão aplicados após registrar a rota do webhook
+// Webhook configurado para aceitar payload RAW
+app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
+
+// Outros middlewares para parsing de JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -38,12 +42,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Registra primeiro as rotas para o webhook do Stripe
   const server = await registerRoutes(app);
-  
-  // Depois de registrar a rota do webhook, aplicamos os middlewares de parsing
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
