@@ -207,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mode,
         line_items: [{ price: priceId, quantity: 1 }],
         ...(mode === 'subscription' && { subscription_data: { trial_period_days: 7 } }),
-        success_url: `${req.headers.origin}/sucesso`,
+        success_url: `${req.headers.origin}/sucesso?plan=${plan}`,
         cancel_url: `${req.headers.origin}/cancelado`,
       });
 
