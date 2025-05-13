@@ -33,35 +33,63 @@ export const pool = new Pool({
   statement_timeout: 10000
 });
 
-// Teste a conexão e configure o fallback se necessário
-let dbClient;
-let useNeonFallback = false;
+// Configuração inicial do cliente de banco de dados
+let dbClient = pool;
 
-try {
-  // Teste rápido de conexão com o Render
-  pool.query('SELECT 1')
-    .then(() => {
-      console.log("✅ Conectado com sucesso ao PostgreSQL no Render!");
-      useNeonFallback = false;
-    })
-    .catch((err) => {
-      console.error("❌ Erro ao conectar ao PostgreSQL no Render:", err.message);
-      useNeonFallback = true;
-      console.log("Usando fallback para Neon.tech...");
+// Função assíncrona para teste de conexão com fallback
+async function setupDatabaseConnection() {
+  try {
+    console.log("⏳ Testando conexão com o PostgreSQL no Render...");
+    
+    // Definimos um timeout para a consulta de teste
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Timeout ao conectar com PostgreSQL no Render")), 8000);
     });
-  
-  // Inicialmente, usamos o pool do Render
-  dbClient = pool;
-} catch (err) {
-  console.error("❌ Erro ao configurar pool do Render:", err.message);
-  useNeonFallback = true;
+    
+    // Executamos a consulta com timeout
+    try {
+      await Promise.race([
+        pool.query('SELECT 1'),
+        timeoutPromise
+      ]);
+      
+      console.log("✅ Conectado com sucesso ao PostgreSQL no Render!");
+      dbClient = pool;
+      return;
+    } catch (err: any) {
+      console.error(`❌ Falha ao conectar ao PostgreSQL no Render: ${err.message}`);
+      console.log("⏳ Tentando usar Neon.tech como fallback...");
+    }
+    
+    // Se chegou aqui, a conexão com Render falhou, tentando Neon
+    if (!NEON_DB_URL) {
+      console.error("❌ URL do Neon não configurada! Não é possível usar fallback.");
+      // Continuamos usando o pool original mesmo com erro
+      return;
+    }
+    
+    try {
+      console.log("⏳ Inicializando conexão com Neon.tech...");
+      const neonPool = new NeonPool({ connectionString: NEON_DB_URL });
+      
+      // Teste rápido na conexão do Neon
+      await neonPool.query('SELECT 1');
+      
+      console.log("✅ Conectado com sucesso ao Neon.tech!");
+      dbClient = neonPool;
+    } catch (neonErr: any) {
+      console.error(`❌ Falha também ao conectar com Neon.tech: ${neonErr.message}`);
+      console.log("⚠️ Usando o pool do Render mesmo com problemas de conexão");
+      // Mantém o pool original, mesmo com erro
+    }
+  } catch (setupErr) {
+    console.error("❌ Erro crítico na configuração do banco de dados:", setupErr);
+  }
 }
 
-// Se estiver usando fallback para Neon
-if (useNeonFallback && NEON_DB_URL) {
-  console.log("Usando banco de dados Neon.tech como fallback");
-  const neonPool = new NeonPool({ connectionString: NEON_DB_URL });
-  dbClient = neonPool;
-}
+// Inicia a tentativa de conexão, mas não espera por ela para evitar bloqueio no startup
+setupDatabaseConnection().catch(err => {
+  console.error("❌ Erro não tratado na configuração do banco de dados:", err);
+});
 
 export const db = drizzle(dbClient, { schema });

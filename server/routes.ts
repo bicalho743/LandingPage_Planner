@@ -44,30 +44,44 @@ function getPriceId(planType: string): string {
 // Função para enviar e-mail de boas-vindas
 async function sendWelcomeEmail(email: string, resetLink: string) {
   try {
+    console.log("⏳ Preparando envio de email de boas-vindas para:", email);
+    console.log("⏳ Verificando link de redefinição...");
+    
+    // Verificar se o link foi gerado corretamente
+    if (!resetLink) {
+      console.error("❌ Link de redefinição de senha vazio ou inválido!");
+      return false;
+    }
+    
+    // Verificar se temos credenciais SMTP configuradas
+    console.log("⏳ Verificando credenciais SMTP...");
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.log("⚠️ Credenciais SMTP não configuradas. E-mail simulado:");
+      console.log("⚠️ Credenciais SMTP não configuradas. Modo de simulação de email:");
       console.log("📧 Para:", email);
       console.log("📧 Assunto: Bem-vindo ao PlannerPro Organizer");
-      console.log("📧 Link para definir senha:", resetLink);
-      return;
+      console.log("📧 Link gerado (primeiros 50 caracteres):", resetLink.substring(0, 50) + "...");
+      return true; // Em desenvolvimento, consideramos sucesso
     }
+    
+    console.log("✅ Credenciais SMTP encontradas");
+    console.log("⏳ Configurando transportador de email via Brevo...");
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp-relay.sendinblue.com", // Usando Brevo (Sendinblue)
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER, // Seu usuário SMTP do Brevo
-        pass: process.env.SMTP_PASS, // Sua senha SMTP do Brevo
-      },
-    });
+    try {
+      const transporter = nodemailer.createTransport({
+        host: "smtp-relay.sendinblue.com", // Usando Brevo (Sendinblue)
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+      
+      console.log("✅ Transportador configurado");
+      console.log("⏳ Enviando email...");
 
-    await transporter.sendMail({
-      from: 'suporte@plannerpro.com', // Substitua pelo seu domínio
-      to: email,
-      subject: "Bem-vindo ao PlannerPro Organizer",
-      text: `Olá,\n\nObrigado por se inscrever! Use o link abaixo para definir sua senha:\n\n${resetLink}\n\nSe você não realizou essa inscrição, por favor ignore este email.`,
-      html: `
+      // Preparar o conteúdo do email (HTML e texto)
+      const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
           <div style="background-color: #4a6cf7; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
             <h1 style="margin: 0;">Bem-vindo ao PlannerPro Organizer</h1>
@@ -88,12 +102,39 @@ async function sendWelcomeEmail(email: string, resetLink: string) {
             </div>
           </div>
         </div>
-      `,
-    });
-
-    console.log("✅ E-mail de boas-vindas enviado para:", email);
-  } catch (error) {
+      `;
+      
+      const emailText = `Olá,\n\nObrigado por se inscrever para o PlannerPro Organizer! Use o link abaixo para definir sua senha:\n\n${resetLink}\n\nSe você não realizou essa inscrição, por favor ignore este email.\n\n© ${new Date().getFullYear()} PlannerPro Organizer. Todos os direitos reservados.`;
+      
+      // Enviar o email
+      const info = await transporter.sendMail({
+        from: 'suporte@plannerpro.com',
+        to: email,
+        subject: "Bem-vindo ao PlannerPro Organizer - Configure sua senha",
+        text: emailText,
+        html: emailHtml,
+      });
+      
+      console.log("✅ Email enviado com sucesso!");
+      console.log("✅ ID da mensagem:", info.messageId);
+      return true;
+    } catch (smtpError: any) {
+      console.error("❌ Erro ao enviar email via SMTP:", smtpError.message);
+      
+      // Em caso de erro, tentar utilizar a API do Brevo diretamente
+      console.log("⏳ Tentando enviar via API do Brevo como fallback...");
+      // Esta parte estaria implementada se tivéssemos configurado a API do Brevo
+      console.log("⚠️ API do Brevo não implementada para fallback");
+      
+      throw smtpError; // Propagar o erro para ser tratado acima
+    }
+  } catch (error: any) {
     console.error("❌ Erro ao enviar e-mail:", error);
+    console.error("❌ Detalhes do erro:", error.message);
+    if (error.stack) {
+      console.error("❌ Stack de erro:", error.stack);
+    }
+    return false;
   }
 }
 
@@ -158,21 +199,62 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
 
 async function createSubscription(session: any) {
   try {
+    console.log("⏳ Iniciando processo de criação de assinatura...");
+    
+    // Extrair dados relevantes da sessão
     const userEmail = session.customer_email;
     const planMode = session.mode;
     const subscriptionId = session.subscription;
     const metadata = session.metadata || {};
-    const planType = metadata.plan_type || (planMode === 'subscription' ? 'mensal' : 'vitalicio');
+    
+    console.log("📊 Dados da assinatura:");
+    console.log("- Email do cliente:", userEmail || "Não disponível");
+    console.log("- Modo do plano:", planMode || "Não especificado");
+    console.log("- ID da assinatura:", subscriptionId || "Não disponível");
+    console.log("- Metadados:", JSON.stringify(metadata));
+    
+    // Determinar o tipo de plano
+    let planType = metadata.plan_type;
+    if (!planType) {
+      planType = (planMode === 'subscription') ? 'mensal' : 'vitalicio';
+      console.log("⚠️ Tipo de plano não encontrado nos metadados, usando padrão:", planType);
+    } else {
+      console.log("✅ Tipo de plano dos metadados:", planType);
+    }
 
-    if (userEmail) {
+    if (!userEmail) {
+      console.error("❌ Email do usuário não disponível na sessão, não é possível criar assinatura");
+      return;
+    }
+    
+    // Buscar o usuário no banco de dados
+    console.log("⏳ Buscando usuário para associar assinatura:", userEmail);
+    try {
       const user = await storage.getUserByEmail(userEmail);
+      
       if (user) {
-        await storage.createSubscription(user.id, planType);
-        console.log("✅ Assinatura criada/atualizada para o usuário:", user.email);
+        console.log("✅ Usuário encontrado no banco de dados. ID:", user.id);
+        
+        try {
+          // Criar a assinatura
+          console.log("⏳ Criando assinatura para o usuário:", user.id, "- Tipo:", planType);
+          await storage.createSubscription(user.id, planType);
+          console.log("✅ Assinatura criada com sucesso para:", user.email);
+        } catch (subError) {
+          console.error("❌ Erro ao criar assinatura no banco de dados:", subError);
+          throw subError;
+        }
+      } else {
+        console.error("❌ Usuário não encontrado no banco de dados:", userEmail);
+        console.log("⚠️ Não foi possível criar assinatura pois o usuário não existe");
       }
+    } catch (userLookupError) {
+      console.error("❌ Erro ao buscar usuário para assinatura:", userLookupError);
+      throw userLookupError;
     }
   } catch (error) {
-    console.error("❌ Erro ao criar assinatura:", error);
+    console.error("❌ Erro geral ao criar assinatura:", error);
+    // Não lançamos o erro para não interromper o processamento do webhook
   }
 }
 
