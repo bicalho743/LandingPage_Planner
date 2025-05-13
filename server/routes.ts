@@ -4,6 +4,14 @@ import { storage } from "./storage";
 import { contactSchema, leadSchema, insertUserSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
+import Stripe from "stripe";
+import express from "express";
+
+// Inicializa o Stripe com a chave secreta
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Import error handling function for consistent error responses
 const handleError = (error: any, res: Response) => {
@@ -142,39 +150,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ===== Webhook for Stripe =====
-  app.post("/api/webhooks/stripe", async (req: Request, res: Response) => {
-    // For actual implementation, we would verify the Stripe signature
-    // and handle various event types like payment_success, subscription_updated, etc.
+  // ===== Checkout with Stripe =====
+  app.post("/api/checkout", async (req: Request, res: Response) => {
     try {
-      const event = req.body;
-      
-      // Log the event for debugging
-      console.log("Received Stripe webhook event:", event.type);
-      
-      // Process based on event type
-      switch (event.type) {
-        case 'checkout.session.completed':
-          // Handle successful checkout
+      const { plan } = req.body;
+      let priceId = '';
+      let mode: 'payment' | 'subscription' = 'subscription';
+
+      // Definição dos preços baseados no plano
+      // Nota: Estes IDs precisam ser definidos no painel do Stripe
+      switch (plan) {
+        case 'mensal':
+          priceId = process.env.STRIPE_PRICE_MONTHLY || 'price_monthly';
           break;
-          
-        case 'customer.subscription.updated':
-          // Handle subscription update
+        case 'anual':
+          priceId = process.env.STRIPE_PRICE_ANNUAL || 'price_annual';
           break;
-          
-        case 'customer.subscription.deleted':
-          // Handle subscription cancellation
+        case 'vitalicio':
+          priceId = process.env.STRIPE_PRICE_LIFETIME || 'price_lifetime';
+          mode = 'payment'; // Plano vitalício é pagamento único
           break;
-          
         default:
-          console.log(`Unhandled event type: ${event.type}`);
+          return res.status(400).json({ 
+            success: false, 
+            message: 'Plano inválido' 
+          });
       }
-      
-      res.json({ received: true });
+
+      // Cria uma sessão de checkout
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode,
+        line_items: [{ price: priceId, quantity: 1 }],
+        ...(mode === 'subscription' && { subscription_data: { trial_period_days: 7 } }),
+        success_url: `${req.headers.origin}/sucesso`,
+        cancel_url: `${req.headers.origin}/planos`,
+      });
+
+      res.json({ 
+        success: true,
+        url: session.url 
+      });
     } catch (error) {
+      console.error('Erro ao criar sessão de checkout:', error);
       handleError(error, res);
     }
   });
+
+  // ===== Webhook for Stripe =====
+  app.post("/api/webhooks/stripe", 
+    express.raw({type: 'application/json'}), 
+    async (req: any, res: Response) => {
+      const sig = req.headers['stripe-signature'] as string;
+      
+      try {
+        const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+        let event;
+        
+        if (endpointSecret && sig) {
+          // Verifica a assinatura do webhook
+          event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            endpointSecret
+          );
+        } else {
+          // Para desenvolvimento, aceita eventos sem verificação
+          event = req.body;
+        }
+        
+        // Log the event for debugging
+        console.log("Received Stripe webhook event:", event.type);
+        
+        // Process based on event type
+        switch (event.type) {
+          case 'checkout.session.completed':
+            const session = event.data.object;
+            console.log('Checkout completed:', session);
+            // Aqui você atualizaria o status da assinatura do usuário
+            break;
+            
+          case 'customer.subscription.updated':
+            const updatedSubscription = event.data.object;
+            console.log('Subscription updated:', updatedSubscription);
+            // Atualizar status da assinatura
+            break;
+            
+          case 'customer.subscription.deleted':
+            const deletedSubscription = event.data.object;
+            console.log('Subscription canceled:', deletedSubscription);
+            // Marcar assinatura como cancelada
+            break;
+            
+          default:
+            console.log(`Unhandled event type: ${event.type}`);
+        }
+        
+        res.json({ received: true });
+      } catch (error: any) {
+        console.error('Erro no webhook:', error);
+        res.status(400).send(`Webhook Error: ${error.message}`);
+      }
+    });
 
   const httpServer = createServer(app);
 
