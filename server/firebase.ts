@@ -41,20 +41,55 @@ const firebaseAdmin = initializeFirebaseAdmin();
 // Função para criar um usuário no Firebase Authentication
 export async function createFirebaseUser(email: string, password: string): Promise<admin.auth.UserRecord> {
   try {
+    console.log("⏳ Criando usuário no Firebase para o email:", email);
+    
+    // Verificar se o usuário já existe
+    try {
+      const existingUser = await getAuth().getUserByEmail(email);
+      console.log("⚠️ Usuário já existe no Firebase com UID:", existingUser.uid);
+      
+      // Se o usuário já existe, apenas retornar
+      return existingUser;
+    } catch (lookupError: any) {
+      if (lookupError.code === 'auth/user-not-found') {
+        console.log("✅ Usuário não encontrado no Firebase, prosseguindo com criação...");
+      } else {
+        console.error("❌ Erro ao verificar usuário existente:", lookupError);
+        throw lookupError;
+      }
+    }
+    
     // Gera uma senha forte aleatória se não for fornecida
     const finalPassword = password || Math.random().toString(36).slice(-10) + Math.random().toString(36).toUpperCase().slice(-2) + '!';
+    console.log("✅ Senha temporária gerada (não exibindo por segurança)");
     
     // Cria o usuário no Firebase Auth
+    console.log("⏳ Enviando solicitação para criar usuário no Firebase...");
     const userRecord = await getAuth().createUser({
       email,
       password: finalPassword,
       emailVerified: false, // O email ainda não foi verificado
+      displayName: email.split('@')[0], // Nome provisório baseado no email
     });
     
-    console.log(`Usuário do Firebase criado com sucesso: ${userRecord.uid}`);
+    console.log(`✅ Usuário do Firebase criado com sucesso! UID: ${userRecord.uid}`);
     return userRecord;
-  } catch (error) {
-    console.error('Erro ao criar usuário no Firebase:', error);
+  } catch (error: any) {
+    if (error.code === 'auth/email-already-exists') {
+      console.log("⚠️ Email já existe no Firebase, tentando recuperar usuário...");
+      try {
+        const existingUser = await getAuth().getUserByEmail(email);
+        console.log("✅ Usuário recuperado do Firebase com UID:", existingUser.uid);
+        return existingUser;
+      } catch (secondError) {
+        console.error("❌ Erro ao recuperar usuário existente:", secondError);
+        throw secondError;
+      }
+    }
+    
+    console.error('❌ Erro ao criar usuário no Firebase:', error);
+    console.error('❌ Código do erro:', error.code);
+    console.error('❌ Mensagem do erro:', error.message);
     throw error;
   }
 }
@@ -62,12 +97,25 @@ export async function createFirebaseUser(email: string, password: string): Promi
 // Função para gerar um link de redefinição de senha
 export async function generatePasswordResetLink(email: string): Promise<string> {
   try {
+    console.log(`⏳ Gerando link de redefinição de senha para ${email}...`);
+    
+    // Verificar se o usuário existe antes de gerar o link
+    try {
+      await getAuth().getUserByEmail(email);
+      console.log("✅ Usuário encontrado no Firebase, gerando link...");
+    } catch (error: any) {
+      console.error("❌ Usuário não encontrado para geração de link de redefinição:", error);
+      throw new Error(`Usuário com email ${email} não encontrado para gerar link de redefinição`);
+    }
+    
     // Gera um link de redefinição de senha
     const link = await getAuth().generatePasswordResetLink(email);
-    console.log(`Link de redefinição de senha gerado para ${email}`);
+    console.log(`✅ Link de redefinição gerado com sucesso (tamanho: ${link.length} caracteres)`);
     return link;
-  } catch (error) {
-    console.error('Erro ao gerar link de redefinição de senha:', error);
+  } catch (error: any) {
+    console.error('❌ Erro ao gerar link de redefinição de senha:', error);
+    console.error('❌ Código do erro:', error.code);
+    console.error('❌ Mensagem do erro:', error.message);
     throw error;
   }
 }

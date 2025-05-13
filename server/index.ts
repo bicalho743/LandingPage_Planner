@@ -5,6 +5,8 @@ import { setupVite, serveStatic, log } from "./vite";
 const app = express();
 
 // Webhook configurado para aceitar payload RAW
+// IMPORTANTE: Este middleware deve vir ANTES de express.json()
+console.log("✅ Configurando middleware raw para Stripe webhook");
 app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
 
 // Outros middlewares para parsing de JSON

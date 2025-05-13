@@ -97,27 +97,61 @@ async function sendWelcomeEmail(email: string, resetLink: string) {
   }
 }
 
-async function createOrUpdateUser(email: string) {
+async function createOrUpdateUser(email: string, firebaseUid: string = '') {
   try {
-    const user = await storage.getUserByEmail(email);
-    if (!user) {
-      console.log("✅ Criando usuário no banco de dados para:", email);
-      
+    console.log("⏳ Verificando se o usuário já existe no banco de dados:", email);
+    
+    // Primeiro verificar se o usuário já existe por email
+    let user;
+    try {
+      user = await storage.getUserByEmail(email);
+      if (user) {
+        console.log("✅ Usuário encontrado no banco de dados. ID:", user.id);
+        
+        // Se temos um novo UID do Firebase e o usuário ainda não tem um, atualizar
+        if (firebaseUid && !user.firebaseUid) {
+          console.log("⏳ Atualizando UID do Firebase para usuário existente...");
+          // Aqui precisaríamos de um método para atualizar o UID, que não está implementado ainda
+          console.log("⚠️ Não foi possível atualizar o Firebase UID - método não implementado");
+        }
+        
+        return user;
+      } else {
+        console.log("⏳ Usuário não encontrado, prosseguindo com criação...");
+      }
+    } catch (dbLookupError) {
+      console.error("⚠️ Erro ao buscar usuário existente:", dbLookupError);
+      // Continua para criar um novo usuário
+    }
+    
+    // Se chegou aqui, o usuário não existe e precisamos criar
+    console.log("⏳ Criando novo usuário no banco de dados para:", email);
+    
+    try {
       // Criar usuário no banco de dados local
       const newUser = await storage.createUser({
         email,
         name: email.split('@')[0], // Nome provisório baseado no email
         password: 'senha_gerenciada_pelo_firebase', // Não usamos diretamente, pois o Firebase gerencia a autenticação
-        firebaseUid: '' // Será atualizado quando o usuário fizer login com Firebase
+        firebaseUid: firebaseUid // Pode ser vazio, será atualizado quando o usuário fizer login
       });
-      console.log("✅ Usuário criado no banco de dados:", newUser.id);
+      
+      console.log("✅ Usuário criado com sucesso no banco de dados! ID:", newUser.id);
       return newUser;
-    } else {
-      console.log("✅ Usuário já existe no sistema:", email);
-      return user;
+    } catch (error: any) {
+      console.error("❌ Erro ao criar novo usuário no banco:", error);
+      if (error.message && typeof error.message === 'string' && error.message.includes('duplicate key')) {
+        console.log("⚠️ Possível condição de corrida, tentando buscar usuário novamente...");
+        const retryUser = await storage.getUserByEmail(email);
+        if (retryUser) {
+          console.log("✅ Usuário encontrado após retry. ID:", retryUser.id);
+          return retryUser;
+        }
+      }
+      throw error;
     }
   } catch (error) {
-    console.error("❌ Erro ao criar/atualizar usuário:", error);
+    console.error("❌ Erro geral ao criar/atualizar usuário:", error);
     throw error;
   }
 }
@@ -146,40 +180,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook do Stripe para processar eventos de pagamento
   // IMPORTANTE: O middleware express.raw() já está configurado no index.ts
   app.post("/api/webhooks/stripe", async (req: Request, res: Response) => {
-    const sig = req.headers["stripe-signature"] as string;
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-    if (!endpointSecret) {
-      console.error("❌ Segredo do Webhook não configurado.");
-      return res.status(400).send("Webhook não autorizado.");
+    console.log("🔔 Webhook do Stripe recebido");
+    
+    // Verificação do conteúdo da requisição
+    if (!req.body || Buffer.isBuffer(req.body) === false) {
+      console.error("❌ ERRO CRÍTICO: Corpo da requisição não é um Buffer! Middleware express.raw() não está funcionando corretamente.");
+      console.log("Tipo do corpo recebido:", typeof req.body);
+      console.log("É Buffer?", Buffer.isBuffer(req.body));
+      return res.status(400).send("Formato de requisição inválido.");
+    } else {
+      console.log("✅ Corpo da requisição é um Buffer, tamanho:", req.body.length);
     }
+    
+    const sig = req.headers["stripe-signature"] as string;
+    if (!sig) {
+      console.error("❌ Header stripe-signature ausente na requisição");
+      return res.status(400).send("Assinatura ausente.");
+    }
+    console.log("✅ Header stripe-signature recebido:", sig.substring(0, 20) + "...");
+    
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!endpointSecret) {
+      console.error("❌ Segredo do Webhook não configurado no ambiente.");
+      return res.status(400).send("Webhook não configurado.");
+    }
+    console.log("✅ STRIPE_WEBHOOK_SECRET configurado");
 
     try {
+      console.log("⏳ Validando assinatura do webhook...");
       const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-      console.log("✅ Webhook Recebido:", event.type);
+      console.log("✅ Webhook validado com sucesso! Evento:", event.type);
 
       if (event.type === "checkout.session.completed") {
+        console.log("💰 Evento de checkout.session.completed detectado!");
         const session = event.data.object as any;
-        console.log("✅ Pagamento confirmado:", session);
+        console.log("✅ ID da Sessão:", session.id);
+        console.log("✅ Status da Sessão:", session.status);
+        console.log("✅ Modo de pagamento:", session.mode);
+        console.log("✅ Total pago:", (session.amount_total || 0) / 100, session.currency?.toUpperCase());
+        console.log("✅ Cliente:", session.customer);
+        console.log("✅ Email do cliente:", session.customer_email || "Não fornecido");
 
+        console.log("⏳ Verificando metadados da sessão...");
+        const metadata = session.metadata || {};
+        console.log("✅ Metadados:", JSON.stringify(metadata));
+        
         // Verificar se temos um email no objeto da sessão ou metadados
         let userEmail = session.customer_email;
+        console.log("⏳ Verificando email do cliente...");
         
         if (!userEmail) {
+          console.log("⚠️ Email não encontrado diretamente na sessão");
           // Se não tiver no customer_email, procurar nos metadados
-          const metadata = session.metadata || {};
           const emailFromMetadata = metadata.customer_email;
           
           if (emailFromMetadata) {
             console.log("✅ Email encontrado nos metadados:", emailFromMetadata);
             userEmail = emailFromMetadata;
           } else {
-            console.error("❌ E-mail do usuário não capturado na sessão de checkout.");
+            console.error("❌ E-mail do usuário não capturado na sessão de checkout nem nos metadados!");
+            console.log("⚠️ Enviando resposta de recebimento, mas sem processar usuário");
             // Se não encontrou o email, não prossegue com criação de conta
-            return res.status(200).json({ received: true });
+            return res.status(200).json({ received: true, status: "email_missing" });
           }
         } else {
-          console.log("✅ Email encontrado na sessão de checkout:", userEmail);
+          console.log("✅ Email encontrado diretamente na sessão:", userEmail);
+        }
+        
+        // Verificar se parece ser um email válido
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+          console.error("❌ O email capturado não parece válido:", userEmail);
         }
 
         try {
@@ -188,17 +258,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Gerando uma senha segura automaticamente
           const tempPassword = Math.random().toString(36).slice(-8) + "Aa1!";
           
+          // Variável para armazenar o UID do Firebase
+          let firebaseUid = '';
+          
           try {
             const firebaseUser = await createFirebaseUser(userEmail, tempPassword);
-            console.log("✅ Usuário criado no Firebase:", firebaseUser.uid);
+            console.log("✅ Usuário criado/recuperado no Firebase:", firebaseUser.uid);
+            firebaseUid = firebaseUser.uid;
           } catch (firebaseError) {
             console.error("❌ Erro ao criar usuário no Firebase:", firebaseError);
             // Não interrompe o fluxo pois pode ser que o usuário já exista no Firebase
           }
           
           try {
-            // Criar usuário no banco de dados local
-            const user = await createOrUpdateUser(userEmail);
+            // Criar usuário no banco de dados local, passando o UID do Firebase se disponível
+            const user = await createOrUpdateUser(userEmail, firebaseUid);
             console.log("✅ Usuário criado/atualizado no PostgreSQL:", user);
             
             // Criar assinatura
