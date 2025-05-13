@@ -159,12 +159,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (event.type === "checkout.session.completed") {
         const session = event.data.object as any;
-        const userEmail = session.customer_email;
         console.log("✅ Pagamento confirmado:", session);
 
-        if (userEmail) {
-          console.log("✅ Criando usuário no Firebase para:", userEmail);
+        // Verificar se temos um email no objeto da sessão ou metadados
+        let userEmail = session.customer_email;
+        
+        if (!userEmail) {
+          // Se não tiver no customer_email, procurar nos metadados
+          const metadata = session.metadata || {};
+          const emailFromMetadata = metadata.customer_email;
+          
+          if (emailFromMetadata) {
+            console.log("✅ Email encontrado nos metadados:", emailFromMetadata);
+            userEmail = emailFromMetadata;
+          } else {
+            console.error("❌ E-mail do usuário não capturado na sessão de checkout.");
+            // Se não encontrou o email, não prossegue com criação de conta
+            return res.status(200).json({ received: true });
+          }
+        } else {
+          console.log("✅ Email encontrado na sessão de checkout:", userEmail);
+        }
 
+        try {
           // Gerando uma senha segura automaticamente
           const tempPassword = Math.random().toString(36).slice(-8) + "Aa1!";
           await createFirebaseUser(userEmail, tempPassword);
@@ -178,6 +195,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Envio de email com link de redefinição de senha
           const resetLink = await generatePasswordResetLink(userEmail);
           await sendWelcomeEmail(userEmail, resetLink);
+          
+          console.log("✅ Conta criada com sucesso para:", userEmail);
+        } catch (error) {
+          console.error("❌ Erro ao processar novo usuário:", error);
         }
       }
 
@@ -282,12 +303,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/checkout", express.json(), async (req: Request, res: Response) => {
     try {
       console.log("Corpo da requisição recebido:", req.body);
-      const { plan } = req.body;
+      const { plan, email } = req.body;
       
       if (!plan || !['mensal', 'anual', 'vitalicio'].includes(plan)) {
         return res.status(400).json({ 
           success: false, 
           message: "Plano inválido ou não especificado." 
+        });
+      }
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: "E-mail não especificado."
+        });
+      }
+
+      // Verificar se é um e-mail válido
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({
+          success: false,
+          message: "E-mail inválido."
         });
       }
 
@@ -301,12 +337,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Adicionar o e-mail à lista do Brevo
+      try {
+        await addContactToBrevo("Cliente potencial", email);
+        console.log(`✅ Email adicionado ao Brevo antes do checkout: ${email}`);
+      } catch (error) {
+        console.error("❌ Erro ao adicionar e-mail ao Brevo:", error);
+        // Continuamos mesmo com erro no Brevo
+      }
+
       // Configurando o modo de pagamento com base no tipo de plano
       const mode = plan === 'vitalicio' ? 'payment' : 'subscription';
       
       // Criando a sessão de checkout
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
+        customer_email: email, // Garantindo que o e-mail é capturado
         line_items: [
           {
             price: priceId,
@@ -314,10 +360,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           },
         ],
         mode: mode,
-        success_url: `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}`,
+        subscription_data: mode === 'subscription' ? {
+          trial_period_days: 7, // Período de teste gratuito para planos de assinatura
+        } : undefined,
+        success_url: `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}&email=${encodeURIComponent(email)}`,
         cancel_url: `${req.protocol}://${req.headers.host}/cancelado`,
         metadata: {
-          plan_type: plan
+          plan_type: plan,
+          customer_email: email
         }
       });
 

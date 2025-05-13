@@ -1,31 +1,82 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { CheckCircle, ShieldCheck, Infinity, Calendar, DollarSign } from "lucide-react";
+import { CheckCircle, ShieldCheck, Infinity, Calendar, DollarSign, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
 
 export default function Planos() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   
+  const validateEmail = (email: string): boolean => {
+    // Validação de email usando zod
+    const emailSchema = z.string().email({ message: "Email inválido" });
+    try {
+      emailSchema.parse(email);
+      setEmailError("");
+      return true;
+    } catch (error) {
+      setEmailError("Por favor, forneça um email válido");
+      return false;
+    }
+  };
+
   const handleSubscribe = async (plan: string) => {
+    // Validar e-mail antes de prosseguir
+    if (!email) {
+      setEmailError("Por favor, forneça seu email para continuar");
+      toast({
+        title: "Email obrigatório",
+        description: "Por favor, digite seu email para prosseguir com a assinatura.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      toast({
+        title: "Email inválido",
+        description: "Por favor, digite um email válido para prosseguir.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       setLoadingPlan(plan);
       
-      console.log("Enviando requisição para checkout com plano:", plan);
-      // Fazer requisição direta para a API de checkout
+      console.log("Enviando requisição para checkout com plano:", plan, "email:", email);
+      // Fazer requisição direta para a API de checkout incluindo o email
       const response = await fetch("/api/checkout", {
         method: "POST", 
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ plan })
+        body: JSON.stringify({ plan, email })
       });
       const data = await response.json();
       
       if (data.success && data.url) {
+        // Adicionar email como lead antes de redirecionar
+        try {
+          await fetch("/api/leads", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: "Cliente interessado", email })
+          });
+        } catch (e) {
+          console.error("Erro ao salvar lead:", e);
+          // Continuamos mesmo com erro ao salvar o lead
+        }
+        
         // Redirecionar para o Stripe
         window.location.href = data.url;
       } else {
@@ -65,6 +116,35 @@ export default function Planos() {
           </Button>
         </div>
       </header>
+      
+      <div className="container mx-auto px-4 py-6">
+        <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <Mail className="w-5 h-5 mr-2" /> 
+            Digite seu e-mail para continuar
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Fornecendo seu e-mail, você receberá acesso ao sistema e informações sobre sua compra.
+          </p>
+          <div className="space-y-4">
+            <div>
+              <Input
+                type="email"
+                placeholder="Seu melhor e-mail"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (e.target.value) validateEmail(e.target.value);
+                }}
+                className={emailError ? "border-red-500" : ""}
+              />
+              {emailError && (
+                <p className="text-red-500 text-sm mt-1">{emailError}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
       <main className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="border p-6 rounded-md shadow-md text-center">

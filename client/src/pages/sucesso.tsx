@@ -15,11 +15,13 @@ export default function Sucesso() {
   });
 
   useEffect(() => {
-    // Obter informações do plano da URL ou definir um padrão
+    // Obter informações do plano e email da URL ou definir um padrão
     const urlParams = new URLSearchParams(window.location.search);
     const planType = urlParams.get('plan') || 'unknown';
+    const email = urlParams.get('email') || '';
     console.log('Parâmetros da URL:', window.location.search);
     console.log('Tipo de plano detectado:', planType);
+    console.log('Email detectado:', email);
     
     // Definir informações do plano com base no parâmetro
     if (planType === 'mensal') {
