@@ -144,6 +144,8 @@ async function createOrUpdateUser(email: string) {
       // Criar usuário no banco de dados local
       const newUser = await storage.createUser({
         email,
+        name: email.split('@')[0], // Nome provisório baseado no email
+        password: 'senha_gerenciada_pelo_firebase', // Não usamos diretamente, pois o Firebase gerencia a autenticação
         firebaseUid: firebaseUser.uid
       });
       console.log("✅ Usuário criado no banco de dados:", newUser.id);

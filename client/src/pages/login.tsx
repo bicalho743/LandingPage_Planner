@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { loginWithEmailPassword, sendPasswordReset } from "@/lib/firebase";
 
 export default function Login() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,26 +19,56 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Simulação de login bem-sucedido
-      // Em uma implementação real, faríamos uma chamada à API
-      setTimeout(() => {
-        toast({
-          title: "Login realizado com sucesso",
-          description: "Bem-vindo ao PlannerPro!",
-        });
-        
-        // Redirecionar para o dashboard
-        setLocation("/dashboard");
-      }, 1500);
-    } catch (error) {
+      // Login real utilizando Firebase
+      const user = await loginWithEmailPassword(email, password);
+      
+      toast({
+        title: "Login realizado com sucesso",
+        description: `Bem-vindo ao PlannerPro, ${user.email}!`,
+      });
+      
+      // Redirecionar para o dashboard
+      setLocation("/dashboard");
+    } catch (error: any) {
       console.error("Erro ao fazer login:", error);
       toast({
         title: "Erro",
-        description: "Não foi possível fazer login. Verifique suas credenciais.",
+        description: error.message || "Não foi possível fazer login. Verifique suas credenciais.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  const handlePasswordReset = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({
+        title: "Digite seu e-mail",
+        description: "Por favor, preencha o campo de e-mail antes de solicitar a recuperação de senha.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsResettingPassword(true);
+    
+    try {
+      await sendPasswordReset(email);
+      toast({
+        title: "Email enviado",
+        description: `Um link de recuperação de senha foi enviado para ${email}.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível enviar o email de redefinição de senha.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -83,23 +115,15 @@ export default function Login() {
                 <a 
                   href="#" 
                   className="text-sm text-blue-600 hover:underline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (!email) {
-                      toast({
-                        title: "Digite seu e-mail",
-                        description: "Por favor, preencha o campo de e-mail antes de solicitar a recuperação de senha.",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-                    toast({
-                      title: "Recuperação de senha",
-                      description: `Um link de recuperação de senha será enviado para ${email}.`,
-                    });
-                  }}
+                  onClick={handlePasswordReset}
+                  aria-disabled={isResettingPassword}
                 >
-                  Esqueceu a senha?
+                  {isResettingPassword ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin w-3 h-3 border-2 border-t-transparent rounded-full mr-1"></span>
+                      Enviando...
+                    </span>
+                  ) : "Esqueceu a senha?"}
                 </a>
               </div>
               <Input
