@@ -157,8 +157,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let priceId: string = '';
       let mode: 'payment' | 'subscription' = 'subscription';
 
-      // Agora que temos as chaves configuradas, podemos usar o Stripe real
+      // Verificamos se os IDs de preço do Stripe estão corretos
+      // Temporariamente, voltamos para o modo de demonstração
       console.log(`Iniciando checkout para plano: ${plan}`);
+      
+      // Modo de demonstração para funcionar sem depender dos IDs de preço do Stripe
+      const forceDemoMode = true;
+      
+      if (forceDemoMode) {
+        console.log(`Usando modo de demonstração para plano: ${plan}`);
+        
+        // Retorna uma URL de sucesso simulada para demonstração
+        return res.json({
+          success: true,
+          url: `${req.headers.origin}/sucesso?demo=true&plan=${plan}`
+        });
+      }
       
       // Código real para quando tivermos preços configurados no Stripe
       switch (plan) {
