@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import Stripe from "stripe";
 import express from "express";
+import { createFirebaseUser, generatePasswordResetLink } from "./firebase";
 
 // Inicializa o Stripe com a chave secreta (suporte a ambiente de teste e produção)
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -298,20 +299,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
               if (userEmail) {
                 // Verificar se o usuário já existe no sistema
                 const existingUser = await storage.getUserByEmail(userEmail);
+                let userId;
+                let firebaseUid;
                 
                 if (!existingUser) {
-                  // Criar um novo usuário com base nos dados da assinatura
-                  const newUser = await storage.createUser({
-                    email: userEmail,
-                    name: userEmail.split('@')[0],
-                    password: 'tempHash', // Idealmente, usaríamos um sistema de reset de senha aqui
-                    firebaseUid: null
-                  });
-                  
-                  console.log('Novo usuário criado após pagamento:', newUser.id);
+                  try {
+                    // Criar usuário no Firebase
+                    console.log(`Criando usuário no Firebase para: ${userEmail}`);
+                    const tempPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
+                    const firebaseUser = await createFirebaseUser(userEmail, tempPassword);
+                    firebaseUid = firebaseUser.uid;
+                    
+                    // Gerar link de redefinição de senha
+                    const resetLink = await generatePasswordResetLink(userEmail);
+                    console.log(`Link de redefinição de senha: ${resetLink}`);
+                    
+                    // Criar um novo usuário no banco de dados local
+                    const newUser = await storage.createUser({
+                      email: userEmail,
+                      name: userEmail.split('@')[0],
+                      password: 'firebase-managed', // A senha é gerenciada pelo Firebase
+                      firebaseUid: firebaseUid
+                    });
+                    
+                    userId = newUser.id;
+                    console.log('Novo usuário criado após pagamento:', userId);
+                    console.log('Firebase UID:', firebaseUid);
+                    
+                    // Aqui você poderia enviar um email com o link de redefinição de senha
+                    // usando um serviço de email como SendGrid, Mailgun, etc.
+                    
+                  } catch (firebaseError) {
+                    console.error('Erro ao criar usuário no Firebase:', firebaseError);
+                    
+                    // Fallback para criar apenas no banco de dados local se o Firebase falhar
+                    const newUser = await storage.createUser({
+                      email: userEmail,
+                      name: userEmail.split('@')[0],
+                      password: 'tempHash',
+                      firebaseUid: null
+                    });
+                    
+                    userId = newUser.id;
+                    console.log('Usuário criado apenas no banco local (Firebase falhou):', userId);
+                  }
                 } else {
                   // Atualizar usuário existente com dados da assinatura
-                  console.log('Usuário existente atualizado após pagamento:', existingUser.id);
+                  userId = existingUser.id;
+                  console.log('Usuário existente atualizado após pagamento:', userId);
                 }
                 
                 // Criar uma assinatura no banco de dados
