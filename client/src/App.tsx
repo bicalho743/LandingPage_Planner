@@ -12,6 +12,7 @@ import { lazy, Suspense } from "react";
 // Importação lazy para páginas de checkout
 const Checkout = lazy(() => import("@/pages/checkout"));
 const Sucesso = lazy(() => import("@/pages/sucesso"));
+const Cancelado = lazy(() => import("@/pages/cancelado"));
 
 // Componente de loading para Suspense
 const PageLoading = () => (
@@ -29,6 +30,7 @@ function Router() {
         <Route path="/planos" component={Planos}/>
         <Route path="/checkout" component={Checkout}/>
         <Route path="/sucesso" component={Sucesso}/>
+        <Route path="/cancelado" component={Cancelado}/>
         <Route component={NotFound} />
       </Switch>
     </Suspense>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function Checkout() {
   const [_, setLocation] = useLocation();
@@ -60,7 +59,7 @@ export default function Checkout() {
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           {isLoading ? (
             <div className="flex flex-col items-center space-y-4">
-              <Spinner className="w-12 h-12 text-blue-600" />
+              <div className="w-12 h-12 animate-spin border-4 border-blue-600 border-t-transparent rounded-full"></div>
               <p className="text-lg">Redirecionando para o ambiente seguro de pagamento...</p>
               <p className="text-sm text-gray-500">Por favor, aguarde um momento.</p>
             </div>
