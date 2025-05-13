@@ -6,16 +6,18 @@ import Testimonials from "@/components/Testimonials";
 import CallToAction from "@/components/CallToAction";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
+import PricingPlans from "@/components/PricingPlans";
 import { Helmet } from "react-helmet";
 
 export default function Home() {
   return (
     <>
       <Helmet>
-        <title>ModernBiz - Innovative Solutions for Your Business</title>
-        <meta name="description" content="Your trusted partner for innovative solutions that drive business growth and transformation." />
-        <meta property="og:title" content="ModernBiz - Innovative Solutions for Your Business" />
-        <meta property="og:description" content="Your trusted partner for innovative solutions that drive business growth and transformation." />
+        <title>Planner Organizer - Professional Organization System</title>
+        <meta name="description" content="The ultimate planner system for personal organizers. Streamline your business, manage clients, and boost productivity with our all-in-one solution." />
+        <meta property="og:title" content="Planner Organizer - Professional Organization System" />
+        <meta property="og:description" content="The ultimate planner system for personal organizers. Streamline your business, manage clients, and boost productivity with our all-in-one solution." />
         <meta property="og:type" content="website" />
       </Helmet>
       
@@ -23,7 +25,9 @@ export default function Home() {
       
       <main>
         <Hero />
+        <LeadCaptureForm />
         <Features />
+        <PricingPlans />
         <About />
         <Testimonials />
         <CallToAction />
