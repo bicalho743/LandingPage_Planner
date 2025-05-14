@@ -9,7 +9,7 @@
  * - Verificar configurações de autenticação
  */
 
-const admin = require('firebase-admin');
+// Import dinâmico será feito dentro da função
 
 // Melhores práticas de segurança: nunca exibir as chaves completas
 function maskString(str) {
@@ -18,6 +18,8 @@ function maskString(str) {
 }
 
 async function testFirebaseIntegration() {
+  // Importar o módulo de forma dinâmica
+  const admin = (await import('firebase-admin')).default;
   console.log('🔄 Iniciando testes de integração com Firebase...');
 
   // 1. Verificar variáveis de ambiente

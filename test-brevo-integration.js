@@ -35,7 +35,8 @@ async function testBrevoIntegration() {
   try {
     console.log('\n📋 Inicializando cliente da API do Brevo...');
     
-    const SibApiV3Sdk = require('sib-api-v3-sdk');
+    // Importar o módulo de forma dinâmica
+    const SibApiV3Sdk = (await import('sib-api-v3-sdk')).default;
     const defaultClient = SibApiV3Sdk.ApiClient.instance;
     
     // Configurar autenticação

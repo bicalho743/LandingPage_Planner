@@ -60,7 +60,8 @@ async function testStripeIntegration() {
   // 2. Inicializar Stripe
   let stripe;
   try {
-    const Stripe = require('stripe');
+    // Usando import dinâmico para compatibilidade com ESM
+    const Stripe = (await import('stripe')).default;
     stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
     });
