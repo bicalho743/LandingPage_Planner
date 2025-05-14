@@ -107,6 +107,17 @@ export default function Registro() {
         setTimeout(() => {
           window.location.href = data.checkoutUrl;
         }, 1500);
+      } else if (data.redirectTo) {
+        // Para sincronização ou outras ações especiais
+        toast({
+          title: "Operação concluída!",
+          description: data.message || "Operação realizada com sucesso.",
+        });
+        
+        // Timeout para permitir que o toast seja visto
+        setTimeout(() => {
+          window.location.href = data.redirectTo;
+        }, 1500);
       } else if (data.redirectUrl) {
         // Para o plano gratuito, redirecionar para o dashboard
         toast({

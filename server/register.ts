@@ -81,6 +81,39 @@ router.post('/api/register', async (req: Request, res: Response) => {
     const existingUserInDB = await storage.getUserByEmail(email);
     if (existingUserInDB) {
       console.log(`⚠️ Usuário já existe no banco de dados: ${existingUserInDB.id}`);
+      
+      // Caso especial: usuário existe no banco mas não tem Firebase UID
+      if (!existingUserInDB.firebaseUid && plano === 'free') {
+        console.log(`⚠️ Usuário existe no banco de dados mas não tem uma conta Firebase. Criando conta...`);
+        try {
+          // Criar o usuário no Firebase
+          const userRecord = await firebaseAuth.createUser({
+            email: email,
+            password: senha,
+            displayName: nome
+          });
+          
+          // Atualizar o registro no banco de dados com o Firebase UID
+          await storage.updateFirebaseUid(existingUserInDB.id, userRecord.uid);
+          await storage.updateUserStatus(existingUserInDB.id, undefined, 'ativo');
+          
+          console.log(`✅ Usuário sincronizado com Firebase UID: ${userRecord.uid}`);
+          
+          return res.status(200).json({
+            success: true,
+            message: "Conta sincronizada com sucesso! Agora você pode fazer login.",
+            redirectTo: "/login"
+          });
+        } catch (syncError) {
+          console.error("❌ Erro ao sincronizar conta:", syncError);
+          return res.status(500).json({
+            success: false,
+            message: "Erro ao sincronizar sua conta. Tente usar o link 'Problemas com login?' na página de login."
+          });
+        }
+      }
+      
+      // Caso normal: usuário já existe
       return res.status(400).json({
         success: false,
         message: "Este email já está cadastrado. Por favor, use 'Já possui uma conta? Faça login' abaixo do formulário."
