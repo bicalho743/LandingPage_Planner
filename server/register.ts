@@ -83,8 +83,9 @@ router.post('/api/register', async (req: Request, res: Response) => {
       console.log(`⚠️ Usuário já existe no banco de dados: ${existingUserInDB.id}`);
       
       // Caso especial: usuário existe no banco mas não tem Firebase UID
-      if (!existingUserInDB.firebaseUid) {
-        console.log(`⚠️ Usuário existe no banco de dados mas não tem uma conta Firebase. Criando conta...`);
+      if (!existingUserInDB.firebaseUid && plano === 'free') {
+        // Sincronização automática APENAS para plano gratuito
+        console.log(`⚠️ Usuário existe no banco de dados mas não tem uma conta Firebase. Criando conta (plano gratuito)...`);
         try {
           // Criar o usuário no Firebase
           const userRecord = await firebaseAuth.createUser({
@@ -111,6 +112,13 @@ router.post('/api/register', async (req: Request, res: Response) => {
             message: "Erro ao sincronizar sua conta. Tente usar o link 'Problemas com login?' na página de login."
           });
         }
+      } else if (!existingUserInDB.firebaseUid && plano !== 'free') {
+        // Para planos pagos, informamos que o usuário já existe e precisa usar a página de sincronização
+        console.log(`⚠️ Usuário existe no banco mas sem conta Firebase. Solicitando sincronização (plano pago).`);
+        return res.status(400).json({
+          success: false,
+          message: "Este email já está cadastrado mas precisa ser sincronizado. Use o link 'Problemas com login?' na página de login."
+        });
       }
       
       // Caso normal: usuário já existe

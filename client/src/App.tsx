@@ -19,6 +19,7 @@ const Login = lazy(() => import("@/pages/login"));
 const Dashboard = lazy(() => import("@/pages/dashboard"));
 const Registro = lazy(() => import("@/pages/registro"));
 const Sincronizar = lazy(() => import("@/pages/sincronizar"));
+const Teste = lazy(() => import("@/pages/teste"));
 
 // Componente de loading para Suspense
 const PageLoading = () => (
@@ -40,6 +41,7 @@ function Router() {
         <Route path="/cancelado" component={Cancelado}/>
         <Route path="/login" component={Login}/>
         <Route path="/sincronizar" component={Sincronizar}/>
+        <Route path="/teste" component={Teste}/>
         <Route path="/dashboard">
           <ProtectedRoute>
             <Dashboard />
