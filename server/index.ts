@@ -5,6 +5,7 @@ import registerRouter from "./register";
 import stripeWebhookRouter from "./stripe-webhook";
 import syncUsersRouter from "./sync-users";
 import migrationsRouter from "./migrations";
+import trialRouter from "./trial";
 import { pool } from "./db";
 
 const app = express();
@@ -23,7 +24,8 @@ app.use(registerRouter);
 app.use(stripeWebhookRouter);
 app.use(syncUsersRouter);
 app.use(migrationsRouter);
-console.log("✅ Routers de registro, webhook do Stripe, sincronização de usuários e migração adicionados");
+app.use(trialRouter);
+console.log("✅ Routers de registro, webhook do Stripe, sincronização de usuários, trial e migração adicionados");
 
 app.use((req, res, next) => {
   const start = Date.now();

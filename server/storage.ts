@@ -323,6 +323,57 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  async updateUserPassword(userId: number, password: string): Promise<User | undefined> {
+    try {
+      console.log(`⏳ Atualizando senha para usuário ID: ${userId}`);
+      
+      // Usando consulta SQL direta
+      const query = `
+        UPDATE users 
+        SET senha_hash = $1, updated_at = $2
+        WHERE id = $3
+        RETURNING *;
+      `;
+      const now = new Date();
+      const values = [password, now, userId];
+      
+      const result = await pool.query(query, values);
+      
+      if (result.rows.length === 0) {
+        console.log(`⚠️ Nenhum usuário encontrado para atualizar senha (userId: ${userId})`);
+        return undefined;
+      }
+      
+      console.log(`✅ Senha atualizada para usuário ID: ${userId}`);
+      return result.rows[0];
+    } catch (error) {
+      console.error(`❌ Falha ao atualizar senha do usuário:`, error);
+      
+      try {
+        // Fallback para Drizzle
+        const [user] = await db
+          .update(users)
+          .set({
+            senha_hash: password,
+            updatedAt: new Date()
+          })
+          .where(eq(users.id, userId))
+          .returning();
+          
+        if (!user) {
+          console.log(`⚠️ Nenhum usuário encontrado via Drizzle para atualizar senha`);
+          return undefined;
+        }
+        
+        console.log(`✅ Senha atualizada via Drizzle para usuário ID: ${userId}`);
+        return user;
+      } catch (drizzleError) {
+        console.error(`❌ Falha ao atualizar senha via Drizzle:`, drizzleError);
+        throw drizzleError;
+      }
+    }
+  }
+  
   // Lead operations
   async createLead(leadData: LeadFormData): Promise<Lead> {
     try {
