@@ -92,11 +92,16 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
         // Verificar se temos senha para o usuário
         const senha = password || dbUser.senha_hash || 'Senha@123456';
         
+        // Mostrar a senha que estamos usando (apenas em debug)
+        console.log(`⏳ Criando usuário no Firebase com email: ${email} e senha: ${senha.substring(0, 3)}*** (truncada por segurança)`);
+        
         // Criar usuário no Firebase
         const userRecord = await createFirebaseUser(email, senha);
+        console.log(`✅ Usuário criado no Firebase com sucesso, UID: ${userRecord.uid}`);
         
         // Atualizar o UID do Firebase no banco de dados
-        await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
+        const updatedUser = await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
+        console.log(`✅ UID do Firebase salvo no banco de dados: ${updatedUser.id} -> ${userRecord.uid}`);
         
         console.log(`✅ Usuário criado no Firebase e sincronizado: ${userRecord.uid}`);
         
