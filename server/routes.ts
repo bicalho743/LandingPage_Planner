@@ -157,6 +157,15 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
             // Agora temos um método para atualizar o UID
             user = await storage.updateFirebaseUid(user.id, firebaseUid);
             console.log("✅ Firebase UID atualizado com sucesso para usuário:", user.id);
+            
+            // Atualizar as datas de trial do usuário
+            try {
+              await storage.updateUserTrialDates(user.id);
+              console.log("✅ Datas de trial atualizadas para usuário existente:", user.id);
+            } catch (trialDatesError) {
+              console.error("❌ Erro ao atualizar datas de trial:", trialDatesError);
+              // Continuamos mesmo com erro na atualização das datas
+            }
           } catch (updateError) {
             console.error("❌ Erro ao atualizar Firebase UID:", updateError);
             // Continuamos mesmo com erro na atualização
@@ -181,7 +190,8 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
         email,
         name: email.split('@')[0], // Nome provisório baseado no email
         password: 'senha_gerenciada_pelo_firebase', // Não usamos diretamente, pois o Firebase gerencia a autenticação
-        firebaseUid: firebaseUid // Pode estar disponível do processo de checkout
+        firebaseUid: firebaseUid, // Pode estar disponível do processo de checkout
+        trial: true // Marcar como usuário em trial
       });
       
       console.log("✅ Usuário criado com sucesso no banco de dados! ID:", newUser.id);
@@ -206,6 +216,15 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
             try {
               const updatedUser = await storage.updateFirebaseUid(retryUser.id, firebaseUid);
               console.log("✅ Firebase UID atualizado após condição de corrida:", updatedUser.id);
+              
+              // Atualizar as datas de trial do usuário após condição de corrida
+              try {
+                await storage.updateUserTrialDates(updatedUser.id);
+                console.log("✅ Datas de trial atualizadas após condição de corrida:", updatedUser.id);
+              } catch (trialDatesError) {
+                console.error("❌ Erro ao atualizar datas de trial após condição de corrida:", trialDatesError);
+              }
+              
               return updatedUser;
             } catch (updateError) {
               console.error("❌ Erro ao atualizar Firebase UID após retry:", updateError);
@@ -267,6 +286,17 @@ async function createSubscription(session: any) {
           console.log("⏳ Criando assinatura para o usuário:", user.id, "- Tipo:", planType);
           await storage.createSubscription(user.id, planType);
           console.log("✅ Assinatura criada com sucesso para:", user.email);
+          
+          // Verificar se deve definir datas de trial
+          if (subscriptionId && planMode === 'subscription') {
+            // Se é uma assinatura, atualizamos as datas de trial
+            try {
+              await storage.updateUserTrialDates(user.id);
+              console.log("✅ Datas de trial atualizadas para usuário com nova assinatura:", user.id);
+            } catch (trialDatesError) {
+              console.error("❌ Erro ao atualizar datas de trial para nova assinatura:", trialDatesError);
+            }
+          }
         } catch (subError) {
           console.error("❌ Erro ao criar assinatura no banco de dados:", subError);
           throw subError;
