@@ -42,10 +42,10 @@ router.post('/api/register', async (req: Request, res: Response) => {
   }
 
   // Verificar se o plano é válido
-  if (!['mensal', 'anual', 'vitalicio'].includes(plano)) {
+  if (!['free', 'mensal', 'anual', 'vitalicio'].includes(plano)) {
     return res.status(400).json({
       success: false,
-      message: "Plano inválido. Escolha entre: mensal, anual ou vitalicio"
+      message: "Plano inválido. Escolha entre: free, mensal, anual ou vitalicio"
     });
   }
 
@@ -100,72 +100,103 @@ router.post('/api/register', async (req: Request, res: Response) => {
     
     console.log(`✅ Usuário salvo no banco de dados: ${user.id}`);
 
-    // Obter o ID do preço com base no plano
-    const getPriceId = (planType: string): string => {
-      const isProduction = process.env.NODE_ENV === 'production';
+    // Verificar se é o plano gratuito
+    if (plano === 'free') {
+      console.log(`✅ Cadastro no plano gratuito concluído para: ${email}`);
       
-      if (planType === 'mensal') {
-        return isProduction 
-          ? process.env.STRIPE_PRICE_MONTHLY || ''
-          : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
-      } else if (planType === 'anual') {
-        return isProduction 
-          ? process.env.STRIPE_PRICE_ANNUAL || ''
-          : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
-      } else if (planType === 'vitalicio') {
-        return isProduction 
-          ? process.env.STRIPE_PRICE_LIFETIME || ''
-          : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
+      // Para o plano gratuito, criar assinatura diretamente sem checkout
+      try {
+        await storage.createSubscription(user.id, 'free');
+        console.log(`✅ Assinatura gratuita criada para usuário: ${user.id}`);
+      } catch (subscriptionError) {
+        console.error(`⚠️ Erro ao criar assinatura gratuita:`, subscriptionError);
+        // Continuar mesmo com erro, pois o usuário já foi criado
       }
       
-      throw new Error(`Tipo de plano inválido: ${planType}`);
-    };
+      // Enviar email de boas-vindas
+      try {
+        // Implementar depois com Brevo
+        console.log(`⏳ Enviando email de boas-vindas para: ${email}`);
+      } catch (emailError) {
+        console.error(`⚠️ Erro ao enviar email de boas-vindas:`, emailError);
+      }
+      
+      // Redirecionar diretamente para o dashboard
+      return res.status(201).json({
+        success: true,
+        message: "Cadastro no plano gratuito concluído com sucesso!",
+        redirectUrl: "/dashboard"
+      });
+    } else {
+      // Para planos pagos, criar checkout do Stripe
+      
+      // Obter o ID do preço com base no plano
+      const getPriceId = (planType: string): string => {
+        const isProduction = process.env.NODE_ENV === 'production';
+        
+        if (planType === 'mensal') {
+          return isProduction 
+            ? process.env.STRIPE_PRICE_MONTHLY || ''
+            : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
+        } else if (planType === 'anual') {
+          return isProduction 
+            ? process.env.STRIPE_PRICE_ANNUAL || ''
+            : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
+        } else if (planType === 'vitalicio') {
+          return isProduction 
+            ? process.env.STRIPE_PRICE_LIFETIME || ''
+            : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
+        }
+        
+        throw new Error(`Tipo de plano inválido: ${planType}`);
+      };
 
-    const priceId = getPriceId(plano);
-    if (!priceId) {
-      console.error(`❌ ID de preço não encontrado para o plano: ${plano}`);
-      return res.status(500).json({
-        success: false,
-        message: "Erro na configuração do plano. Por favor, contate o suporte."
+      const priceId = getPriceId(plano);
+      if (!priceId) {
+        console.error(`❌ ID de preço não encontrado para o plano: ${plano}`);
+        return res.status(500).json({
+          success: false,
+          message: "Erro na configuração do plano. Por favor, contate o suporte."
+        });
+      }
+
+      // Configurar modo de pagamento (subscription ou one-time)
+      const mode = plano === 'vitalicio' ? 'payment' : 'subscription';
+
+      // Criar sessão de checkout no Stripe
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        customer_email: email,
+        client_reference_id: user.id.toString(),
+        mode: mode,
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        subscription_data: mode === 'subscription' ? {
+          trial_period_days: 7, // Período de teste gratuito para planos de assinatura
+        } : undefined,
+        success_url: `${req.protocol}://${req.headers.host}/sucesso?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(email)}`,
+        cancel_url: `${req.protocol}://${req.headers.host}/cancelado`,
+        metadata: {
+          userId: user.id.toString(),
+          firebaseUid: userRecord.uid,
+          plan_type: plano,
+          customer_email: email
+        }
+      });
+
+      console.log(`✅ Sessão de checkout criada: ${session.id}`);
+
+      // Retornar URL do checkout para redirecionamento
+      return res.status(201).json({
+        success: true,
+        message: "Usuário cadastrado com sucesso",
+        checkoutUrl: session.url
       });
     }
-
-    // Configurar modo de pagamento (subscription ou one-time)
-    const mode = plano === 'vitalicio' ? 'payment' : 'subscription';
-
-    // Criar sessão de checkout no Stripe
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      customer_email: email,
-      client_reference_id: user.id.toString(),
-      mode: mode,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      subscription_data: mode === 'subscription' ? {
-        trial_period_days: 7, // Período de teste gratuito para planos de assinatura
-      } : undefined,
-      success_url: `${req.protocol}://${req.headers.host}/sucesso?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(email)}`,
-      cancel_url: `${req.protocol}://${req.headers.host}/cancelado`,
-      metadata: {
-        userId: user.id.toString(),
-        firebaseUid: userRecord.uid,
-        plan_type: plano,
-        customer_email: email
-      }
-    });
-
-    console.log(`✅ Sessão de checkout criada: ${session.id}`);
-
-    // Retornar URL do checkout para redirecionamento
-    return res.status(201).json({
-      success: true,
-      message: "Usuário cadastrado com sucesso",
-      checkoutUrl: session.url
-    });
   } catch (error: any) {
     console.error("❌ Erro ao cadastrar usuário:", error);
     

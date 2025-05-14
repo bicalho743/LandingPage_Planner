@@ -54,10 +54,30 @@ function PricingPlan({ title, monthlyPrice, yearlyPrice, description, features, 
   const billingLabel = billingType === "monthly" ? "/month" : "/year";
   
   const handleSubscribe = () => {
-    // Here we would create a Stripe Checkout session
-    console.log(`Subscribe to ${title} plan with priceId: ${priceId}`);
-    // In a real implementation, we would redirect to a registration/login page
-    // or directly to Stripe checkout
+    // Pegar o nome do plano baseado no título
+    let planType = "";
+    
+    if (title === "Basic") {
+      planType = "free";
+      console.log(`Iniciando registro no plano gratuito`);
+    } else if (title === "Professional") {
+      planType = billingType === "monthly" ? "mensal" : "anual";
+      console.log(`Iniciando assinatura do plano ${title} (${planType})`);
+    } else if (title === "Business") {
+      planType = "vitalicio";
+      console.log(`Iniciando assinatura do plano ${title} (${planType})`);
+    }
+    
+    // Usar URLSearchParams para construir a query string
+    const params = new URLSearchParams();
+    
+    // Adicionar parâmetros à URL
+    if (planType) {
+      params.append('plano', planType);
+    }
+    
+    // Redirecionar para a página de registro com os parâmetros
+    window.location.href = `/registro?${params.toString()}`;
   };
   
   return (
@@ -144,7 +164,7 @@ export default function PricingPlans() {
             description="Perfect for getting started with organizing"
             features={planFeatures.basic}
             billingType={billingType}
-            priceId=""
+            priceId="free_tier"
             ctaText="Get Started Free"
           />
           

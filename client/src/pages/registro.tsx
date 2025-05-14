@@ -95,13 +95,31 @@ export default function Registro() {
         description: "Você será redirecionado para finalizar o pagamento.",
       });
       
-      // Redirecionar para o checkout do Stripe
+      // Redirecionar com base na resposta
       if (data.checkoutUrl) {
+        // Para planos pagos, redirecionar para o checkout do Stripe
+        toast({
+          title: "Redirecionando para pagamento",
+          description: "Você será redirecionado para a página de pagamento.",
+        });
+        
         // Timeout para permitir que o toast seja visto
         setTimeout(() => {
           window.location.href = data.checkoutUrl;
         }, 1500);
+      } else if (data.redirectUrl) {
+        // Para o plano gratuito, redirecionar para o dashboard
+        toast({
+          title: "Cadastro concluído!",
+          description: "Seu cadastro no plano gratuito foi concluído com sucesso.",
+        });
+        
+        // Timeout para permitir que o toast seja visto
+        setTimeout(() => {
+          setLocation(data.redirectUrl);
+        }, 1500);
       } else {
+        // Caso não tenha URL de redirecionamento, voltar para planos
         setLocation('/planos');
       }
     } catch (error: any) {
