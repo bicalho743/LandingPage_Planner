@@ -20,6 +20,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined>;
+  getUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateFirebaseUid(userId: number, firebaseUid: string): Promise<User>;
   updateUserStatus(userId: number | undefined, email: string | undefined, status: string): Promise<User | undefined>;
@@ -77,6 +78,19 @@ export class DatabaseStorage implements IStorage {
       // Fallback para Drizzle
       const [user] = await db.select().from(users).where(eq(users.firebaseUid, firebaseUid));
       return user;
+    }
+  }
+  
+  async getUsers(): Promise<User[]> {
+    try {
+      // Usando consulta SQL direta para compatibilidade com Render
+      const result = await pool.query('SELECT * FROM users ORDER BY id DESC');
+      return result.rows;
+    } catch (error) {
+      console.error("Erro ao buscar todos os usuários:", error);
+      // Fallback para Drizzle
+      const allUsers = await db.select().from(users).orderBy(users.id);
+      return allUsers;
     }
   }
 

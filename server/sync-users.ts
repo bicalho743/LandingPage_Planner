@@ -6,11 +6,38 @@ import { addContactToBrevo } from './brevo';
 
 const router = Router();
 
+// Debug function - Lista todas as tentativas de sincronização
+const syncAttempts = new Map<string, {count: number, lastError: string, lastAttempt: Date}>();
+
+function logSyncAttempt(email: string, error: string = '') {
+  const now = new Date();
+  const existing = syncAttempts.get(email) || {count: 0, lastError: '', lastAttempt: now};
+  
+  existing.count++;
+  if (error) existing.lastError = error;
+  existing.lastAttempt = now;
+  
+  syncAttempts.set(email, existing);
+  
+  console.log(`📊 Histórico de sincronização para ${email}: ${existing.count} tentativas, último erro: ${existing.lastError || 'nenhum'}`);
+}
+
 // Endpoint admin para listar usuários com status
 router.get('/api/admin/users', async (req: Request, res: Response) => {
   try {
-    // Implementar depois com autenticação adequada
-    res.status(200).json({ message: 'Endpoint de administração' });
+    // Buscar todos os usuários do banco de dados
+    const users = await storage.getUsers();
+    
+    // Adicionar informações sobre tentativas de sincronização
+    const syncInfo = Object.fromEntries(syncAttempts.entries());
+    
+    res.status(200).json({ 
+      users, 
+      syncAttempts: syncInfo,
+      totalUsers: users.length,
+      syncedUsers: users.filter(u => u.firebaseUid).length,
+      pendingUsers: users.filter(u => !u.firebaseUid).length
+    });
   } catch (error) {
     console.error('Erro ao listar usuários:', error);
     res.status(500).json({ error: 'Erro interno do servidor' });
