@@ -11,7 +11,8 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-console.log("Conectando ao banco de dados PostgreSQL...");
+const isProduction = process.env.NODE_ENV === 'production';
+console.log(`Conectando ao banco de dados PostgreSQL (Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'})...`);
 
 // Configura o pool de conexão com o PostgreSQL
 export const pool = new Pool({
@@ -19,11 +20,20 @@ export const pool = new Pool({
   ssl: {
     rejectUnauthorized: false // Para evitar erros de SSL com serviços remotos
   },
-  // Configurações para evitar timeout durante desenvolvimento
-  connectionTimeoutMillis: 30000, // 30 segundos timeout
-  query_timeout: 30000,
-  statement_timeout: 30000,
-  idle_in_transaction_session_timeout: 30000
+  // Configurações otimizadas por ambiente
+  connectionTimeoutMillis: isProduction ? 60000 : 30000, // Timeout maior em produção
+  query_timeout: isProduction ? 60000 : 30000,
+  statement_timeout: isProduction ? 60000 : 30000,
+  idle_in_transaction_session_timeout: isProduction ? 60000 : 30000,
+  // Pool de conexões otimizado para produção
+  max: isProduction ? 20 : 10, // Mais conexões em produção
+  min: isProduction ? 5 : 2,  // Mínimo de conexões em produção
+  idleTimeoutMillis: isProduction ? 30000 : 10000 // Timeout de conexões ociosas
+});
+
+// Monitora eventos do pool de conexões
+pool.on('error', (err, client) => {
+  console.error('Erro inesperado no cliente PostgreSQL:', err);
 });
 
 // Teste de conexão

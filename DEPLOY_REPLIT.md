@@ -32,83 +32,119 @@ Certifique-se de que todas as variáveis do Firebase estejam configuradas:
 No Replit, vá para as configurações do seu projeto e defina o comando de inicialização:
 
 ```
-npm run start
+NODE_ENV=production npm run start
+```
+
+Ou se preferir, você pode usar o script de produção:
+
+```
+./start-production.sh
+```
+
+### 3. Verifique suas variáveis de ambiente
+
+Execute o verificador de ambiente para garantir que tudo está configurado corretamente:
+
+```
+node verificar-env.js
 ```
 
 ## Processo de Build e Deploy
 
-### 1. Compile o Projeto para Produção
+### 1. Build do Projeto
 
-Execute o script de build que criamos:
+No shell do Replit, execute:
 
-```
-./deploy.sh
-```
+```bash
+# Tornar o script executável (necessário apenas uma vez)
+chmod +x deploy.sh
 
-Este script irá:
-- Verificar se as variáveis de ambiente necessárias estão configuradas
-- Compilar o frontend usando Vite
-- Compilar o backend usando ESBuild
-- Iniciar o servidor em modo de produção
-
-Alternativamente, você pode executar o processo de build manualmente:
-
-```
-npm run build
+# Executar o build sem iniciar o servidor
+NODE_ENV=production npm run build
 ```
 
-### 2. Inicie o Servidor em Modo de Produção
+### 2. Deploy no Replit
 
-Para iniciar o servidor em modo de produção:
+Após ter feito o build com sucesso, você pode fazer o deploy através do botão "Deploy" no Replit.
 
-```
-npm run start
-```
+Antes de fazer o deploy, verifique se:
+
+1. O build foi concluído com sucesso
+2. Todas as variáveis de ambiente estão configuradas
+3. O comando de inicialização está definido corretamente
+
+### 3. Verificação Pós-Deploy
+
+Após o deploy, verifique:
+
+- Se a aplicação está funcionando corretamente
+- Se a URL de produção está acessível
+- Se você pode acessar o dashboard administrativo
 
 ## Configuração do Webhook do Stripe
 
 Após o deploy, é necessário configurar o webhook do Stripe para apontar para o seu aplicativo em produção:
 
-1. Obtenha a URL do seu aplicativo (por exemplo, `https://seuprojeto.utilizador.repl.co`)
+1. Obtenha a URL do seu aplicativo (por exemplo, `https://planner-pro.utilizador.repl.co`)
 2. Configure o webhook no Stripe conforme detalhado no arquivo `STRIPE_WEBHOOK.md`
-3. Adicione a URL completa do webhook: `https://seuprojeto.utilizador.repl.co/api/stripe-webhook`
+3. Adicione a URL completa do webhook: `https://planner-pro.utilizador.repl.co/api/stripe-webhook`
+4. Teste o webhook usando a ferramenta de teste do Stripe
+
+## Lista de Verificação Final para Produção
+
+- [ ] Build concluído com sucesso
+- [ ] Variáveis de ambiente configuradas corretamente
+- [ ] Webhook do Stripe configurado com a URL de produção
+- [ ] Domínio do Firebase atualizado com URL de produção
+- [ ] Banco de dados configurado e acessível
+- [ ] Comando de inicialização definido corretamente
+- [ ] Deploy realizado com sucesso
+- [ ] Site acessível via URL de produção
+- [ ] Processo de pagamento testado
+- [ ] Webhooks recebendo eventos corretamente
+- [ ] Emails sendo enviados corretamente
 
 ## Monitoramento e Logs
 
 Para monitorar seu aplicativo em produção no Replit:
 
-1. Verifique os logs do console no Replit para diagnosticar problemas
-2. Monitore os webhooks do Stripe no painel do Stripe
-3. Verifique as estatísticas de envio de email no painel do Brevo
+1. Verifique os logs do console no Replit
+2. Monitore os eventos e webhooks no painel do Stripe
+3. Verifique o tráfego e logs de autenticação no console do Firebase
+4. Monitore o envio e entrega de emails no painel do Brevo
 
-## Troubleshooting para o Replit
+## Troubleshooting Comum
 
-### Problemas de Memória
+### Problemas de Memória ou Timeout
 
-Se o aplicativo estiver consumindo muita memória:
+Se o aplicativo estiver consumindo muita memória ou apresentando timeouts:
 
-1. Verifique se não há vazamentos de memória no código
-2. Considere atualizar para um plano do Replit com mais recursos
+1. Verifique os logs para identificar operações intensivas
+2. Ajuste os limites de timeout no código, se necessário
+3. Atualize para um plano do Replit com mais recursos
 
-### O Aplicativo Para de Responder
+### Aplicativo em "Sleep"
 
-O Replit pode colocar seu aplicativo em "sleep" após períodos de inatividade. Para manter o aplicativo sempre ativo:
+O Replit pode colocar seu aplicativo em "sleep" após períodos de inatividade:
 
-1. Configure um serviço de "ping" como UptimeRobot para fazer requisições regulares
-2. Atualize para um plano do Replit que ofereça tempo de atividade contínuo
+1. Configure um serviço de "ping" como UptimeRobot
+2. Atualize para um plano do Replit com tempo de atividade contínuo
 
-### Problemas com Webhooks
+### Webhooks Não Funcionando
 
-Se os webhooks do Stripe não estiverem funcionando:
+Se os webhooks do Stripe não funcionarem em produção:
 
-1. Verifique se a URL do webhook está correta
-2. Confirme que o aplicativo está acessível publicamente
-3. Verifique se os logs mostram erros relacionados ao webhook
+1. Verifique se a URL está correta no painel do Stripe
+2. Confirme que a chave de assinatura do webhook está configurada
+3. Verifique os logs para erros de autenticação do webhook
+4. Teste com a ferramenta "Send test webhook" do Stripe
 
-## Considerações para Produção
+## Suporte e Manutenção
 
-Para um ambiente de produção robusto, considere:
+Para manter seu aplicativo funcionando corretamente:
 
-1. Configurar backups regulares do banco de dados
-2. Implementar monitoramento de saúde do aplicativo
-3. Configurar alertas para falhas de pagamento ou problemas de servidor
+1. Realize backups regulares do banco de dados
+2. Mantenha suas dependências atualizadas
+3. Monitore a utilização de recursos no Replit
+4. Configure alertas para eventos importantes (falhas de pagamento, erros críticos)
+5. Teste regularmente o fluxo completo de registro e pagamento

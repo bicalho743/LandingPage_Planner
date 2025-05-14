@@ -42,21 +42,57 @@ npm run dev
 
 ### Produção
 
-Para compilar e executar em produção:
+Para compilar e executar em produção, siga estas etapas:
+
+#### 1. Configure as variáveis de ambiente de produção
+
+Certifique-se de que todas as variáveis necessárias estejam configuradas. Você pode verificar isso executando:
+
+```bash
+node verificar-env.js
+```
+
+#### 2. Método 1: Use o script de deploy completo
+
+O script de deploy automatiza todo o processo de compilação e inicialização:
+
+```bash
+# Tornar o script executável (necessário apenas uma vez)
+chmod +x deploy.sh
+
+# Executar o deploy
+./deploy.sh
+```
+
+#### 3. Método 2: Processo manual
+
+Alternativamente, você pode executar as etapas manualmente:
 
 ```bash
 # Compilar o projeto para produção
 npm run build
 
-# Executar em produção
-npm run start
+# Iniciar o servidor em modo de produção
+NODE_ENV=production npm run start
 ```
 
-Ou utilize o script de deploy incluído:
+#### 4. Método 3: Usar scripts separados para build e inicialização
 
 ```bash
+# Compilar para produção
 ./deploy.sh
+
+# Iniciar o servidor em produção (em outro terminal ou depois de terminar o build)
+./start-production.sh
 ```
+
+#### 5. Verificação de Funcionamento
+
+Após o deploy, verifique:
+- O acesso à página inicial
+- A integração com Stripe através de um pagamento de teste
+- O funcionamento dos webhooks
+- O envio de emails via Brevo
 
 ### Configurar Webhooks do Stripe
 
