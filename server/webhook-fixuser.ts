@@ -130,10 +130,10 @@ router.post('/api/webhook-fixuser', async (req: Request, res: Response) => {
           
           // Passo 3: Criar usuário no Firebase
           try {
-            console.log(`🔄 INICIANDO CRIAÇÃO DE USUÁRIO NO FIREBASE: ${userEmail}`);
+            console.log(`📌 Criando usuário no Firebase para: ${userEmail}`);
             const userRecord = await firebaseAuth.createUser({
               email: userEmail,
-              password: password,
+              password: password || "senha_aleatoria_segura",
               displayName: dbUser.name || userEmail.split('@')[0],
               emailVerified: true // Importante para evitar problemas de login
             });
