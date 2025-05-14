@@ -108,8 +108,8 @@ export default function TesteWebhookPage() {
         };
       }
 
-      // Enviar o webhook para o endpoint adequado
-      const result = await apiRequest('POST', '/api/webhook-direto', payload);
+      // Enviar o webhook para o endpoint robusto que criamos
+      const result = await apiRequest('POST', '/api/webhook-fixuser', payload);
       const resultData = await result.json();
       
       setResponse(JSON.stringify(resultData, null, 2));
