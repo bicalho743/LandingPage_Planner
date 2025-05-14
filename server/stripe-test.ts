@@ -70,18 +70,70 @@ router.post('/api/admin/stripe-test-event', async (req: Request, res: Response) 
         }
       });
       
-      // Criar um evento de teste usando a sessão
-      event = await stripe.events.create({
+      // Como a API atual do Stripe não suporta criação de eventos diretamente, vamos fazer diferente
+      // Vamos enviar o evento diretamente para o nosso webhook
+      const webhook = process.env.STRIPE_WEBHOOK_SECRET 
+        ? '/api/stripe-webhook' 
+        : '/api/webhook-direto';
+      
+      console.log(`✅ Enviando sessão para ${webhook}...`);
+      
+      // Criar um objeto de evento
+      const eventObject = {
+        id: `evt_test_${Math.random().toString(36).substring(2, 12)}`,
         type: 'checkout.session.completed',
         data: {
           object: session
         }
+      };
+      
+      // Fazer uma chamada para o nosso próprio webhook
+      const response = await fetch(`http://localhost:5000${webhook}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventObject)
       });
+      
+      if (!response.ok) {
+        throw new Error(`Falha ao enviar evento para webhook: ${response.statusText}`);
+      }
+      
+      event = eventObject;
     } else {
-      // Para outros tipos de evento, criar um evento genérico
-      event = await stripe.events.create({
-        type: eventType || 'checkout.session.completed'
+      // Para outros tipos de evento, criar um objeto de evento genérico
+      const eventObject = {
+        id: `evt_test_${Math.random().toString(36).substring(2, 12)}`,
+        type: eventType || 'checkout.session.completed',
+        data: {
+          object: {
+            id: `obj_test_${Math.random().toString(36).substring(2, 12)}`,
+            customer_email: 'test@example.com'
+          }
+        }
+      };
+      
+      // Enviar para o webhook
+      const webhook = process.env.STRIPE_WEBHOOK_SECRET 
+        ? '/api/stripe-webhook' 
+        : '/api/webhook-direto';
+      
+      console.log(`✅ Enviando evento ${eventType} para ${webhook}...`);
+      
+      const response = await fetch(`http://localhost:5000${webhook}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventObject)
       });
+      
+      if (!response.ok) {
+        throw new Error(`Falha ao enviar evento para webhook: ${response.statusText}`);
+      }
+      
+      event = eventObject;
     }
     
     // Enviar o evento para o webhook
