@@ -52,23 +52,29 @@ router.post('/api/register', async (req: Request, res: Response) => {
   try {
     console.log(`⏳ Iniciando cadastro de usuário: ${email}`);
 
-    // Verificar se o usuário já existe no Firebase
-    try {
-      const existingUser = await firebaseAuth.getUserByEmail(email);
-      console.log(`⚠️ Usuário já existe no Firebase: ${existingUser.uid}`);
-      return res.status(400).json({
-        success: false,
-        message: "Este email já está cadastrado. Tente fazer login."
-      });
-    } catch (error: any) {
-      if (error.code !== 'auth/user-not-found') {
-        console.error("❌ Erro ao verificar usuário no Firebase:", error);
-        return res.status(500).json({
+    // Verificar se o usuário já existe no Firebase apenas para planos gratuitos
+    // Para planos pagos, verificamos apenas no banco de dados
+    let firebaseUid = '';
+    
+    if (plano === 'free') {
+      try {
+        // Para plano free, checamos primeiro no Firebase
+        const existingUser = await firebaseAuth.getUserByEmail(email);
+        console.log(`⚠️ Usuário já existe no Firebase: ${existingUser.uid}`);
+        return res.status(400).json({
           success: false,
-          message: "Erro ao verificar cadastro existente."
+          message: "Este email já está cadastrado. Tente fazer login."
         });
+      } catch (error: any) {
+        if (error.code !== 'auth/user-not-found') {
+          console.error("❌ Erro ao verificar usuário no Firebase:", error);
+          return res.status(500).json({
+            success: false,
+            message: "Erro ao verificar cadastro existente."
+          });
+        }
+        // Usuário não existe no Firebase, podemos prosseguir
       }
-      // Usuário não existe, podemos prosseguir
     }
 
     // Verificar se o usuário já existe no banco de dados
@@ -81,21 +87,25 @@ router.post('/api/register', async (req: Request, res: Response) => {
       });
     }
 
-    // Criar usuário no Firebase
-    const userRecord = await firebaseAuth.createUser({
-      email: email,
-      password: senha,
-      displayName: nome
-    });
-    
-    console.log(`✅ Usuário criado no Firebase: ${userRecord.uid}`);
+    // Criar usuário no Firebase APENAS para plano gratuito
+    // Para planos pagos, isso será feito após o pagamento pelo webhook
+    if (plano === 'free') {
+      const userRecord = await firebaseAuth.createUser({
+        email: email,
+        password: senha,
+        displayName: nome
+      });
+      
+      firebaseUid = userRecord.uid;
+      console.log(`✅ Usuário criado no Firebase: ${userRecord.uid}`);
+    }
 
     // Salvar lead/usuário no banco de dados
     const user = await storage.createUser({
       email: email,
       name: nome,
       password: 'senha_gerenciada_pelo_firebase',
-      firebaseUid: userRecord.uid
+      firebaseUid: firebaseUid // Vazio para planos pagos, preenchido para plano free
     });
     
     console.log(`✅ Usuário salvo no banco de dados: ${user.id}`);
@@ -182,9 +192,10 @@ router.post('/api/register', async (req: Request, res: Response) => {
         cancel_url: `${req.protocol}://${req.headers.host}/cancelado`,
         metadata: {
           userId: user.id.toString(),
-          firebaseUid: userRecord.uid,
           plan_type: plano,
-          customer_email: email
+          customer_email: email,
+          // Vamos enviar a senha criptografada para criar o usuário no Firebase após o pagamento
+          senha: Buffer.from(senha).toString('base64') // Codificação básica apenas para transporte
         }
       });
 

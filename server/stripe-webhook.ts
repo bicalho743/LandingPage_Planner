@@ -91,68 +91,86 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   const email = session.customer_email;
   const userId = session.client_reference_id;
-  const firebaseUid = session.metadata?.firebaseUid;
   const planType = session.metadata?.plan_type || 'mensal';
+  
+  // Para obter a senha que enviamos nos metadados
+  const encodedPassword = session.metadata?.senha;
+  let password;
+  
+  if (encodedPassword) {
+    // Decodificar a senha
+    password = Buffer.from(encodedPassword, 'base64').toString();
+    console.log('✅ Senha recuperada dos metadados da sessão');
+  } else {
+    // Gerar senha aleatória caso não tenha sido enviada
+    password = Math.random().toString(36).slice(-10) + 
+               Math.random().toString(36).toUpperCase().slice(-2) + 
+               Math.floor(Math.random() * 10) + 
+               '!';
+    console.log('⚠️ Senha não encontrada nos metadados, gerando senha aleatória');
+  }
   
   try {
     // 1. Verificar se o usuário já existe no Firebase
-    let userRecord;
+    let userRecord: any = null;
+    let isNewUser = false;
+    
     try {
-      // Verificar se já temos o usuário no Firebase
-      if (firebaseUid) {
-        userRecord = await firebaseAuth.getUser(firebaseUid);
-        console.log(`✅ Usuário encontrado no Firebase com UID: ${firebaseUid}`);
-      } else {
-        // Tentar obter pelo email
-        userRecord = await firebaseAuth.getUserByEmail(email);
-        console.log(`✅ Usuário encontrado no Firebase pelo email: ${email}`);
-      }
+      // Tentar obter pelo email
+      userRecord = await firebaseAuth.getUserByEmail(email);
+      console.log(`⚠️ Usuário já existe no Firebase: ${userRecord.uid}`);
+      // Usuário já existe (caso raro, mas possível)
     } catch (firebaseError: any) {
-      console.log(`⚠️ Usuário não encontrado no Firebase: ${firebaseError.message}`);
-      
-      // Se não existe no Firebase, criar com senha aleatória
-      try {
-        // Gerar senha aleatória segura
-        const randomPassword = Math.random().toString(36).slice(-10) + 
-                             Math.random().toString(36).toUpperCase().slice(-2) + 
-                             Math.floor(Math.random() * 10) + 
-                             '!';
+      // Se o usuário não existir no Firebase, criamos um novo
+      if (firebaseError.code === 'auth/user-not-found') {
+        console.log(`✅ Usuário não encontrado no Firebase, criando novo...`);
         
-        userRecord = await firebaseAuth.createUser({
-          email: email,
-          password: randomPassword,
-          displayName: email.split('@')[0] // Nome provisório baseado no email
-        });
-        
-        console.log(`✅ Novo usuário criado no Firebase: ${userRecord.uid}`);
-        
-        // Enviar email com instruções para definir senha
         try {
-          const resetLink = await generatePasswordResetLink(email);
+          // Obter o nome do usuário do banco de dados
+          const dbUser = await storage.getUserByEmail(email);
+          const displayName = dbUser ? dbUser.name : email.split('@')[0];
           
-          const htmlContent = `
-            <h1>Bem-vindo ao PlannerPro Organizer!</h1>
-            <p>Olá,</p>
-            <p>Seu pagamento foi confirmado com sucesso e criamos uma conta para você.</p>
-            <p>Para definir sua senha, clique no link abaixo:</p>
-            <p><a href="${resetLink}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">Definir minha senha</a></p>
-            <p>Este link irá expirar em 24 horas.</p>
-            <p>Atenciosamente,<br>Equipe PlannerPro</p>
-          `;
+          // Criar usuário no Firebase SOMENTE AGORA, após o pagamento confirmado
+          userRecord = await firebaseAuth.createUser({
+            email: email,
+            password: password,
+            displayName: displayName
+          });
           
-          await sendTransactionalEmail(
-            email,
-            'Bem-vindo ao PlannerPro - Configure sua senha',
-            htmlContent,
-            'Seu pagamento foi confirmado e sua conta foi criada. Clique no link para definir sua senha.'
-          );
+          isNewUser = true;
+          console.log(`✅ Novo usuário criado no Firebase: ${userRecord.uid}`);
           
-          console.log(`✅ Email com link para definir senha enviado para: ${email}`);
-        } catch (emailError) {
-          console.error('❌ Erro ao enviar email com link para definir senha:', emailError);
+          // Enviar email de boas-vindas com instruções (opcional)
+          try {
+            // Se for usuário novo e precisar redefinir senha
+            const resetLink = await generatePasswordResetLink(email);
+            
+            const htmlContent = `
+              <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+              <p>Olá,</p>
+              <p>Seu pagamento foi confirmado com sucesso e criamos uma conta para você.</p>
+              <p>Para definir sua senha, clique no link abaixo:</p>
+              <p><a href="${resetLink}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">Definir minha senha</a></p>
+              <p>Este link irá expirar em 24 horas.</p>
+              <p>Atenciosamente,<br>Equipe PlannerPro</p>
+            `;
+            
+            await sendTransactionalEmail(
+              email,
+              'Bem-vindo ao PlannerPro - Configure sua senha',
+              htmlContent,
+              'Seu pagamento foi confirmado e sua conta foi criada. Clique no link para definir sua senha.'
+            );
+            
+            console.log(`✅ Email com link para definir senha enviado para: ${email}`);
+          } catch (emailError) {
+            console.error('❌ Erro ao enviar email com link para definir senha:', emailError);
+          }
+        } catch (createError) {
+          console.error('❌ Erro ao criar usuário no Firebase:', createError);
         }
-      } catch (createError) {
-        console.error('❌ Erro ao criar usuário no Firebase:', createError);
+      } else {
+        console.error('❌ Erro no Firebase:', firebaseError);
       }
     }
 
@@ -293,7 +311,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   try {
     // Obter informações do cliente
     const customer = await stripe.customers.retrieve(customerId);
-    if (customer.deleted) {
+    if ('deleted' in customer && customer.deleted) {
       console.log('⚠️ Cliente foi excluído');
       return;
     }
@@ -330,7 +348,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   try {
     // Obter informações do cliente
     const customer = await stripe.customers.retrieve(customerId);
-    if (customer.deleted) {
+    if ('deleted' in customer && customer.deleted) {
       console.log('⚠️ Cliente foi excluído');
       return;
     }
