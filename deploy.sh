@@ -4,38 +4,32 @@
 
 echo "🚀 Iniciando o processo de deploy..."
 
-# Verificando NODE_ENV
+# Verificando se o script de verificação de ambiente existe
+if [ ! -f "verificar-env.js" ]; then
+  echo "❌ Erro: Script verificar-env.js não encontrado!"
+  exit 1
+fi
+
+# Verificar se NODE_ENV está definido como production
 if [[ "$NODE_ENV" != "production" ]]; then
   echo "⚠️  AVISO: Ambiente de produção não detectado!"
-  echo "⚠️  Defina NODE_ENV=production antes de executar este script"
-  echo "⚠️  Você pode fazer isso executando: export NODE_ENV=production"
+  echo "⚠️  Definindo NODE_ENV=production para este script"
+  export NODE_ENV=production
+fi
+
+echo "⏳ Verificando variáveis de ambiente..."
+# Executar o verificador de ambiente
+if ! node verificar-env.js; then
+  echo "❌ Erro: Verificação de ambiente falhou. Corrija os problemas acima antes de continuar."
+  echo "   Consulte o arquivo CHECKLIST_PRODUCAO.md para mais detalhes."
   exit 1
 fi
 
-# Verificando chaves do Stripe
-if [[ -z "$STRIPE_SECRET_KEY" || ! "$STRIPE_SECRET_KEY" == sk_live_* ]]; then
-  echo "⚠️  AVISO: STRIPE_SECRET_KEY de produção não configurada corretamente!"
-  echo "⚠️  A chave deve começar com 'sk_live_'"
-  exit 1
-fi
-
-if [[ -z "$STRIPE_PUBLIC_KEY" || ! "$STRIPE_PUBLIC_KEY" == pk_live_* ]]; then
-  echo "⚠️  AVISO: STRIPE_PUBLIC_KEY de produção não configurada corretamente!"
-  echo "⚠️  A chave deve começar com 'pk_live_'"
-  exit 1
-fi
-
-# Verificando IDs de preço do Stripe
-if [[ -z "$STRIPE_PRICE_MONTHLY" || -z "$STRIPE_PRICE_ANNUAL" || -z "$STRIPE_PRICE_LIFETIME" ]]; then
-  echo "⚠️  AVISO: IDs de preço do Stripe não configurados!"
-  echo "⚠️  Configure STRIPE_PRICE_MONTHLY, STRIPE_PRICE_ANNUAL e STRIPE_PRICE_LIFETIME"
-  exit 1
-fi
-
-echo "✅ Verificações preliminares concluídas"
+echo "✅ Verificações de ambiente concluídas"
 echo "⏳ Compilando o projeto para produção..."
 
 # Limpando a pasta dist
+echo "🧹 Limpando diretório de build anterior..."
 rm -rf dist
 mkdir -p dist
 
@@ -46,8 +40,24 @@ vite build
 echo "⏳ Compilando o backend..."
 esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
-echo "✅ Compilação concluída"
+# Verificar se a compilação foi bem-sucedida
+if [ ! -f "dist/index.js" ]; then
+  echo "❌ Erro: Compilação do backend falhou!"
+  exit 1
+fi
+
+if [ ! -f "dist/public/index.html" ]; then
+  echo "❌ Erro: Compilação do frontend falhou!"
+  exit 1
+fi
+
+echo "✅ Compilação concluída com sucesso!"
+
+# Executar migrações do banco de dados, se necessário
+echo "⏳ Executando migrações do banco de dados..."
+npm run db:push
+
 echo "🚀 Iniciando o servidor em modo de produção..."
 
 # Iniciar o servidor
-node dist/index.js
+NODE_ENV=production node dist/index.js

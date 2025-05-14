@@ -6,8 +6,11 @@ Uma plataforma completa de organização pessoal com sistema de assinatura usand
 
 - Landing page com apresentação do produto
 - Sistema de planos de assinatura (Mensal, Anual e Vitalício)
-- Integração com Stripe para pagamentos
+- Período de trial de 7 dias para planos de assinatura
+- Integração com Stripe para processamento de pagamentos
 - Autenticação de usuários via Firebase
+- Sistema de captura de leads com integração ao Brevo
+- Emails transacionais automatizados
 - Dashboard para gerenciamento de tarefas
 
 ## Tecnologias Utilizadas
@@ -17,18 +20,45 @@ Uma plataforma completa de organização pessoal com sistema de assinatura usand
 - Banco de Dados: PostgreSQL com Drizzle ORM
 - Pagamentos: Stripe
 - Autenticação: Firebase Authentication
+- Email Marketing: Brevo (antigo SendInBlue)
+
+## Arquitetura da Aplicação
+
+- **Frontend**: Single-page Application (SPA) em React
+- **Backend**: API RESTful em Express
+- **Fluxo de pagamento**: Checkout hospedado pelo Stripe com webhooks para processamento
+- **Autenticação**: Firebase para gerenciamento de usuários
+- **Persistência**: PostgreSQL com Drizzle ORM para modelagem e migrações
 
 ## Como Executar o Projeto
 
-### Iniciar o Servidor
+### Desenvolvimento
 
-O servidor usa um sistema de detecção automática de portas. Se a porta 5000 estiver ocupada, ele tentará a próxima porta disponível.
+Iniciar o servidor em modo de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-### Configurar Webhooks do Stripe (Desenvolvimento)
+### Produção
+
+Para compilar e executar em produção:
+
+```bash
+# Compilar o projeto para produção
+npm run build
+
+# Executar em produção
+npm run start
+```
+
+Ou utilize o script de deploy incluído:
+
+```bash
+./deploy.sh
+```
+
+### Configurar Webhooks do Stripe
 
 Para testar o webhook do Stripe localmente, você pode usar o script fornecido:
 
@@ -40,14 +70,32 @@ chmod +x start-stripe.sh
 node run-stripe-webhook.js
 ```
 
-O script detectará automaticamente a porta em que o servidor está rodando (entre 5000 e 5100) e iniciará o Stripe CLI, encaminhando eventos para o endpoint correto.
+O script detectará automaticamente a porta em que o servidor está rodando e iniciará o Stripe CLI.
 
-### Ambientes de Teste e Produção
+## Documentação Adicional
+
+Para informações detalhadas sobre como configurar o ambiente de produção, consulte os seguintes documentos:
+
+- [PRODUCAO.md](PRODUCAO.md) - Guia geral para produção
+- [DEPLOY_REPLIT.md](DEPLOY_REPLIT.md) - Instruções específicas para deploy no Replit
+- [STRIPE_WEBHOOK.md](STRIPE_WEBHOOK.md) - Guia para configuração do webhook do Stripe
+- [CHECKLIST_PRODUCAO.md](CHECKLIST_PRODUCAO.md) - Lista de verificação para ambiente de produção
+
+## Ambientes de Teste e Produção
 
 O sistema suporta ambos os ambientes do Stripe (teste e produção):
 
-- Em desenvolvimento, ele usa as chaves de teste e IDs de preço de teste
-- Em produção, ele usa as chaves de produção e IDs de preço de produção
+- Em desenvolvimento (`NODE_ENV=development`), ele usa as chaves de teste
+- Em produção (`NODE_ENV=production`), ele usa as chaves de produção
+
+## Ferramentas de Teste e Diagnóstico
+
+O projeto inclui várias ferramentas para testes e diagnóstico:
+
+- `/webhook-manual` - Ferramenta para testar webhooks manualmente
+- `/testar-stripe` - Interface para testar a integração com o Stripe
+- `/teste-email` - Ferramenta para testar o envio de emails via Brevo
+- `/teste-webhook` - Simulador de webhooks do Stripe para testes
 
 ## Secrets Necessários
 
@@ -69,3 +117,6 @@ O projeto requer as seguintes variáveis de ambiente:
 - `VITE_FIREBASE_PROJECT_ID` - ID do projeto Firebase
 - `VITE_FIREBASE_APP_ID` - ID do aplicativo Firebase
 - `FIREBASE_ADMIN_CREDENTIALS` - Credenciais da conta de serviço (JSON)
+
+### Brevo (Email Marketing)
+- `BREVO_API_KEY` - Chave de API do Brevo para emails transacionais
