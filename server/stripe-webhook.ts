@@ -4,6 +4,7 @@ import { storage } from './storage';
 import { pool } from './db';
 import { addContactToBrevo, sendTransactionalEmail } from './brevo';
 import { firebaseAuth, generatePasswordResetLink } from './firebase';
+import { handleTrialCheckoutCompleted, handleTrialEndPaymentFailed } from './stripe-webhook-trial';
 
 // Inicializando o Stripe
 const stripeKey = process.env.NODE_ENV === 'production' 
@@ -46,7 +47,19 @@ router.post('/api/stripe-webhook', async (req: Request, res: Response) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutSessionCompleted(session);
+        
+        // Verificar se é uma sessão com trial
+        const hasTrialPeriod = (session.metadata && session.metadata.trial === 'true');
+                             
+        if (hasTrialPeriod) {
+          // Para sessões com trial, criar usuário no Firebase imediatamente
+          console.log('🔄 Sessão de checkout com trial completada, criando usuário imediatamente');
+          // Função que será implementada mais abaixo
+          await handleTrialCheckoutCompleted(session);
+        } else {
+          // Para sessões normais, seguir o fluxo padrão
+          await handleCheckoutSessionCompleted(session);
+        }
         break;
       }
       case 'invoice.paid': {
@@ -67,6 +80,23 @@ router.post('/api/stripe-webhook', async (req: Request, res: Response) => {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
         await handleSubscriptionDeleted(subscription);
+        break;
+      }
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        
+        // Verificar se é a primeira fatura após o período de trial
+        const isPostTrialInvoice = invoice.billing_reason === 'subscription_cycle' && 
+                                  invoice.created > (invoice.lines.data[0]?.period?.start || 0);
+                                 
+        if (isPostTrialInvoice) {
+          // Falha no pagamento após período de trial
+          console.log(`❌ Falha no pagamento após período de trial`);
+          await handleTrialEndPaymentFailed(invoice);
+        } else {
+          // Falha de pagamento normal
+          console.log(`⚠️ Falha no pagamento da fatura para a assinatura ${invoice.subscription}`);
+        }
         break;
       }
       default:
