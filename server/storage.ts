@@ -263,6 +263,8 @@ export class DatabaseStorage implements IStorage {
   }
   
   async updateSubscriptionStatus(userId: number, status: string): Promise<void> {
+    console.log(`⏳ Atualizando status da assinatura para usuário ${userId}: ${status}`);
+    
     try {
       const now = new Date();
       const query = `
@@ -270,17 +272,54 @@ export class DatabaseStorage implements IStorage {
         SET status = $1, updated_at = $2
         WHERE user_id = $3;
       `;
-      await pool.query(query, [status, now, userId]);
+      
+      const result = await pool.query(query, [status, now, userId]);
+      
+      if (result.rowCount === 0) {
+        console.log(`⚠️ Nenhuma assinatura encontrada para usuário ${userId}. Tentando criar uma nova.`);
+        // Se não existe assinatura, podemos criar uma nova
+        try {
+          await this.createSubscription(userId, 'monthly'); // Valor padrão
+          console.log(`✅ Nova assinatura criada para usuário ${userId} com status ${status}`);
+          return;
+        } catch (createError) {
+          console.error(`❌ Erro ao criar nova assinatura:`, createError);
+          // Continua para o fallback
+        }
+      } else {
+        console.log(`✅ Status da assinatura atualizado via SQL para usuário ${userId}: ${status}`);
+        return;
+      }
     } catch (error) {
-      console.error("Erro ao atualizar status da assinatura:", error);
-      // Fallback para Drizzle
-      await db
-        .update(subscriptions)
-        .set({ 
-          status: status as any,
-          updatedAt: new Date()
-        })
-        .where(eq(subscriptions.userId, userId));
+      console.error(`❌ Erro ao atualizar status da assinatura via SQL:`, error);
+      
+      try {
+        // Fallback para Drizzle
+        const result = await db
+          .update(subscriptions)
+          .set({ 
+            status: status as any,
+            updatedAt: new Date()
+          })
+          .where(eq(subscriptions.userId, userId));
+        
+        if (result.count === 0) {
+          console.log(`⚠️ Nenhuma assinatura encontrada via Drizzle para usuário ${userId}. Tentando criar uma nova.`);
+          // Se não existe assinatura, podemos criar uma nova
+          try {
+            await this.createSubscription(userId, 'monthly'); // Valor padrão
+            console.log(`✅ Nova assinatura criada via Drizzle para usuário ${userId} com status ${status}`);
+          } catch (createError) {
+            console.error(`❌ Erro ao criar nova assinatura via Drizzle:`, createError);
+            throw createError;
+          }
+        } else {
+          console.log(`✅ Status da assinatura atualizado via Drizzle para usuário ${userId}: ${status}`);
+        }
+      } catch (drizzleError) {
+        console.error(`❌ Erro ao atualizar status da assinatura via Drizzle:`, drizzleError);
+        throw drizzleError;
+      }
     }
   }
 }

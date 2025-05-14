@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import registerRouter from "./register";
+import stripeWebhookRouter from "./stripe-webhook";
 
 const app = express();
 
@@ -12,6 +14,11 @@ app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
 // Outros middlewares para parsing de JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Registrando os novos routers
+app.use(registerRouter);
+app.use(stripeWebhookRouter);
+console.log("✅ Routers de registro e webhook do Stripe adicionados");
 
 app.use((req, res, next) => {
   const start = Date.now();
