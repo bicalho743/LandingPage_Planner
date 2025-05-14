@@ -104,11 +104,16 @@ export class DatabaseStorage implements IStorage {
       const status = insertUser.status || 'pendente';
       const senha_hash = insertUser.senha_hash || '';
       
+      // Verificar se deve criar com trial period
+      const isTrial = insertUser.trial === true;
+      const trialStart = isTrial ? now : null;
+      const trialEnd = isTrial ? new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) : null; // +7 dias
+      
       if (hasFirebaseUid) {
         // Incluir o firebase_uid na inserção
         query = `
-          INSERT INTO users (email, name, firebase_uid, password, status, senha_hash, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          INSERT INTO users (email, name, firebase_uid, password, status, senha_hash, trial_start, trial_end, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
           RETURNING *;
         `;
         values = [
@@ -118,14 +123,16 @@ export class DatabaseStorage implements IStorage {
           insertUser.password,
           status,
           senha_hash,
+          trialStart,
+          trialEnd,
           now,
           now
         ];
       } else {
         // Omitir o firebase_uid na inserção
         query = `
-          INSERT INTO users (email, name, password, status, senha_hash, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          INSERT INTO users (email, name, password, status, senha_hash, trial_start, trial_end, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
           RETURNING *;
         `;
         values = [
@@ -134,6 +141,8 @@ export class DatabaseStorage implements IStorage {
           insertUser.password,
           status,
           senha_hash,
+          trialStart,
+          trialEnd,
           now,
           now
         ];
@@ -148,9 +157,14 @@ export class DatabaseStorage implements IStorage {
       if (error.constraint === 'users_firebase_uid_unique') {
         console.log("⚠️ Erro de restrição de unicidade no campo firebase_uid. Tentando inserir sem este campo...");
         // Omitir o firebase_uid na inserção
+        const now = new Date();
+        const isTrial = insertUser.trial === true;
+        const trialStart = isTrial ? now : null;
+        const trialEnd = isTrial ? new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) : null; // +7 dias
+        
         const fallbackQuery = `
-          INSERT INTO users (email, name, password, status, senha_hash, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          INSERT INTO users (email, name, password, status, senha_hash, trial_start, trial_end, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
           RETURNING *;
         `;
         const fallbackValues = [
@@ -159,8 +173,10 @@ export class DatabaseStorage implements IStorage {
           insertUser.password,
           insertUser.status || 'pendente',
           insertUser.senha_hash || '',
-          new Date(),
-          new Date()
+          trialStart,
+          trialEnd,
+          now,
+          now
         ];
         
         try {

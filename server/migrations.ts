@@ -52,7 +52,51 @@ router.post('/api/migrate', async (req: Request, res: Response) => {
       console.log('✅ Coluna senha_hash já existe na tabela users.');
     }
     
-    // 3. Criar o enum user_status se não existir
+    // 3. Verificar se a coluna 'trial_start' existe na tabela 'users'
+    const checkTrialStartColumn = `
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'users' 
+      AND column_name = 'trial_start'
+    `;
+    
+    const trialStartExists = await pool.query(checkTrialStartColumn);
+    
+    if (trialStartExists.rows.length === 0) {
+      console.log('⏳ Adicionando coluna trial_start à tabela users...');
+      // Adicionar coluna trial_start
+      await pool.query(`
+        ALTER TABLE users 
+        ADD COLUMN trial_start TIMESTAMP
+      `);
+      console.log('✅ Coluna trial_start adicionada com sucesso!');
+    } else {
+      console.log('✅ Coluna trial_start já existe na tabela users.');
+    }
+    
+    // 4. Verificar se a coluna 'trial_end' existe na tabela 'users'
+    const checkTrialEndColumn = `
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'users' 
+      AND column_name = 'trial_end'
+    `;
+    
+    const trialEndExists = await pool.query(checkTrialEndColumn);
+    
+    if (trialEndExists.rows.length === 0) {
+      console.log('⏳ Adicionando coluna trial_end à tabela users...');
+      // Adicionar coluna trial_end
+      await pool.query(`
+        ALTER TABLE users 
+        ADD COLUMN trial_end TIMESTAMP
+      `);
+      console.log('✅ Coluna trial_end adicionada com sucesso!');
+    } else {
+      console.log('✅ Coluna trial_end já existe na tabela users.');
+    }
+    
+    // 5. Criar o enum user_status se não existir
     try {
       console.log('⏳ Verificando se o enum user_status existe...');
       // Verificar se o enum existe
