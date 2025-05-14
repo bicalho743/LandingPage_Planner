@@ -38,6 +38,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   name: true,
   firebaseUid: true,
+  status: true,
+  senha_hash: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

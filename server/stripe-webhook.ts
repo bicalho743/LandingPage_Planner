@@ -111,7 +111,14 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
   
   try {
-    // 1. Verificar se o usuário já existe no Firebase
+    // 1. Verificar se o usuário existe no banco de dados
+    const dbUser = await storage.getUserByEmail(email);
+    if (!dbUser) {
+      console.log(`❌ Usuário não encontrado no banco de dados: ${email}`);
+      return;
+    }
+    
+    // 2. Verificar se o usuário já existe no Firebase
     let userRecord: any = null;
     let isNewUser = false;
     
@@ -120,25 +127,27 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       userRecord = await firebaseAuth.getUserByEmail(email);
       console.log(`⚠️ Usuário já existe no Firebase: ${userRecord.uid}`);
       // Usuário já existe (caso raro, mas possível)
+      
+      // Atualizar o status do usuário para ativo no banco de dados
+      await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
     } catch (firebaseError: any) {
       // Se o usuário não existir no Firebase, criamos um novo
       if (firebaseError.code === 'auth/user-not-found') {
         console.log(`✅ Usuário não encontrado no Firebase, criando novo...`);
         
         try {
-          // Obter o nome do usuário do banco de dados
-          const dbUser = await storage.getUserByEmail(email);
-          const displayName = dbUser ? dbUser.name : email.split('@')[0];
-          
           // Criar usuário no Firebase SOMENTE AGORA, após o pagamento confirmado
           userRecord = await firebaseAuth.createUser({
             email: email,
             password: password,
-            displayName: displayName
+            displayName: dbUser.name
           });
           
           isNewUser = true;
           console.log(`✅ Novo usuário criado no Firebase: ${userRecord.uid}`);
+          
+          // Atualizar o usuário no banco de dados com o firebaseUid e status ativo
+          await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
           
           // Enviar email de boas-vindas com instruções (opcional)
           try {
