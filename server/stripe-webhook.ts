@@ -90,7 +90,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
 
   const email = session.customer_email;
-  const userId = session.client_reference_id;
+  const userId = session.client_reference_id ? parseInt(session.client_reference_id) : undefined;
   const planType = session.metadata?.plan_type || 'mensal';
   
   // Para obter a senha que enviamos nos metadados
@@ -131,7 +131,13 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   
   try {
     // 1. Verificar se o usuário existe no banco de dados
-    const dbUser = await storage.getUserByEmail(email);
+    let dbUser;
+    if (userId) {
+      dbUser = await storage.getUser(userId);
+    }
+    if (!dbUser) {
+      dbUser = await storage.getUserByEmail(email);
+    }
     if (!dbUser) {
       console.log(`❌ Usuário não encontrado no banco de dados: ${email}`);
       return;

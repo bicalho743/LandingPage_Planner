@@ -228,6 +228,7 @@ export default function Registro() {
                 <option value="mensal">Plano Mensal</option>
                 <option value="anual">Plano Anual (Economize 20%)</option>
                 <option value="vitalicio">Plano Vitalício (Pagamento único)</option>
+                <option value="free">Plano Gratuito (Recursos limitados)</option>
               </select>
             </div>
             
@@ -244,7 +245,7 @@ export default function Registro() {
                   </svg>
                   Processando...
                 </>
-              ) : "Criar conta e prosseguir para pagamento"}
+              ) : plano === 'free' ? "Criar conta gratuita" : "Criar conta e prosseguir para pagamento"}
             </Button>
           </form>
           
