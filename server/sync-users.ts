@@ -57,13 +57,16 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
     }
     
     console.log(`⏳ Iniciando sincronização de usuário: ${email}`);
+    logSyncAttempt(email);
     
     // 1. Verificar se o usuário existe no banco de dados
     const dbUser = await storage.getUserByEmail(email);
     if (!dbUser) {
+      const errorMsg = 'Usuário não encontrado no banco de dados';
+      logSyncAttempt(email, errorMsg);
       return res.status(404).json({ 
         success: false, 
-        message: 'Usuário não encontrado no banco de dados' 
+        message: errorMsg
       });
     }
     
@@ -83,9 +86,16 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
       
       userExists = true;
       
+      // Atualizar status do usuário se estiver pendente
+      if (dbUser.status === 'pendente') {
+        await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
+        console.log(`✅ Status do usuário atualizado para ativo`);
+      }
+      
       // Apenas retornar um link de redefinição de senha
       try {
         const resetLink = await generatePasswordResetLink(email);
+        console.log(`✅ Link de redefinição de senha gerado: ${resetLink.substring(0, 50)}...`);
         
         return res.status(200).json({
           success: true,
@@ -93,8 +103,11 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
           resetLink,
           existingUser: true
         });
-      } catch (resetError) {
-        console.error('❌ Erro ao gerar link de redefinição de senha:', resetError);
+      } catch (resetError: any) {
+        const errorMsg = `Erro ao gerar link de redefinição: ${resetError.message}`;
+        logSyncAttempt(email, errorMsg);
+        console.error('❌ ' + errorMsg, resetError);
+        
         return res.status(200).json({
           success: true,
           message: 'Usuário já existe no Firebase, mas houve um erro ao gerar link de redefinição',
@@ -103,7 +116,10 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
       }
     } catch (firebaseError: any) {
       if (firebaseError.code !== 'auth/user-not-found') {
-        console.error('❌ Erro ao verificar usuário no Firebase:', firebaseError);
+        const errorMsg = `Erro ao verificar usuário no Firebase: ${firebaseError.code} - ${firebaseError.message}`;
+        logSyncAttempt(email, errorMsg);
+        console.error('❌ ' + errorMsg);
+        
         return res.status(500).json({ 
           success: false, 
           message: 'Erro ao verificar usuário no Firebase' 
@@ -132,26 +148,42 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
         
         console.log(`✅ Usuário criado no Firebase e sincronizado: ${userRecord.uid}`);
         
-        // Usuário foi restaurado com sucesso, enviar link de redefinição por segurança
-        const resetLink = await generatePasswordResetLink(email);
-        
         // Se usuário estava pendente, ativar
-        if (dbUser.status === 'pendente') {
-          await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
+        if (updatedUser.status === 'pendente') {
+          await storage.updateUserStatus(updatedUser.id, undefined, 'ativo');
           console.log(`✅ Status do usuário atualizado para ativo`);
         }
         
-        return res.status(201).json({
-          success: true,
-          message: 'Usuário criado no Firebase e sincronizado com sucesso',
-          resetLink,
-          newUser: true
-        });
-      } catch (createError) {
-        console.error('❌ Erro ao criar usuário no Firebase:', createError);
+        // Usuário foi restaurado com sucesso, enviar link de redefinição por segurança
+        try {
+          const resetLink = await generatePasswordResetLink(email);
+          console.log(`✅ Link de redefinição de senha gerado: ${resetLink.substring(0, 50)}...`);
+          
+          return res.status(200).json({
+            success: true,
+            message: 'Usuário restaurado no Firebase com sucesso',
+            resetLink,
+            newUser: true
+          });
+        } catch (resetError: any) {
+          const errorMsg = `Erro ao gerar link de redefinição: ${resetError.message}`;
+          logSyncAttempt(email, errorMsg);
+          console.error('❌ ' + errorMsg, resetError);
+          
+          return res.status(200).json({
+            success: true,
+            message: 'Usuário restaurado no Firebase, mas houve um erro ao gerar link de redefinição',
+            newUser: true
+          });
+        }
+      } catch (createError: any) {
+        const errorMsg = `Erro ao criar usuário no Firebase: ${createError.code} - ${createError.message}`;
+        logSyncAttempt(email, errorMsg);
+        console.error('❌ ' + errorMsg);
+        
         return res.status(500).json({ 
           success: false, 
-          message: 'Erro ao criar usuário no Firebase' 
+          message: 'Erro ao criar usuário no Firebase: ' + createError.message 
         });
       }
     }
