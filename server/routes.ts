@@ -150,10 +150,17 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
         console.log("✅ Usuário encontrado no banco de dados. ID:", user.id);
         
         // Se temos um novo UID do Firebase e o usuário ainda não tem um, atualizar
-        if (firebaseUid && !user.firebaseUid) {
+        if (firebaseUid && (!user.firebaseUid || user.firebaseUid !== firebaseUid)) {
           console.log("⏳ Atualizando UID do Firebase para usuário existente...");
-          // Aqui precisaríamos de um método para atualizar o UID, que não está implementado ainda
-          console.log("⚠️ Não foi possível atualizar o Firebase UID - método não implementado");
+          
+          try {
+            // Agora temos um método para atualizar o UID
+            user = await storage.updateFirebaseUid(user.id, firebaseUid);
+            console.log("✅ Firebase UID atualizado com sucesso para usuário:", user.id);
+          } catch (updateError) {
+            console.error("❌ Erro ao atualizar Firebase UID:", updateError);
+            // Continuamos mesmo com erro na atualização
+          }
         }
         
         return user;
@@ -169,15 +176,22 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
     console.log("⏳ Criando novo usuário no banco de dados para:", email);
     
     try {
-      // Criar usuário no banco de dados local
+      // Criar usuário no banco de dados local com os dados que temos
       const newUser = await storage.createUser({
         email,
         name: email.split('@')[0], // Nome provisório baseado no email
         password: 'senha_gerenciada_pelo_firebase', // Não usamos diretamente, pois o Firebase gerencia a autenticação
-        firebaseUid: firebaseUid // Pode ser vazio, será atualizado quando o usuário fizer login
+        firebaseUid: firebaseUid // Pode estar disponível do processo de checkout
       });
       
       console.log("✅ Usuário criado com sucesso no banco de dados! ID:", newUser.id);
+      
+      // Verificar se precisamos atualizar o Firebase UID após a criação
+      // (caso não tenhamos recebido o UID no momento da criação)
+      if (!firebaseUid && newUser.id) {
+        console.log("⚠️ Usuário criado sem Firebase UID. Será necessário atualizar posteriormente.");
+      }
+      
       return newUser;
     } catch (error: any) {
       console.error("❌ Erro ao criar novo usuário no banco:", error);
@@ -186,6 +200,19 @@ async function createOrUpdateUser(email: string, firebaseUid: string = '') {
         const retryUser = await storage.getUserByEmail(email);
         if (retryUser) {
           console.log("✅ Usuário encontrado após retry. ID:", retryUser.id);
+          
+          // Se temos um Firebase UID, vamos tentar atualizar mesmo neste caso
+          if (firebaseUid && (!retryUser.firebaseUid || retryUser.firebaseUid !== firebaseUid)) {
+            try {
+              const updatedUser = await storage.updateFirebaseUid(retryUser.id, firebaseUid);
+              console.log("✅ Firebase UID atualizado após condição de corrida:", updatedUser.id);
+              return updatedUser;
+            } catch (updateError) {
+              console.error("❌ Erro ao atualizar Firebase UID após retry:", updateError);
+              // Retornamos o usuário existente mesmo sem atualizar o UID
+            }
+          }
+          
           return retryUser;
         }
       }

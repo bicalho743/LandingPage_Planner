@@ -22,6 +22,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateFirebaseUid(userId: number, firebaseUid: string): Promise<User>;
   
   // Lead operations
   createLead(lead: LeadFormData): Promise<Lead>;
@@ -111,6 +112,55 @@ export class DatabaseStorage implements IStorage {
         })
         .returning();
       return user;
+    }
+  }
+  
+  async updateFirebaseUid(userId: number, firebaseUid: string): Promise<User> {
+    try {
+      console.log(`⏳ Atualizando Firebase UID para usuário ID: ${userId}`);
+      
+      // Usando consulta SQL direta para compatibilidade com Render
+      const query = `
+        UPDATE users 
+        SET firebase_uid = $1, updated_at = $2
+        WHERE id = $3
+        RETURNING *;
+      `;
+      const now = new Date();
+      const values = [firebaseUid, now, userId];
+      
+      const result = await pool.query(query, values);
+      
+      if (result.rows.length === 0) {
+        throw new Error(`Usuário com ID ${userId} não encontrado`);
+      }
+      
+      console.log(`✅ Firebase UID atualizado com sucesso para usuário ID: ${userId}`);
+      return result.rows[0];
+    } catch (error) {
+      console.error(`❌ Erro ao atualizar Firebase UID com SQL:`, error);
+      
+      // Fallback para o Drizzle
+      try {
+        const [user] = await db
+          .update(users)
+          .set({ 
+            firebaseUid, 
+            updatedAt: new Date()
+          })
+          .where(eq(users.id, userId))
+          .returning();
+          
+        if (!user) {
+          throw new Error(`Usuário com ID ${userId} não encontrado`);
+        }
+        
+        console.log(`✅ Firebase UID atualizado com sucesso via Drizzle para usuário ID: ${userId}`);
+        return user;
+      } catch (drizzleError) {
+        console.error(`❌ Falha ao atualizar Firebase UID via Drizzle:`, drizzleError);
+        throw drizzleError;
+      }
     }
   }
   
