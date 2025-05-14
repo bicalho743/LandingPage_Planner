@@ -47,7 +47,10 @@ router.post('/api/webhook-fixuser', async (req: Request, res: Response) => {
       
       if (!userEmail) {
         console.error('❌ Email não encontrado na sessão de checkout');
-        return res.status(200).send("Email não encontrado na sessão");
+        return res.status(200).json({
+        error: true,
+        message: "Email não encontrado na sessão"
+      });
       }
       
       console.log(`✅ Processando checkout para ${userEmail}`);
@@ -86,7 +89,10 @@ router.post('/api/webhook-fixuser', async (req: Request, res: Response) => {
           console.log(`✅ Usuário criado no banco: ${newUser.id}`);
         }
         
-        return res.status(200).send("Usuário já existente processado");
+        return res.status(200).json({
+        success: true,
+        message: "Usuário já existente processado"
+      });
       } catch (firebaseError: any) {
         // Usuário não existe no Firebase
         if (firebaseError.code === 'auth/user-not-found') {
@@ -175,26 +181,44 @@ router.post('/api/webhook-fixuser', async (req: Request, res: Response) => {
               console.error(`❌ Erro ao enviar email:`, emailError);
             }
             
-            return res.status(200).send(`Usuário ${userEmail} criado com sucesso no Firebase`);
+            return res.status(200).json({ 
+              success: true, 
+              message: `Usuário ${userEmail} criado com sucesso no Firebase`
+            });
           } catch (createError: any) {
             console.error(`❌ ERRO AO CRIAR USUÁRIO NO FIREBASE:`, createError);
-            return res.status(500).send(`Erro ao criar usuário no Firebase: ${createError.message}`);
+            return res.status(500).json({
+              error: true,
+              message: `Erro ao criar usuário no Firebase: ${createError.message}`
+            });
           }
         } else {
           console.error(`❌ Erro ao verificar usuário no Firebase:`, firebaseError);
-          return res.status(500).send(`Erro ao verificar usuário: ${firebaseError.message}`);
+          return res.status(500).json({
+            error: true,
+            message: `Erro ao verificar usuário: ${firebaseError.message}`
+          });
         }
       }
     } else if (req.body && req.body.type) {
       console.log(`⚠️ Evento não tratado: ${req.body.type}`);
-      return res.status(200).send(`Evento ${req.body.type} recebido, mas não processado`);
+      return res.status(200).json({ 
+        success: true, 
+        message: `Evento ${req.body.type} recebido, mas não processado` 
+      });
     } else {
       console.error('❌ Payload inválido');
-      return res.status(400).send('Payload inválido');
+      return res.status(400).json({ 
+        error: true, 
+        message: 'Payload inválido'
+      });
     }
   } catch (error: any) {
     console.error('❌ Erro ao processar webhook:', error);
-    return res.status(500).send(`Erro interno: ${error.message}`);
+    return res.status(500).json({
+      error: true,
+      message: `Erro interno: ${error.message}`
+    });
   }
 });
 
