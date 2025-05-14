@@ -1,9 +1,8 @@
 import {
   users,
   leads,
-  contacts,
   subscriptions,
-  tasks,
+  contacts,
   type User,
   type InsertUser,
   type Lead,
@@ -41,7 +40,6 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations usando consultas SQL diretas (para Render)
   async getUser(id: number): Promise<User | undefined> {
     try {
       // Usando consulta SQL direta para compatibilidade com Render
@@ -61,7 +59,7 @@ export class DatabaseStorage implements IStorage {
       const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
       return result.rows[0] || undefined;
     } catch (error) {
-      console.error("Erro ao buscar usuário por e-mail:", error);
+      console.error("Erro ao buscar usuário por email:", error);
       // Fallback para Drizzle
       const [user] = await db.select().from(users).where(eq(users.email, email));
       return user;
@@ -96,43 +94,108 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(insertUser: any): Promise<User> {
     try {
-      // Usando consulta SQL direta para compatibilidade com Render
-      const query = `
-        INSERT INTO users (email, name, firebase_uid, password, status, senha_hash, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING *;
-      `;
+      // Se o firebaseUid estiver vazio ou null, não incluiremos este campo na inserção
+      const hasFirebaseUid = insertUser.firebaseUid && insertUser.firebaseUid.trim() !== '';
+      
+      let query;
+      let values;
       const now = new Date();
       const status = insertUser.status || 'pendente';
       const senha_hash = insertUser.senha_hash || '';
       
-      const values = [
-        insertUser.email, 
-        insertUser.name, 
-        insertUser.firebaseUid, 
-        insertUser.password,
-        status,
-        senha_hash,
-        now,
-        now
-      ];
+      if (hasFirebaseUid) {
+        // Incluir o firebase_uid na inserção
+        query = `
+          INSERT INTO users (email, name, firebase_uid, password, status, senha_hash, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          RETURNING *;
+        `;
+        values = [
+          insertUser.email, 
+          insertUser.name, 
+          insertUser.firebaseUid, 
+          insertUser.password,
+          status,
+          senha_hash,
+          now,
+          now
+        ];
+      } else {
+        // Omitir o firebase_uid na inserção
+        query = `
+          INSERT INTO users (email, name, password, status, senha_hash, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          RETURNING *;
+        `;
+        values = [
+          insertUser.email, 
+          insertUser.name, 
+          insertUser.password,
+          status,
+          senha_hash,
+          now,
+          now
+        ];
+      }
       
       const result = await pool.query(query, values);
       return result.rows[0];
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao criar usuário com SQL:", error);
-      // Fallback para o Drizzle
-      const [user] = await db
-        .insert(users)
-        .values({
+      
+      // Verificar se é um erro de firebaseUid duplicado (vazio)
+      if (error.constraint === 'users_firebase_uid_unique') {
+        console.log("⚠️ Erro de restrição de unicidade no campo firebase_uid. Tentando inserir sem este campo...");
+        // Omitir o firebase_uid na inserção
+        const fallbackQuery = `
+          INSERT INTO users (email, name, password, status, senha_hash, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          RETURNING *;
+        `;
+        const fallbackValues = [
+          insertUser.email, 
+          insertUser.name, 
+          insertUser.password,
+          insertUser.status || 'pendente',
+          insertUser.senha_hash || '',
+          new Date(),
+          new Date()
+        ];
+        
+        try {
+          const fallbackResult = await pool.query(fallbackQuery, fallbackValues);
+          return fallbackResult.rows[0];
+        } catch (fallbackError) {
+          console.error("❌ Falha na tentativa alternativa de criar usuário:", fallbackError);
+          throw fallbackError;
+        }
+      }
+      
+      // Fallback para o Drizzle se não for um erro de campo firebase_uid
+      try {
+        // Evitar enviar firebaseUid vazio
+        const drizzleInsert = {
           ...insertUser,
           status: insertUser.status || 'pendente',
           senha_hash: insertUser.senha_hash || '',
           createdAt: new Date(),
           updatedAt: new Date()
-        })
-        .returning();
-      return user;
+        };
+        
+        // Remover firebaseUid se estiver vazio
+        if (!insertUser.firebaseUid || insertUser.firebaseUid.trim() === '') {
+          delete drizzleInsert.firebaseUid;
+        }
+        
+        const [user] = await db
+          .insert(users)
+          .values(drizzleInsert)
+          .returning();
+        return user;
+      } catch (drizzleError) {
+        console.error("❌ Falha no fallback do Drizzle:", drizzleError);
+        throw drizzleError;
+      }
     }
   }
   
@@ -159,13 +222,13 @@ export class DatabaseStorage implements IStorage {
       console.log(`✅ Firebase UID atualizado e status ativado para usuário ID: ${userId}`);
       return result.rows[0];
     } catch (error) {
-      console.error(`❌ Erro ao atualizar Firebase UID com SQL:`, error);
+      console.error(`❌ Falha ao atualizar Firebase UID:`, error);
       
-      // Fallback para o Drizzle
       try {
+        // Fallback para Drizzle
         const [user] = await db
           .update(users)
-          .set({ 
+          .set({
             firebaseUid,
             status: 'ativo' as any,
             updatedAt: new Date()
@@ -181,6 +244,79 @@ export class DatabaseStorage implements IStorage {
         return user;
       } catch (drizzleError) {
         console.error(`❌ Falha ao atualizar Firebase UID via Drizzle:`, drizzleError);
+        throw drizzleError;
+      }
+    }
+  }
+  
+  async updateUserStatus(userId: number | undefined, email: string | undefined, status: string): Promise<User | undefined> {
+    try {
+      let query;
+      let values;
+      
+      if (userId) {
+        query = `
+          UPDATE users 
+          SET status = $1, updated_at = $2
+          WHERE id = $3
+          RETURNING *;
+        `;
+        values = [status, new Date(), userId];
+      } else if (email) {
+        query = `
+          UPDATE users 
+          SET status = $1, updated_at = $2
+          WHERE email = $3
+          RETURNING *;
+        `;
+        values = [status, new Date(), email];
+      } else {
+        throw new Error('É necessário fornecer userId ou email para atualizar o status');
+      }
+      
+      const result = await pool.query(query, values);
+      
+      if (result.rows.length === 0) {
+        return undefined;
+      }
+      
+      return result.rows[0];
+    } catch (error) {
+      console.error('❌ Erro ao atualizar status do usuário:', error);
+      
+      try {
+        // Fallback para Drizzle
+        let updateResult;
+        
+        if (userId) {
+          updateResult = await db
+            .update(users)
+            .set({
+              status: status as any,
+              updatedAt: new Date()
+            })
+            .where(eq(users.id, userId))
+            .returning();
+        } else if (email) {
+          updateResult = await db
+            .update(users)
+            .set({
+              status: status as any,
+              updatedAt: new Date()
+            })
+            .where(eq(users.email, email))
+            .returning();
+        } else {
+          throw new Error('É necessário fornecer userId ou email para atualizar o status');
+        }
+        
+        if (updateResult.length === 0) {
+          return undefined;
+        }
+        
+        return updateResult[0];
+      } catch (drizzleError) {
+        console.error('❌ Erro ao atualizar status via Drizzle:', drizzleError);
         throw drizzleError;
       }
     }
@@ -207,8 +343,8 @@ export class DatabaseStorage implements IStorage {
         throw new Error("Timeout ao salvar lead no banco");
       }
     } catch (error) {
-      console.error("❌ Erro ao criar lead com SQL:", error);
-      // Fallback para o Drizzle
+      console.error("❌ Erro ao salvar lead:", error);
+      // Fallback para Drizzle
       const [lead] = await db
         .insert(leads)
         .values({
@@ -218,39 +354,39 @@ export class DatabaseStorage implements IStorage {
           convertedToUser: false
         })
         .returning();
+      
       return lead;
     }
   }
-
+  
   async getLeads(): Promise<Lead[]> {
     try {
-      // Usando consulta SQL direta para compatibilidade com Render
       const result = await pool.query('SELECT * FROM leads ORDER BY created_at DESC');
       return result.rows;
     } catch (error) {
-      console.error("Erro ao buscar leads com SQL:", error);
-      // Fallback para o Drizzle
-      return await db.select().from(leads).orderBy(leads.createdAt);
+      console.error("❌ Erro ao buscar leads:", error);
+      // Fallback para Drizzle
+      const allLeads = await db.select().from(leads).orderBy(leads.createdAt);
+      return allLeads;
     }
   }
-
+  
   async convertLeadToUser(email: string): Promise<void> {
     try {
-      // Usando consulta SQL direta para compatibilidade com Render
       await pool.query(
         'UPDATE leads SET converted_to_user = true WHERE email = $1',
         [email]
       );
     } catch (error) {
-      console.error("Erro ao converter lead para usuário com SQL:", error);
-      // Fallback para o Drizzle
+      console.error("❌ Erro ao converter lead para usuário:", error);
+      // Fallback para Drizzle
       await db
         .update(leads)
         .set({ convertedToUser: true })
         .where(eq(leads.email, email));
     }
   }
-
+  
   // Contact operations
   async createContact(contactData: ContactFormData): Promise<Contact> {
     try {
@@ -266,8 +402,8 @@ export class DatabaseStorage implements IStorage {
       const result = await pool.query(query, values);
       return result.rows[0];
     } catch (error) {
-      console.error("Erro ao criar contato com SQL:", error);
-      // Fallback para o Drizzle
+      console.error("❌ Erro ao salvar contato:", error);
+      // Fallback para Drizzle
       const [contact] = await db
         .insert(contacts)
         .values({
@@ -277,22 +413,23 @@ export class DatabaseStorage implements IStorage {
           createdAt: new Date()
         })
         .returning();
+      
       return contact;
     }
   }
-
+  
   async getContacts(): Promise<Contact[]> {
     try {
-      // Usando consulta SQL direta para compatibilidade com Render
       const result = await pool.query('SELECT * FROM contacts ORDER BY created_at DESC');
       return result.rows;
     } catch (error) {
-      console.error("Erro ao buscar contatos com SQL:", error);
-      // Fallback para o Drizzle
-      return await db.select().from(contacts).orderBy(contacts.createdAt);
+      console.error("❌ Erro ao buscar contatos:", error);
+      // Fallback para Drizzle
+      const allContacts = await db.select().from(contacts).orderBy(contacts.createdAt);
+      return allContacts;
     }
   }
-
+  
   // Subscription operations
   async createSubscription(userId: number, planType: string): Promise<any> {
     try {
@@ -308,158 +445,59 @@ export class DatabaseStorage implements IStorage {
       const result = await pool.query(query, values);
       return result.rows[0];
     } catch (error) {
-      console.error("Erro ao criar assinatura com SQL:", error);
-      // Fallback para o Drizzle
+      console.error("❌ Erro ao criar assinatura:", error);
+      // Fallback para Drizzle
       const [subscription] = await db
         .insert(subscriptions)
         .values({
           userId,
           planType: planType as any,
-          status: 'active',
+          status: 'active' as any,
           createdAt: new Date(),
           updatedAt: new Date()
         })
         .returning();
+      
       return subscription;
     }
   }
-
+  
   async getSubscriptionByUserId(userId: number): Promise<any> {
     try {
-      // Usando consulta SQL direta para compatibilidade com Render
-      const result = await pool.query('SELECT * FROM subscriptions WHERE user_id = $1', [userId]);
+      const result = await pool.query(
+        'SELECT * FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1',
+        [userId]
+      );
       return result.rows[0] || null;
     } catch (error) {
-      console.error("Erro ao buscar assinatura por ID do usuário com SQL:", error);
-      // Fallback para o Drizzle
+      console.error("❌ Erro ao buscar assinatura por userId:", error);
+      // Fallback para Drizzle
       const [subscription] = await db
         .select()
         .from(subscriptions)
-        .where(eq(subscriptions.userId, userId));
+        .where(eq(subscriptions.userId, userId))
+        .orderBy(subscriptions.createdAt);
       
-      return subscription;
+      return subscription || null;
     }
   }
   
   async updateSubscriptionStatus(userId: number, status: string): Promise<void> {
-    console.log(`⏳ Atualizando status da assinatura para usuário ${userId}: ${status}`);
-    
     try {
-      const now = new Date();
-      const query = `
-        UPDATE subscriptions 
-        SET status = $1, updated_at = $2
-        WHERE user_id = $3;
-      `;
-      
-      const result = await pool.query(query, [status, now, userId]);
-      
-      if (result.rowCount === 0) {
-        console.log(`⚠️ Nenhuma assinatura encontrada para usuário ${userId}. Tentando criar uma nova.`);
-        // Se não existe assinatura, podemos criar uma nova
-        try {
-          await this.createSubscription(userId, 'monthly'); // Valor padrão
-          console.log(`✅ Nova assinatura criada para usuário ${userId} com status ${status}`);
-          return;
-        } catch (createError) {
-          console.error(`❌ Erro ao criar nova assinatura:`, createError);
-          // Continua para o fallback
-        }
-      } else {
-        console.log(`✅ Status da assinatura atualizado via SQL para usuário ${userId}: ${status}`);
-        return;
-      }
+      await pool.query(
+        'UPDATE subscriptions SET status = $1, updated_at = $2 WHERE user_id = $3',
+        [status, new Date(), userId]
+      );
     } catch (error) {
-      console.error(`❌ Erro ao atualizar status da assinatura via SQL:`, error);
-      
-      try {
-        // Fallback para Drizzle
-        const result = await db
-          .update(subscriptions)
-          .set({ 
-            status: status as any,
-            updatedAt: new Date()
-          })
-          .where(eq(subscriptions.userId, userId));
-        
-        console.log(`✅ Status da assinatura atualizado via Drizzle para usuário ${userId}: ${status}`);
-      } catch (drizzleError) {
-        console.error(`❌ Falha ao atualizar status da assinatura via Drizzle:`, drizzleError);
-        throw drizzleError;
-      }
-    }
-  }
-  
-  async updateUserStatus(userId: number | undefined, email: string | undefined, status: string): Promise<User | undefined> {
-    try {
-      if (!userId && !email) {
-        console.error('❌ Nenhum identificador (userId ou email) fornecido para atualizar status');
-        return undefined;
-      }
-      
-      console.log(`⏳ Atualizando status do usuário para: ${status}`);
-      
-      let query;
-      let values;
-      
-      if (userId) {
-        query = `
-          UPDATE users 
-          SET status = $1, updated_at = $2
-          WHERE id = $3
-          RETURNING *;
-        `;
-        values = [status, new Date(), userId];
-      } else {
-        query = `
-          UPDATE users 
-          SET status = $1, updated_at = $2
-          WHERE email = $3
-          RETURNING *;
-        `;
-        values = [status, new Date(), email];
-      }
-      
-      const result = await pool.query(query, values);
-      
-      if (result.rows.length === 0) {
-        console.log('⚠️ Nenhum usuário encontrado para atualizar status');
-        return undefined;
-      }
-      
-      console.log(`✅ Status do usuário atualizado para "${status}" com sucesso!`);
-      return result.rows[0];
-    } catch (error) {
-      console.error("❌ Erro ao atualizar status do usuário:", error);
-      
-      // Fallback para o Drizzle
-      try {
-        if (userId) {
-          const [user] = await db
-            .update(users)
-            .set({ 
-              status: status as any,
-              updatedAt: new Date()
-            })
-            .where(eq(users.id, userId))
-            .returning();
-          return user;
-        } else if (email) {
-          const [user] = await db
-            .update(users)
-            .set({ 
-              status: status as any,
-              updatedAt: new Date()
-            })
-            .where(eq(users.email, email))
-            .returning();
-          return user;
-        }
-      } catch (drizzleError) {
-        console.error("❌ Erro no fallback Drizzle:", drizzleError);
-      }
-      
-      return undefined;
+      console.error("❌ Erro ao atualizar status da assinatura:", error);
+      // Fallback para Drizzle
+      await db
+        .update(subscriptions)
+        .set({ 
+          status: status as any,
+          updatedAt: new Date()
+        })
+        .where(eq(subscriptions.userId, userId));
     }
   }
 }
