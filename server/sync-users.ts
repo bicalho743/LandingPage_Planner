@@ -46,19 +46,19 @@ router.get('/api/admin/users', async (req: Request, res: Response) => {
 
 // Endpoint para sincronizar usuário com Firebase
 router.post('/api/sync-user', async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Email não fornecido' 
+    });
+  }
+  
+  console.log(`⏳ Iniciando sincronização de usuário: ${email}`);
+  logSyncAttempt(email);
+  
   try {
-    const { email, password } = req.body;
-    
-    if (!email) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email não fornecido' 
-      });
-    }
-    
-    console.log(`⏳ Iniciando sincronização de usuário: ${email}`);
-    logSyncAttempt(email);
-    
     // 1. Verificar se o usuário existe no banco de dados
     const dbUser = await storage.getUserByEmail(email);
     if (!dbUser) {
@@ -84,13 +84,13 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
         console.log(`✅ UID do Firebase atualizado no banco de dados`);
       }
       
-      userExists = true;
-      
       // Atualizar status do usuário se estiver pendente
       if (dbUser.status === 'pendente') {
         await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
         console.log(`✅ Status do usuário atualizado para ativo`);
       }
+      
+      userExists = true;
       
       // Apenas retornar um link de redefinição de senha
       try {
@@ -187,11 +187,15 @@ router.post('/api/sync-user', async (req: Request, res: Response) => {
         });
       }
     }
-  } catch (error) {
-    console.error('❌ Erro geral na sincronização de usuário:', error);
-    res.status(500).json({ 
+    
+  } catch (error: any) {
+    const errorMsg = `Erro interno ao sincronizar usuário: ${error.message || 'Erro desconhecido'}`;
+    logSyncAttempt(email || 'email_desconhecido', errorMsg);
+    console.error('❌ ' + errorMsg, error);
+    
+    return res.status(500).json({ 
       success: false, 
-      message: 'Erro interno do servidor' 
+      message: 'Erro interno do servidor: ' + (error.message || 'Erro desconhecido')
     });
   }
 });

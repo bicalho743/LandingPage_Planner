@@ -138,19 +138,28 @@ export default function Login() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Senha</Label>
-                <a 
-                  href="#" 
-                  className="text-sm text-blue-600 hover:underline"
-                  onClick={handlePasswordReset}
-                  aria-disabled={isResettingPassword}
-                >
-                  {isResettingPassword ? (
-                    <span className="flex items-center">
-                      <span className="animate-spin w-3 h-3 border-2 border-t-transparent rounded-full mr-1"></span>
-                      Enviando...
-                    </span>
-                  ) : "Esqueceu a senha?"}
-                </a>
+                <div className="flex space-x-3">
+                  <a 
+                    href="#" 
+                    className="text-sm text-blue-600 hover:underline"
+                    onClick={() => setLocation(`/sincronizar${email ? `?email=${encodeURIComponent(email)}` : ''}`)}
+                  >
+                    Problemas com login?
+                  </a>
+                  <a 
+                    href="#" 
+                    className="text-sm text-blue-600 hover:underline"
+                    onClick={handlePasswordReset}
+                    aria-disabled={isResettingPassword}
+                  >
+                    {isResettingPassword ? (
+                      <span className="flex items-center">
+                        <span className="animate-spin w-3 h-3 border-2 border-t-transparent rounded-full mr-1"></span>
+                        Enviando...
+                      </span>
+                    ) : "Esqueceu a senha?"}
+                  </a>
+                </div>
               </div>
               <Input
                 id="password"
