@@ -123,11 +123,24 @@ export default function Registro() {
         setLocation('/planos');
       }
     } catch (error: any) {
-      toast({
-        title: "Erro ao cadastrar",
-        description: error.message || "Não foi possível completar o cadastro. Tente novamente.",
-        variant: "destructive",
-      });
+      // Mensagem mais amigável para erro de usuário já cadastrado
+      if (error.message && error.message.includes("já está cadastrado")) {
+        toast({
+          title: "Email já cadastrado",
+          description: "Este email já possui uma conta. Por favor, faça login.",
+          variant: "destructive",
+        });
+        // Adicionar um pequeno atraso para mostrar o toast antes de redirecionar
+        setTimeout(() => {
+          setLocation('/login');
+        }, 2500);
+      } else {
+        toast({
+          title: "Erro ao cadastrar",
+          description: error.message || "Não foi possível completar o cadastro. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

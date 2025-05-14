@@ -83,7 +83,7 @@ router.post('/api/register', async (req: Request, res: Response) => {
       console.log(`⚠️ Usuário já existe no banco de dados: ${existingUserInDB.id}`);
       return res.status(400).json({
         success: false,
-        message: "Este email já está cadastrado. Tente fazer login."
+        message: "Este email já está cadastrado. Por favor, use 'Já possui uma conta? Faça login' abaixo do formulário."
       });
     }
 

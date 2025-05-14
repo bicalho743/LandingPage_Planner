@@ -521,9 +521,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           await Promise.race([dbPromise, timeoutPromise]);
           console.log(`✅ Lead salvo no banco de dados: ${email}`);
-        } catch (dbError) {
-          console.error("❌ Erro ao salvar lead no banco de dados:", dbError);
-          // Já temos o lead no Brevo, então não é crítico se falhar no banco
+        } catch (dbError: any) {
+          // Verificar se é erro de duplicação de chave (lead já existe)
+          if (dbError.code === '23505' || 
+              (dbError.detail && dbError.detail.includes('already exists')) ||
+              (dbError.message && dbError.message.includes('duplicate key'))) {
+            console.log(`⚠️ Lead já existe no banco de dados: ${email}`);
+            // Este não é realmente um erro, já temos o lead capturado
+          } else {
+            console.error("❌ Erro ao salvar lead no banco de dados:", dbError);
+            // Já temos o lead no Brevo, então não é crítico se falhar no banco
+          }
         }
         
         console.log(`✅ Processamento de lead concluído: ${name} (${email})`);
