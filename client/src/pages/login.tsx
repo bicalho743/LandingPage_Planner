@@ -31,9 +31,35 @@ export default function Login() {
       setLocation("/dashboard");
     } catch (error: any) {
       console.error("Erro ao fazer login:", error);
+      let errorMessage = error.message || "Não foi possível fazer login. Verifique suas credenciais.";
+      let needsSync = false;
+      
+      // Verificar se é erro de usuário não encontrado ou credenciais inválidas
+      if (error.code === 'auth/user-not-found' || 
+          error.code === 'auth/wrong-password' ||
+          error.message?.includes('user-not-found') ||
+          error.message?.includes('wrong-password')) {
+        needsSync = true;
+        errorMessage = "Usuário não encontrado ou senha incorreta. Talvez seja necessário sincronizar sua conta.";
+      }
+      
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível fazer login. Verifique suas credenciais.",
+        description: (
+          <div>
+            {errorMessage}
+            {needsSync && (
+              <div className="mt-2">
+                <button 
+                  className="text-blue-600 hover:underline text-sm font-medium"
+                  onClick={() => setLocation("/sincronizar" + (email ? `?email=${encodeURIComponent(email)}` : ''))}
+                >
+                  Clique aqui para sincronizar sua conta →
+                </button>
+              </div>
+            )}
+          </div>
+        ),
         variant: "destructive",
       });
     } finally {
@@ -150,7 +176,7 @@ export default function Login() {
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
             <p className="text-sm text-gray-600">
               Ainda não tem uma conta?{" "}
               <a 
@@ -162,6 +188,20 @@ export default function Login() {
                 }}
               >
                 Assine agora
+              </a>
+            </p>
+            
+            <p className="text-sm text-gray-600">
+              Problemas para acessar sua conta?{" "}
+              <a 
+                href="#" 
+                className="text-blue-600 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setLocation("/sincronizar" + (email ? `?email=${encodeURIComponent(email)}` : ''));
+                }}
+              >
+                Clique aqui para sincronizar
               </a>
             </p>
           </div>

@@ -39,6 +39,7 @@ function Router() {
         <Route path="/sucesso" component={Sucesso}/>
         <Route path="/cancelado" component={Cancelado}/>
         <Route path="/login" component={Login}/>
+        <Route path="/sincronizar" component={Sincronizar}/>
         <Route path="/dashboard">
           <ProtectedRoute>
             <Dashboard />
