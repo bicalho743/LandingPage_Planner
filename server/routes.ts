@@ -446,49 +446,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Endpoint para captura de leads
+  // Endpoint para captura de leads - Otimizado para ser não-bloqueante
   app.post("/api/leads", express.json(), async (req: Request, res: Response) => {
-    try {
-      const { name, email } = req.body;
+    const { name, email } = req.body;
 
-      if (!name || !email) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Nome e e-mail são obrigatórios." 
-        });
-      }
-
-      // Adicionar o lead à lista do Brevo
-      await addContactToBrevo(name, email);
-      
-      // Salvar o lead no banco de dados local
-      await storage.createLead({
-        name,
-        email
-      });
-
-      console.log(`✅ Lead capturado com sucesso: ${name} (${email})`);
-      
-      return res.status(200).json({ 
-        success: true, 
-        message: "Lead capturado com sucesso!" 
-      });
-    } catch (error: any) {
-      console.error("❌ Erro ao capturar lead:", error);
-      return res.status(500).json({ 
+    // Validação básica rápida
+    if (!name || !email) {
+      return res.status(400).json({ 
         success: false, 
-        message: "Erro ao processar sua solicitação." 
+        message: "Nome e e-mail são obrigatórios." 
       });
     }
+
+    // Verificação rápida de formato de email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Formato de e-mail inválido."
+      });
+    }
+
+    // Retorna resposta imediatamente para não bloquear o cliente
+    res.status(200).json({ 
+      success: true, 
+      message: "Lead recebido com sucesso!" 
+    });
+
+    // Processa o lead em background
+    (async () => {
+      try {
+        // Primeiro tentamos adicionar ao Brevo, que é mais rápido e confiável
+        try {
+          await addContactToBrevo(name, email);
+          console.log(`✅ Lead adicionado ao Brevo: ${email}`);
+        } catch (brevoError) {
+          console.error("❌ Erro ao adicionar lead ao Brevo:", brevoError);
+          // Continua mesmo com erro no Brevo
+        }
+        
+        // Depois tentamos salvar no banco de dados com timeout
+        try {
+          // Criamos uma promise com timeout para evitar bloqueio
+          const dbPromise = storage.createLead({ name, email });
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Timeout ao salvar lead no banco")), 5000)
+          );
+          
+          await Promise.race([dbPromise, timeoutPromise]);
+          console.log(`✅ Lead salvo no banco de dados: ${email}`);
+        } catch (dbError) {
+          console.error("❌ Erro ao salvar lead no banco de dados:", dbError);
+          // Já temos o lead no Brevo, então não é crítico se falhar no banco
+        }
+        
+        console.log(`✅ Processamento de lead concluído: ${name} (${email})`);
+      } catch (error) {
+        console.error("❌ Erro geral ao processar lead em background:", error);
+      }
+    })().catch(error => {
+      console.error("❌ Erro não tratado no processamento de lead:", error);
+    });
   });
 
-  // Endpoint para iniciar o processo de checkout
+  // Endpoint para iniciar o processo de checkout - Otimizado para performance
   app.post("/api/checkout", express.json(), async (req: Request, res: Response) => {
     try {
-      console.log("Corpo da requisição recebido:", req.body);
-      const { plan, email } = req.body;
+      console.log("⏳ Iniciando processo de checkout...");
+      console.log("📝 Dados recebidos:", req.body);
       
+      const { plan, email } = req.body;
+      const startTime = Date.now();
+      
+      // Validação rápida dos parâmetros
       if (!plan || !['mensal', 'anual', 'vitalicio'].includes(plan)) {
+        console.log("❌ Plano inválido:", plan);
         return res.status(400).json({ 
           success: false, 
           message: "Plano inválido ou não especificado." 
@@ -496,6 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!email) {
+        console.log("❌ Email não especificado");
         return res.status(400).json({
           success: false,
           message: "E-mail não especificado."
@@ -504,36 +536,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Verificar se é um e-mail válido
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        console.log("❌ Email inválido:", email);
         return res.status(400).json({
           success: false,
           message: "E-mail inválido."
         });
       }
 
+      // Obter o ID do preço Stripe para o plano
+      console.log("⏳ Obtendo ID do preço para o plano:", plan);
       const priceId = getPriceId(plan);
       
       if (!priceId) {
-        console.error(`ID de preço não encontrado para o plano: ${plan}`);
+        console.error(`❌ ID de preço não encontrado para o plano: ${plan}`);
         return res.status(500).json({
           success: false,
           message: "Erro na configuração do plano. Por favor, contate o suporte."
         });
       }
+      console.log("✅ ID do preço obtido:", priceId);
 
-      // Adicionar o e-mail à lista do Brevo
-      try {
-        await addContactToBrevo("Cliente potencial", email);
-        console.log(`✅ Email adicionado ao Brevo antes do checkout: ${email}`);
-      } catch (error) {
-        console.error("❌ Erro ao adicionar e-mail ao Brevo:", error);
-        // Continuamos mesmo com erro no Brevo
-      }
+      // Adicionar o e-mail à lista do Brevo em background
+      // Não esperamos isso terminar para não bloquear o checkout
+      (async () => {
+        try {
+          await addContactToBrevo("Cliente potencial", email);
+          console.log(`✅ Email adicionado ao Brevo antes do checkout: ${email}`);
+        } catch (error) {
+          console.error("❌ Erro ao adicionar e-mail ao Brevo:", error);
+        }
+      })();
 
       // Configurando o modo de pagamento com base no tipo de plano
       const mode = plan === 'vitalicio' ? 'payment' : 'subscription';
+      console.log("📊 Modo de pagamento:", mode);
       
-      // Criando a sessão de checkout
-      const session = await stripe.checkout.sessions.create({
+      // Montando URLs de sucesso e cancelamento
+      const successUrl = `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}&email=${encodeURIComponent(email)}`;
+      const cancelUrl = `${req.protocol}://${req.headers.host}/cancelado`;
+      
+      console.log("⏳ Criando sessão de checkout no Stripe...");
+      
+      // Criando a sessão de checkout com um timeout para evitar bloqueios longos
+      const sessionPromise = stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         customer_email: email, // Garantindo que o e-mail é capturado
         line_items: [
@@ -546,23 +591,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscription_data: mode === 'subscription' ? {
           trial_period_days: 7, // Período de teste gratuito para planos de assinatura
         } : undefined,
-        success_url: `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}&email=${encodeURIComponent(email)}`,
-        cancel_url: `${req.protocol}://${req.headers.host}/cancelado`,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
         metadata: {
           plan_type: plan,
           customer_email: email
         }
       });
-
+      
+      // Adicionamos um timeout para não bloquear o servidor por muito tempo
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Timeout ao criar sessão de checkout")), 10000);
+      });
+      
+      const session = await Promise.race([sessionPromise, timeoutPromise]) as Stripe.Checkout.Session;
+      
+      console.log("✅ Sessão de checkout criada com sucesso!");
+      console.log("⏱️ Tempo total:", Date.now() - startTime, "ms");
+      
+      // Verificação de segurança
+      if (!session.url) {
+        console.error("❌ URL de checkout não gerada pelo Stripe");
+        return res.status(500).json({
+          success: false,
+          message: "Erro ao gerar URL de checkout. Tente novamente."
+        });
+      }
+      
+      console.log("🔗 URL de checkout:", session.url);
+      
+      // Retornar a URL de checkout para o cliente
       res.json({
         success: true,
         url: session.url
       });
     } catch (error: any) {
-      console.error("Erro ao criar sessão de checkout:", error);
+      console.error("❌ Erro ao criar sessão de checkout:", error);
+      
+      // Mensagem de erro mais amigável
+      let errorMessage = "Falha ao processar o checkout. Tente novamente.";
+      
+      if (error.type && error.type.startsWith('Stripe')) {
+        console.error("❌ Erro do Stripe:", error.type);
+        
+        // Erros específicos do Stripe para mensagens mais úteis
+        if (error.type === 'StripeCardError') {
+          errorMessage = "Erro no processamento do cartão. Verifique os dados e tente novamente.";
+        } else if (error.type === 'StripeRateLimitError') {
+          errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+        }
+      }
+      
       res.status(500).json({
         success: false,
-        message: `Falha ao processar o checkout: ${error.message}`
+        message: errorMessage
       });
     }
   });
