@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import registerRouter from "./register";
 import stripeWebhookRouter from "./stripe-webhook";
+import syncUsersRouter from "./sync-users";
 
 const app = express();
 
@@ -18,7 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 // Registrando os novos routers
 app.use(registerRouter);
 app.use(stripeWebhookRouter);
-console.log("✅ Routers de registro e webhook do Stripe adicionados");
+app.use(syncUsersRouter);
+console.log("✅ Routers de registro, webhook do Stripe, e sincronização de usuários adicionados");
 
 app.use((req, res, next) => {
   const start = Date.now();

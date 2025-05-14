@@ -18,6 +18,7 @@ const Cancelado = lazy(() => import("@/pages/cancelado"));
 const Login = lazy(() => import("@/pages/login"));
 const Dashboard = lazy(() => import("@/pages/dashboard"));
 const Registro = lazy(() => import("@/pages/registro"));
+const Sincronizar = lazy(() => import("@/pages/sincronizar"));
 
 // Componente de loading para Suspense
 const PageLoading = () => (
