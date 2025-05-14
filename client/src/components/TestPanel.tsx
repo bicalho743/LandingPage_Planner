@@ -78,6 +78,19 @@ export default function TestPanel() {
             />
           </div>
           
+          <div className="flex items-center space-x-2 mt-4">
+            <input
+              type="checkbox"
+              id="use-trial"
+              checked={useTrial}
+              onChange={(e) => setUseTrial(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label htmlFor="use-trial" className="text-sm font-medium text-gray-700">
+              Ativar período de trial (7 dias)
+            </label>
+          </div>
+          
           {response && (
             <div className="mt-4 p-4 border rounded-md bg-gray-50">
               <h3 className="font-medium mb-2">Resposta:</h3>

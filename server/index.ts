@@ -3,6 +3,8 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import registerRouter from "./register";
 import stripeWebhookRouter from "./stripe-webhook";
+import stripeWebhookFixRouter from "./stripe-webhook-fix";
+import webhookDiretoRouter from "./webhook-direto";
 import syncUsersRouter from "./sync-users";
 import migrationsRouter from "./migrations";
 import trialRouter from "./trial";
@@ -14,6 +16,8 @@ const app = express();
 // IMPORTANTE: Este middleware deve vir ANTES de express.json()
 console.log("✅ Configurando middleware raw para Stripe webhook");
 app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
+app.use("/api/stripe-webhook", express.raw({ type: "application/json" }));
+app.use("/api/stripe-webhook-new", express.raw({ type: "application/json" }));
 
 // Outros middlewares para parsing de JSON
 app.use(express.json());
@@ -22,10 +26,12 @@ app.use(express.urlencoded({ extended: false }));
 // Registrando os novos routers
 app.use(registerRouter);
 app.use(stripeWebhookRouter);
+app.use(stripeWebhookFixRouter); // Novo webhook com correções
+app.use(webhookDiretoRouter); // Webhook direto sem verificação
 app.use(syncUsersRouter);
 app.use(migrationsRouter);
 app.use(trialRouter);
-console.log("✅ Routers de registro, webhook do Stripe, sincronização de usuários, trial e migração adicionados");
+console.log("✅ Routers de registro, webhooks do Stripe, sincronização de usuários, trial e migração adicionados");
 
 app.use((req, res, next) => {
   const start = Date.now();

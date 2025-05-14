@@ -141,7 +141,8 @@ router.post('/api/trial-checkout', express.json(), async (req: Request, res: Res
         planType: planType,
         senha: encodedPassword,
         trial: 'true' // Marcador para indicar que é uma sessão com trial
-      }
+      },
+      allow_promotion_codes: true
     });
     
     console.log(`✅ Sessão de checkout com trial criada: ${session.id}`);

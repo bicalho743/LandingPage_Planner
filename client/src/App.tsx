@@ -20,6 +20,8 @@ const Dashboard = lazy(() => import("@/pages/dashboard"));
 const Registro = lazy(() => import("@/pages/registro"));
 const Sincronizar = lazy(() => import("@/pages/sincronizar"));
 const Teste = lazy(() => import("@/pages/teste"));
+const TesteWebhook = lazy(() => import("@/pages/teste-webhook"));
+const WebhookManual = lazy(() => import("@/pages/webhook-manual"));
 
 // Componente de loading para Suspense
 const PageLoading = () => (
@@ -42,6 +44,8 @@ function Router() {
         <Route path="/login" component={Login}/>
         <Route path="/sincronizar" component={Sincronizar}/>
         <Route path="/teste" component={Teste}/>
+        <Route path="/teste-webhook" component={TesteWebhook}/>
+        <Route path="/webhook-manual" component={WebhookManual}/>
         <Route path="/dashboard">
           <ProtectedRoute>
             <Dashboard />
