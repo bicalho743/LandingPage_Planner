@@ -32,6 +32,35 @@ if ! node verificar-env.js; then
   fi
 fi
 
+# Script para executar migrações seguras de produção
+echo "⏳ Executando migrações seguras do banco de dados para produção..."
+cat > migrate-production.js << EOF
+import { runProductionMigration } from './dist/production-migration.js';
+
+async function main() {
+  const success = await runProductionMigration();
+  if (!success) {
+    console.error('❌ Falha ao executar migrações de produção');
+    process.exit(1);
+  }
+}
+
+main().catch(err => {
+  console.error('❌ Erro:', err);
+  process.exit(1);
+});
+EOF
+
+NODE_ENV=production node --input-type=module migrate-production.js || {
+  echo "⚠️ Houve um problema na migração do banco de dados."
+  echo "   Confirmar que deseja continuar? (s/N)"
+  read resp
+  if [ "$resp" != "s" ] && [ "$resp" != "S" ]; then
+    echo "Operação cancelada."
+    exit 1
+  fi
+}
+
 # Inicia o servidor de produção
 echo "🚀 Iniciando o servidor em modo de produção..."
 node dist/index.js

@@ -40,6 +40,9 @@ vite build
 echo "⏳ Compilando o backend..."
 esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
+echo "⏳ Compilando script de migração de produção..."
+esbuild server/production-migration.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
 # Verificar se a compilação foi bem-sucedida
 if [ ! -f "dist/index.js" ]; then
   echo "❌ Erro: Compilação do backend falhou!"
@@ -51,13 +54,19 @@ if [ ! -f "dist/public/index.html" ]; then
   exit 1
 fi
 
+if [ ! -f "dist/production-migration.js" ]; then
+  echo "❌ Erro: Compilação do script de migração falhou!"
+  exit 1
+fi
+
 echo "✅ Compilação concluída com sucesso!"
 
-# Executar migrações do banco de dados, se necessário
-echo "⏳ Executando migrações do banco de dados..."
-npm run db:push
+# Aviso sobre migrações do banco de dados
+echo "⚠️ IMPORTANTE: Migrações de banco de dados serão executadas na inicialização"
+echo "   com o script start-production.sh de forma segura, sem perda de dados."
 
-echo "🚀 Iniciando o servidor em modo de produção..."
-
-# Iniciar o servidor
-NODE_ENV=production node dist/index.js
+echo "✅ Deploy concluído com sucesso!"
+echo ""
+echo "Para iniciar o servidor em modo de produção, execute:"
+echo "   ./start-production.sh"
+echo ""

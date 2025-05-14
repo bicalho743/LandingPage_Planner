@@ -18,17 +18,21 @@ export async function runProductionMigration() {
       WHERE table_name = 'users' AND column_name = 'status'
     `);
     
-    if (result.length > 0 && result[0].data_type === 'text') {
+    const rows = result.rows as Array<{ data_type: string }>;
+    
+    if (rows && rows.length > 0 && rows[0].data_type === 'text') {
       console.log('⚠️ Coluna status encontrada como tipo text, convertendo para enum...');
       
       // Primeiro, verificamos se os valores existentes são válidos
-      const invalidValues = await db.execute(sql`
+      const invalidValuesResult = await db.execute(sql`
         SELECT DISTINCT status 
         FROM users 
         WHERE status NOT IN ('pendente', 'ativo', 'bloqueado')
       `);
       
-      if (invalidValues.length > 0) {
+      const invalidValues = invalidValuesResult.rows as Array<{ status: string }>;
+      
+      if (invalidValues && invalidValues.length > 0) {
         console.log('❌ Valores inválidos encontrados na coluna status:', invalidValues);
         console.log('⚠️ Convertendo valores inválidos para "pendente"...');
         

@@ -88,7 +88,16 @@ Após o deploy, é necessário configurar o webhook do Stripe para apontar para 
 1. Obtenha a URL do seu aplicativo (por exemplo, `https://planner-pro.utilizador.repl.co`)
 2. Configure o webhook no Stripe conforme detalhado no arquivo `STRIPE_WEBHOOK.md`
 3. Adicione a URL completa do webhook: `https://planner-pro.utilizador.repl.co/api/stripe-webhook`
-4. Teste o webhook usando a ferramenta de teste do Stripe
+4. Obtenha a "Signing Secret" fornecida pelo Stripe e adicione-a como variável de ambiente `STRIPE_WEBHOOK_SECRET`
+5. Execute o script auxiliar para verificar a configuração:
+
+```bash
+chmod +x configure-stripe-webhook-production.sh
+./configure-stripe-webhook-production.sh
+```
+
+6. Se houver problemas, o script fornecerá instruções detalhadas para solucionar
+7. Após configurar, teste o webhook usando a ferramenta de teste do Stripe
 
 ## Lista de Verificação Final para Produção
 
@@ -135,9 +144,16 @@ O Replit pode colocar seu aplicativo em "sleep" após períodos de inatividade:
 Se os webhooks do Stripe não funcionarem em produção:
 
 1. Verifique se a URL está correta no painel do Stripe
-2. Confirme que a chave de assinatura do webhook está configurada
-3. Verifique os logs para erros de autenticação do webhook
-4. Teste com a ferramenta "Send test webhook" do Stripe
+2. Confirme que a chave de assinatura do webhook (`STRIPE_WEBHOOK_SECRET`) está configurada corretamente
+3. Verifique os logs para erros de autenticação do webhook (erros como "No signatures found" ou "Signature verification failed")
+4. Execute o script auxiliar para diagnosticar problemas:
+   ```bash
+   ./configure-stripe-webhook-production.sh
+   ```
+5. Verifique se a rota `/api/stripe-webhook` está configurada com o middleware `express.raw` em `server/index.ts`
+6. Teste com a ferramenta "Send test webhook" do Stripe e observe os logs em tempo real
+7. Certifique-se de que o servidor não está processando o corpo da requisição antes do webhook (middleware order issue)
+8. Confirme que você está usando a versão correta da API do Stripe (versão atual: `2023-10-16`)
 
 ## Suporte e Manutenção
 

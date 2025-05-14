@@ -42,6 +42,17 @@ Use esta lista para verificar se todas as etapas necessárias para o ambiente de
 - [ ] Login funciona corretamente com usuários recém-criados
 - [ ] Sistema de assinaturas e trial funciona conforme esperado
 
+## Testes de Integração
+
+- [ ] Executado script completo de testes de integração (`./run-integration-tests.sh`)
+- [ ] Verificada integração com banco de dados PostgreSQL
+- [ ] Verificada integração com Stripe (API e Webhooks)
+- [ ] Verificada integração com Firebase Authentication
+- [ ] Verificada integração com Brevo para emails
+- [ ] Testado fluxo completo de registro, pagamento e acesso
+- [ ] Testado fluxo de trial com período de 7 dias
+- [ ] Documentados os resultados dos testes
+
 ## Segurança
 
 - [ ] Não há senhas ou chaves API hard-coded no código

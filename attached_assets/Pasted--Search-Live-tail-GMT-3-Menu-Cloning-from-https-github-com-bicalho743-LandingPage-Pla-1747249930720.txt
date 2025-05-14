@@ -1,0 +1,116 @@
+
+Search
+
+Live tail
+GMT-3
+
+Menu
+==> Cloning from https://github.com/bicalho743/LandingPage_Planner
+==> Checking out commit 1c8e996efd40c742a542445ec99d0df680fb0b45 in branch main
+==> Using Node.js version 22.14.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Using Bun version 1.1.0 (default)
+==> Docs on specifying a bun version: https://render.com/docs/bun-version
+==> Running build command 'npm install; npm run build'...
+added 714 packages, and audited 715 packages in 19s
+84 packages are looking for funding
+  run `npm fund` for details
+7 moderate severity vulnerabilities
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+vite v5.4.14 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1742 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                      0.63 kB │ gzip:   0.39 kB
+../dist/public/assets/index-0uVAkDnX.css      71.08 kB │ gzip:  12.32 kB
+../dist/public/assets/checkout-BxKtlpoC.js     2.61 kB │ gzip:   1.15 kB
+../dist/public/assets/cancelado-BF-3B0fm.js    3.66 kB │ gzip:   1.48 kB
+../dist/public/assets/sucesso-5sFJVlD-.js      4.45 kB │ gzip:   1.85 kB
+../dist/public/assets/login-B8bJQyek.js        4.69 kB │ gzip:   1.89 kB
+../dist/public/assets/dashboard-CREV5F2g.js    5.79 kB │ gzip:   1.99 kB
+../dist/public/assets/index-DVL_uw55.js      535.26 kB │ gzip: 151.41 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.16s
+  dist/index.js  40.9kb
+⚡ Done in 7ms
+==> Uploading build...
+==> Uploaded in 11.2s. Compression took 6.0s
+==> Build successful 🎉
+==> Deploying...
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+Tentando conectar ao banco de dados PostgreSQL no Render...
+⏳ Testando conexão com o PostgreSQL no Render...
+Erro ao inicializar Firebase Admin SDK: FirebaseAppError: Invalid Firebase app options passed as the first argument to initializeApp() for the app named "[DEFAULT]". The "credential" property must be an object which implements the Credential interface.
+    at new FirebaseApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/firebase-app.js:140:19)
+    at AppStore.initializeApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/lifecycle.js:57:21)
+    at FirebaseNamespaceInternals.initializeApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/firebase-namespace.js:43:35)
+    at FirebaseNamespace.initializeApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/firebase-namespace.js:246:30)
+    at initializeFirebaseAdmin (file:///opt/render/project/src/dist/index.js:362:13)
+    at file:///opt/render/project/src/dist/index.js:370:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5) {
+  errorInfo: {
+    code: 'app/invalid-app-options',
+    message: 'Invalid Firebase app options passed as the first argument to initializeApp() for the app named "[DEFAULT]". The "credential" property must be an object which implements the Credential interface.'
+  },
+  codePrefix: 'app'
+}
+⚠️ BREVO_API_KEY não configurada. A integração com Brevo estará desativada.
+file:///opt/render/project/src/dist/index.js:475
+  throw new Error("Missing required Stripe secret: STRIPE_SECRET_KEY");
+        ^
+Error: Missing required Stripe secret: STRIPE_SECRET_KEY
+    at file:///opt/render/project/src/dist/index.js:475:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+Node.js v22.14.0
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+Tentando conectar ao banco de dados PostgreSQL no Render...
+⏳ Testando conexão com o PostgreSQL no Render...
+Erro ao inicializar Firebase Admin SDK: FirebaseAppError: Invalid Firebase app options passed as the first argument to initializeApp() for the app named "[DEFAULT]". The "credential" property must be an object which implements the Credential interface.
+    at new FirebaseApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/firebase-app.js:140:19)
+    at AppStore.initializeApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/lifecycle.js:57:21)
+    at FirebaseNamespaceInternals.initializeApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/firebase-namespace.js:43:35)
+    at FirebaseNamespace.initializeApp (/opt/render/project/src/node_modules/firebase-admin/lib/app/firebase-namespace.js:246:30)
+    at initializeFirebaseAdmin (file:///opt/render/project/src/dist/index.js:362:13)
+    at file:///opt/render/project/src/dist/index.js:370:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5) {
+  errorInfo: {
+    code: 'app/invalid-app-options',
+    message: 'Invalid Firebase app options passed as the first argument to initializeApp() for the app named "[DEFAULT]". The "credential" property must be an object which implements the Credential interface.'
+  },
+  codePrefix: 'app'
+}
+⚠️ BREVO_API_KEY não configurada. A integração com Brevo estará desativada.
+file:///opt/render/project/src/dist/index.js:475
+  throw new Error("Missing required Stripe secret: STRIPE_SECRET_KEY");
+        ^
+Error: Missing required Stripe secret: STRIPE_SECRET_KEY
+    at file:///opt/render/project/src/dist/index.js:475:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+Node.js v22.14.0
