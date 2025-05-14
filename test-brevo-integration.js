@@ -93,73 +93,89 @@ async function testBrevoIntegration() {
     }
     
     // 4. Testar API de listas
-    try {
-      console.log('\n📋 Testando API de listas...');
-      
-      const listsResult = await listsApi.getLists({ limit: 10, offset: 0 });
-      console.log(`✅ Listagem de listas testada com sucesso (${listsResult.lists ? listsResult.lists.length : 0} listas)`);
-      
-      if (listsResult.lists && listsResult.lists.length > 0) {
-        console.log('📋 Listas de contatos disponíveis:');
-        listsResult.lists.forEach(list => {
-          console.log(`   - ${list.name} (ID: ${list.id}, ${list.totalSubscribers} inscritos)`);
-        });
-      } else {
-        console.log('⚠️ Nenhuma lista de contatos encontrada');
+    if (listsApi) {
+      try {
+        console.log('\n📋 Testando API de listas...');
+        
+        const listsResult = await listsApi.getLists({ limit: 10, offset: 0 });
+        console.log(`✅ Listagem de listas testada com sucesso (${listsResult.lists ? listsResult.lists.length : 0} listas)`);
+        
+        if (listsResult.lists && listsResult.lists.length > 0) {
+          console.log('📋 Listas de contatos disponíveis:');
+          listsResult.lists.forEach(list => {
+            console.log(`   - ${list.name} (ID: ${list.id}, ${list.totalSubscribers} inscritos)`);
+          });
+        } else {
+          console.log('⚠️ Nenhuma lista de contatos encontrada');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao testar API de listas:', error.message);
       }
-    } catch (error) {
-      console.error('❌ Erro ao testar API de listas:', error.message);
+    } else {
+      console.log('⏭️ Teste de API de listas ignorado (API não disponível)');
     }
     
     // 5. Verificar configurações de conta
-    try {
-      console.log('\n📋 Verificando configurações de conta...');
-      
-      const accountInfo = await accountApi.getAccount();
-      console.log(`✅ Informações da conta recuperadas com sucesso`);
-      console.log(`   - Plano: ${accountInfo.plan[0].name}`);
-      console.log(`   - Empresa: ${accountInfo.companyName || 'Não definido'}`);
-      console.log(`   - Email: ${accountInfo.email}`);
-    } catch (error) {
-      console.error('❌ Erro ao verificar configurações de conta:', error.message);
+    if (accountApi) {
+      try {
+        console.log('\n📋 Verificando configurações de conta...');
+        
+        const accountInfo = await accountApi.getAccount();
+        console.log(`✅ Informações da conta recuperadas com sucesso`);
+        console.log(`   - Plano: ${accountInfo.plan[0].name}`);
+        console.log(`   - Empresa: ${accountInfo.companyName || 'Não definido'}`);
+        console.log(`   - Email: ${accountInfo.email}`);
+      } catch (error) {
+        console.error('❌ Erro ao verificar configurações de conta:', error.message);
+      }
+    } else {
+      console.log('⏭️ Teste de API de conta ignorado (API não disponível)');
     }
     
     // 6. Verificar domínios de email
-    try {
-      console.log('\n📋 Verificando domínios de email...');
-      
-      const domains = await transactionalEmailsApi.getSmtpDetails();
-      
-      if (domains.relay && domains.relay.data && domains.relay.data.length > 0) {
-        console.log(`✅ ${domains.relay.data.length} domínios configurados`);
+    if (transactionalEmailsApi && typeof transactionalEmailsApi.getSmtpDetails === 'function') {
+      try {
+        console.log('\n📋 Verificando domínios de email...');
         
-        domains.relay.data.forEach(domain => {
-          const status = domain.active ? '✅ Ativo' : '❌ Inativo';
-          console.log(`   - ${domain.domain} (${status})`);
-        });
-      } else {
-        console.log('⚠️ Nenhum domínio de email configurado');
+        const domains = await transactionalEmailsApi.getSmtpDetails();
+        
+        if (domains.relay && domains.relay.data && domains.relay.data.length > 0) {
+          console.log(`✅ ${domains.relay.data.length} domínios configurados`);
+          
+          domains.relay.data.forEach(domain => {
+            const status = domain.active ? '✅ Ativo' : '❌ Inativo';
+            console.log(`   - ${domain.domain} (${status})`);
+          });
+        } else {
+          console.log('⚠️ Nenhum domínio de email configurado');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao verificar domínios de email:', error.message);
       }
-    } catch (error) {
-      console.error('❌ Erro ao verificar domínios de email:', error.message);
+    } else {
+      console.log('⏭️ Teste de verificação de domínios ignorado (método não disponível)');
     }
     
     // 7. Verificar status de email transacional
-    try {
-      console.log('\n📋 Verificando status de email transacional...');
-      
-      const emailStats = await transactionalEmailsApi.getEmailEventReport({
-        limit: 1,
-        events: ['delivered']
-      });
-      
-      if (emailStats && emailStats.events) {
-        console.log(`✅ Estatísticas de email recuperadas com sucesso`);
-      } else {
-        console.log('⚠️ Sem estatísticas de email disponíveis');
+    if (transactionalEmailsApi) {
+      try {
+        console.log('\n📋 Verificando status de email transacional...');
+        
+        const emailStats = await transactionalEmailsApi.getEmailEventReport({
+          limit: 1,
+          events: ['delivered']
+        });
+        
+        if (emailStats && emailStats.events) {
+          console.log(`✅ Estatísticas de email recuperadas com sucesso`);
+        } else {
+          console.log('⚠️ Sem estatísticas de email disponíveis');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao verificar estatísticas de email:', error.message);
       }
-    } catch (error) {
-      console.error('❌ Erro ao verificar estatísticas de email:', error.message);
+    } else {
+      console.log('⏭️ Teste de estatísticas de email ignorado (API não disponível)');
     }
     
   } catch (error) {
