@@ -90,6 +90,14 @@ export async function handleTrialCheckoutCompleted(session: Stripe.Checkout.Sess
           // Atualizar o usuário no banco de dados com o firebaseUid e status ativo
           await storage.updateFirebaseUid(user.id, userRecord.uid);
           
+          // Atualizar as datas de trial do usuário
+          try {
+            await storage.updateUserTrialDates(user.id);
+            console.log(`✅ Datas de trial atualizadas para usuário: ${user.id}`);
+          } catch (trialDatesError) {
+            console.error(`❌ Erro ao atualizar datas de trial:`, trialDatesError);
+          }
+          
           // Criar assinatura no banco de dados
           try {
             await storage.createSubscription(user.id, planType);

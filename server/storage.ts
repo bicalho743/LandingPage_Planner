@@ -558,6 +558,66 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  async updateUserTrialDates(userId: number): Promise<User | undefined> {
+    try {
+      console.log(`⏳ Atualizando datas de trial para usuário ID: ${userId}`);
+      
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 dias
+      
+      const query = `
+        UPDATE users 
+        SET trial_start = $1, trial_end = $2, updated_at = $3
+        WHERE id = $4
+        RETURNING *;
+      `;
+      
+      const values = [now, trialEnd, now, userId];
+      
+      const result = await pool.query(query, values);
+      
+      if (result.rows.length === 0) {
+        console.log(`⚠️ Usuário com ID ${userId} não encontrado ao atualizar datas de trial`);
+        return undefined;
+      }
+      
+      console.log(`✅ Datas de trial atualizadas para usuário ID: ${userId}`);
+      console.log(`   Trial Start: ${now.toISOString()}`);
+      console.log(`   Trial End: ${trialEnd.toISOString()}`);
+      
+      return result.rows[0];
+    } catch (error) {
+      console.error(`❌ Falha ao atualizar datas de trial:`, error);
+      
+      try {
+        // Fallback para Drizzle
+        const now = new Date();
+        const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // +7 dias
+        
+        const [user] = await db
+          .update(users)
+          .set({
+            trialStart: now,
+            trialEnd: trialEnd,
+            updatedAt: now
+          })
+          .where(eq(users.id, userId))
+          .returning();
+          
+        if (!user) {
+          console.log(`⚠️ Usuário com ID ${userId} não encontrado ao atualizar datas de trial via Drizzle`);
+          return undefined;
+        }
+        
+        console.log(`✅ Datas de trial atualizadas via Drizzle para usuário ID: ${userId}`);
+        return user;
+      } catch (drizzleError) {
+        console.error(`❌ Falha ao atualizar datas de trial via Drizzle:`, drizzleError);
+        throw drizzleError;
+      }
+    }
+  }
+
   async updateSubscriptionStatus(userId: number, status: string): Promise<void> {
     try {
       await pool.query(
