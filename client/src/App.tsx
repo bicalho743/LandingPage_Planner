@@ -17,6 +17,7 @@ const Sucesso = lazy(() => import("@/pages/sucesso"));
 const Cancelado = lazy(() => import("@/pages/cancelado"));
 const Login = lazy(() => import("@/pages/login"));
 const Dashboard = lazy(() => import("@/pages/dashboard"));
+const Registro = lazy(() => import("@/pages/registro"));
 
 // Componente de loading para Suspense
 const PageLoading = () => (
@@ -32,6 +33,7 @@ function Router() {
         <Route path="/" component={LandingPage}/>
         <Route path="/home" component={Home}/>
         <Route path="/planos" component={Planos}/>
+        <Route path="/registro" component={Registro}/>
         <Route path="/checkout" component={Checkout}/>
         <Route path="/sucesso" component={Sucesso}/>
         <Route path="/cancelado" component={Cancelado}/>
