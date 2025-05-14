@@ -23,6 +23,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateFirebaseUid(userId: number, firebaseUid: string): Promise<User>;
   updateUserStatus(userId: number | undefined, email: string | undefined, status: string): Promise<User | undefined>;
+  updateUserPassword(userId: number, password: string): Promise<User | undefined>;
   
   // Lead operations
   createLead(lead: LeadFormData): Promise<Lead>;

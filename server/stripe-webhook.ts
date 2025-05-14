@@ -86,8 +86,7 @@ router.post('/api/stripe-webhook', async (req: Request, res: Response) => {
         const invoice = event.data.object as Stripe.Invoice;
         
         // Verificar se é a primeira fatura após o período de trial
-        const isPostTrialInvoice = invoice.billing_reason === 'subscription_cycle' && 
-                                  invoice.created > (invoice.lines.data[0]?.period?.start || 0);
+        const isPostTrialInvoice = invoice.billing_reason === 'subscription_cycle';
                                  
         if (isPostTrialInvoice) {
           // Falha no pagamento após período de trial
@@ -95,7 +94,7 @@ router.post('/api/stripe-webhook', async (req: Request, res: Response) => {
           await handleTrialEndPaymentFailed(invoice);
         } else {
           // Falha de pagamento normal
-          console.log(`⚠️ Falha no pagamento da fatura para a assinatura ${invoice.subscription}`);
+          console.log(`⚠️ Falha no pagamento da fatura`);
         }
         break;
       }

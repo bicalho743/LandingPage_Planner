@@ -21,6 +21,8 @@ export const users = pgTable("users", {
   firebaseUid: text("firebase_uid").unique(),
   status: userStatusEnum("status").notNull().default('pendente'),
   senha_hash: text("senha_hash").default(''),
+  trialStart: timestamp("trial_start"),
+  trialEnd: timestamp("trial_end"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
