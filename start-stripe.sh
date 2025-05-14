@@ -19,4 +19,19 @@ done
 echo "✅ Servidor detectado na porta ${PORT}. Iniciando o Stripe CLI..."
 
 # Iniciar o Stripe CLI para redirecionar automaticamente para o servidor
-stripe listen --forward-to http://localhost:$PORT/api/webhooks/stripe
+# Adicionado novo endpoint do nosso webhook direto como opção
+echo "Escolha o endpoint para receber os webhooks:"
+echo "1) /api/webhooks/stripe (original)"
+echo "2) /api/stripe-webhook (versão melhorada)"
+echo "3) /api/webhook-direto (versão direta, mais robusta)"
+read -p "Digite o número (1-3, padrão: 3): " endpoint_choice
+
+# Define o endpoint com base na escolha, padrão para a opção 3
+case "$endpoint_choice" in
+  1) ENDPOINT="/api/webhooks/stripe" ;;
+  2) ENDPOINT="/api/stripe-webhook" ;;
+  *) ENDPOINT="/api/webhook-direto" ;;
+esac
+
+echo "✅ Redirecionando eventos para http://localhost:$PORT$ENDPOINT"
+stripe listen --forward-to http://localhost:$PORT$ENDPOINT

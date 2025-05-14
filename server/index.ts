@@ -8,6 +8,7 @@ import webhookDiretoRouter from "./webhook-direto";
 import syncUsersRouter from "./sync-users";
 import migrationsRouter from "./migrations";
 import trialRouter from "./trial";
+import stripeTestRouter from "./stripe-test";
 import { pool } from "./db";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(webhookDiretoRouter); // Webhook direto sem verificação
 app.use(syncUsersRouter);
 app.use(migrationsRouter);
 app.use(trialRouter);
+app.use(stripeTestRouter); // Endpoints para testar o Stripe
 console.log("✅ Routers de registro, webhooks do Stripe, sincronização de usuários, trial e migração adicionados");
 
 app.use((req, res, next) => {
