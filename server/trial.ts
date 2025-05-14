@@ -67,7 +67,8 @@ router.post('/api/trial-checkout', express.json(), async (req: Request, res: Res
           email,
           status: 'pendente',
           senha_hash: password, // Armazenar a senha temporariamente até criar o usuário no Firebase
-          firebase_uid: '' // Será preenchido após o pagamento
+          firebase_uid: '', // Será preenchido após o pagamento
+          trial: true // Marcar como usuário em trial
         });
         console.log(`✅ Usuário pendente criado no banco: ${user.id}`);
       } catch (dbError) {

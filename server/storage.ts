@@ -191,12 +191,19 @@ export class DatabaseStorage implements IStorage {
       // Fallback para o Drizzle se não for um erro de campo firebase_uid
       try {
         // Evitar enviar firebaseUid vazio
+        const now = new Date();
+        const isTrial = insertUser.trial === true;
+        const trialStart = isTrial ? now : undefined;
+        const trialEnd = isTrial ? new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) : undefined; // +7 dias
+        
         const drizzleInsert = {
           ...insertUser,
           status: insertUser.status || 'pendente',
           senha_hash: insertUser.senha_hash || '',
-          createdAt: new Date(),
-          updatedAt: new Date()
+          trialStart: trialStart,
+          trialEnd: trialEnd,
+          createdAt: now,
+          updatedAt: now
         };
         
         // Remover firebaseUid se estiver vazio

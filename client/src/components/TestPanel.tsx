@@ -8,6 +8,7 @@ import { apiRequest } from '@/lib/queryClient';
 export default function TestPanel() {
   const { toast } = useToast();
   const [email, setEmail] = useState('');
+  const [useTrial, setUseTrial] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState<any>(null);
 
@@ -25,7 +26,7 @@ export default function TestPanel() {
     setResponse(null);
 
     try {
-      const result = await apiRequest('POST', '/api/test/complete-registration', { email });
+      const result = await apiRequest('POST', '/api/test/complete-registration', { email, useTrial });
       const data = await result.json();
       
       setResponse(data);
