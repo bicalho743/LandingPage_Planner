@@ -42,29 +42,18 @@ export default function Planos() {
         // Não bloqueamos o fluxo por causa deste erro
       });
 
-      // Iniciar checkout com Stripe
-      console.log("Iniciando checkout para:", plan, email);
+      console.log("Redirecionando para registro com plano:", plan);
       
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ plan, email })
-      });
+      // NOVO FLUXO: Redirecionar para a página de registro com o email e plano
+      const params = new URLSearchParams();
+      params.append('plano', plan);
+      params.append('email', email);
       
-      const data = await response.json();
-      
-      if (data.success && data.url) {
-        console.log("Redirecionando para Stripe Checkout:", data.url);
-        window.location.href = data.url;
-      } else {
-        setErrorMessage(data.message || "Erro ao iniciar checkout. Tente novamente.");
-        setLoading(null);
-      }
+      // Redirecionar para a página de registro com os parâmetros
+      window.location.href = `/registro?${params.toString()}`;
     } catch (error) {
-      console.error("Erro ao iniciar checkout:", error);
-      setErrorMessage("Erro ao conectar-se ao servidor. Tente novamente.");
+      console.error("Erro ao iniciar registro:", error);
+      setErrorMessage("Erro ao processar sua solicitação. Tente novamente.");
       setLoading(null);
     }
   };

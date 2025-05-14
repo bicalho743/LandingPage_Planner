@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { storage } from './storage';
 import { pool } from './db';
 import { addContactToBrevo, sendTransactionalEmail } from './brevo';
+import { firebaseAuth, generatePasswordResetLink } from './firebase';
 
 // Inicializando o Stripe
 const stripeKey = process.env.NODE_ENV === 'production' 
@@ -106,7 +107,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         userRecord = await firebaseAuth.getUserByEmail(email);
         console.log(`✅ Usuário encontrado no Firebase pelo email: ${email}`);
       }
-    } catch (firebaseError) {
+    } catch (firebaseError: any) {
       console.log(`⚠️ Usuário não encontrado no Firebase: ${firebaseError.message}`);
       
       // Se não existe no Firebase, criar com senha aleatória
@@ -127,7 +128,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         
         // Enviar email com instruções para definir senha
         try {
-          const resetLink = await firebaseAuth.generatePasswordResetLink(email);
+          const resetLink = await generatePasswordResetLink(email);
           
           const htmlContent = `
             <h1>Bem-vindo ao PlannerPro Organizer!</h1>
