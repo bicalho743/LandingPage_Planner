@@ -83,7 +83,7 @@ router.post('/api/register', async (req: Request, res: Response) => {
       console.log(`⚠️ Usuário já existe no banco de dados: ${existingUserInDB.id}`);
       
       // Caso especial: usuário existe no banco mas não tem Firebase UID
-      if (!existingUserInDB.firebaseUid && plano === 'free') {
+      if (!existingUserInDB.firebaseUid) {
         console.log(`⚠️ Usuário existe no banco de dados mas não tem uma conta Firebase. Criando conta...`);
         try {
           // Criar o usuário no Firebase

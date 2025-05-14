@@ -474,6 +474,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Endpoint para captura de leads - Otimizado para ser não-bloqueante
+  // Rota de teste para simular o webhook do Stripe e finalizar o processo de registro
+  app.post("/api/test/complete-registration", express.json(), async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({
+          success: false, 
+          message: "Email é obrigatório"
+        });
+      }
+      
+      console.log(`⏳ Simulando webhook do Stripe para finalizar registro: ${email}`);
+      
+      // 1. Verificar se o usuário existe no banco de dados
+      const dbUser = await storage.getUserByEmail(email);
+      if (!dbUser) {
+        return res.status(404).json({
+          success: false,
+          message: "Usuário não encontrado no banco de dados"
+        });
+      }
+      
+      // 2. Verificar se o usuário já existe no Firebase
+      let isNewUser = false;
+      let userRecord;
+      
+      try {
+        // Tentar obter pelo email
+        userRecord = await firebaseAuth.getUserByEmail(email);
+        console.log(`⚠️ Usuário já existe no Firebase: ${userRecord.uid}`);
+        
+        // Atualizar o status do usuário para ativo no banco de dados
+        await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
+      } catch (firebaseError: any) {
+        // Se o usuário não existir no Firebase, criamos um novo
+        if (firebaseError.code === 'auth/user-not-found') {
+          console.log(`✅ Usuário não encontrado no Firebase, criando novo...`);
+          
+          try {
+            // Recuperar senha do banco
+            const password = dbUser.senha_hash || 'Teste@123';
+            
+            // Criar usuário no Firebase
+            userRecord = await firebaseAuth.createUser({
+              email: email,
+              password: password,
+              displayName: dbUser.name
+            });
+            
+            isNewUser = true;
+            console.log(`✅ Novo usuário criado no Firebase: ${userRecord.uid}`);
+            
+            // Atualizar o usuário no banco de dados com o firebaseUid e status ativo
+            await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
+            
+            // Enviar link de redefinição de senha (opcional)
+            const resetLink = await generatePasswordResetLink(email);
+            console.log(`✅ Link de redefinição de senha gerado`);
+            
+            try {
+              await sendWelcomeEmail(email, resetLink);
+              console.log(`✅ Email de boas-vindas enviado`);
+            } catch (emailError) {
+              console.error(`❌ Erro ao enviar email de boas-vindas:`, emailError);
+            }
+          } catch (createError) {
+            console.error(`❌ Erro ao criar usuário no Firebase:`, createError);
+            return res.status(500).json({
+              success: false,
+              message: "Erro ao criar usuário no Firebase"
+            });
+          }
+        } else {
+          console.error(`❌ Erro ao verificar usuário no Firebase:`, firebaseError);
+          return res.status(500).json({
+            success: false,
+            message: "Erro ao verificar usuário no Firebase"
+          });
+        }
+      }
+      
+      console.log(`✅ Processo de registro finalizado com sucesso para: ${email}`);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Usuário registrado e ativado com sucesso",
+        isNewUser
+      });
+      
+    } catch (error) {
+      console.error("❌ Erro ao simular webhook:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Erro interno ao processar a solicitação"
+      });
+    }
+  });
+
   app.post("/api/leads", express.json(), async (req: Request, res: Response) => {
     const { name, email } = req.body;
 
