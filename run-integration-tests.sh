@@ -73,19 +73,19 @@ function test_all_systems() {
 
 function test_stripe() {
   echo -e "${YELLOW}🧪 Executando testes de integração com Stripe...${NC}"
-  NODE_ENV=$NODE_ENV node test-stripe-integration.js
+  NODE_ENV=$NODE_ENV node --experimental-vm-modules test-stripe-integration.js
   return $?
 }
 
 function test_firebase() {
   echo -e "${YELLOW}🧪 Executando testes de integração com Firebase...${NC}"
-  NODE_ENV=$NODE_ENV node test-firebase-integration.js
+  NODE_ENV=$NODE_ENV node --experimental-vm-modules test-firebase-integration.js
   return $?
 }
 
 function test_brevo() {
   echo -e "${YELLOW}🧪 Executando testes de integração com Brevo (Email)...${NC}"
-  NODE_ENV=$NODE_ENV node test-brevo-integration.js
+  NODE_ENV=$NODE_ENV node --experimental-vm-modules test-brevo-integration.js
   return $?
 }
 
