@@ -1,0 +1,67 @@
+import express, { Request, Response } from "express";
+import Stripe from "stripe";
+import admin from "firebase-admin";
+
+// Configuração do Stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2022-11-15",
+});
+
+const app = express();
+
+// Garante que o rawBody é recebido corretamente
+app.post(
+  "/api/stripe-webhook",
+  express.raw({ type: "application/json" }),
+  async (req: Request, res: Response) => {
+    const sig = req.headers["stripe-signature"] as string;
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body, // Verifique se o rawBody está sendo recebido corretamente
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      );
+      console.log("✅ Webhook Recebido:", event.type);
+    } catch (err) {
+      console.error("❌ Erro de verificação do webhook:", err);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Manipulação dos eventos
+    switch (event.type) {
+      case "checkout.session.completed":
+        const session = event.data.object;
+        console.log("✅ Evento de checkout.session.completed recebido:", session);
+        await criarUsuarioFirebase(session);
+        break;
+      default:
+        console.log(`Evento não tratado: ${event.type}`);
+    }
+
+    res.status(200).send("Webhook processado com sucesso.");
+  }
+);
+
+// Função para criar usuário no Firebase
+const criarUsuarioFirebase = async (session: any) => {
+  try {
+    console.log("📌 Criando usuário no Firebase para:", session.customer_email);
+
+    const userRecord = await admin.auth().createUser({
+      email: session.customer_email,
+      password: "senha_aleatoria_segura",
+      displayName: "Novo Usuário",
+    });
+
+    console.log("✅ Usuário criado no Firebase:", userRecord.uid);
+  } catch (error) {
+    console.error("❌ Erro ao criar usuário no Firebase:", error);
+  }
+};
+
+// Inicializa o servidor
+app.listen(3000, () => {
+  console.log("Servidor rodando na porta 3000");
+});

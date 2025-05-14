@@ -5,6 +5,7 @@ import registerRouter from "./register";
 import stripeWebhookRouter from "./stripe-webhook";
 import stripeWebhookFixRouter from "./stripe-webhook-fix";
 import webhookDiretoRouter from "./webhook-direto";
+import webhookFixUserRouter from "./webhook-fixuser";
 import syncUsersRouter from "./sync-users";
 import migrationsRouter from "./migrations";
 import trialRouter from "./trial";
@@ -19,6 +20,7 @@ console.log("✅ Configurando middleware raw para Stripe webhook");
 app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }));
 app.use("/api/stripe-webhook-new", express.raw({ type: "application/json" }));
+app.use("/api/webhook-fixuser", express.raw({ type: "application/json" }));
 
 // Outros middlewares para parsing de JSON
 app.use(express.json());
@@ -28,7 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(registerRouter);
 app.use(stripeWebhookRouter);
 app.use(stripeWebhookFixRouter); // Novo webhook com correções
-app.use(webhookDiretoRouter); // Webhook direto sem verificação
+app.use(webhookFixUserRouter); // Nova implementação do webhook para criar usuário
 app.use(syncUsersRouter);
 app.use(migrationsRouter);
 app.use(trialRouter);

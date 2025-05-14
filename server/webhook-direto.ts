@@ -25,7 +25,12 @@ router.post('/api/webhook-direto', express.json(), async (req: Request, res: Res
     // Verificar se é um evento de checkout concluído
     if (req.body && req.body.type === 'checkout.session.completed') {
       const session = req.body.data.object;
-      const userEmail = session.customer_email;
+      console.log('✅ Sessão completa:', JSON.stringify(session));
+      
+      // Obter email do usuário de várias formas possíveis
+      const userEmail = session.customer_email || 
+                       (session.customer_details ? session.customer_details.email : null) ||
+                       (session.metadata ? session.metadata.email : null);
       
       if (userEmail) {
         console.log(`✅ Processando checkout para ${userEmail}`);
@@ -35,12 +40,39 @@ router.post('/api/webhook-direto', express.json(), async (req: Request, res: Res
         const userId = metadata.userId || metadata.user_id;
         const encodedPassword = metadata.senha;
         
+        // Se não houver userId nos metadados, tentamos buscar pelo email
         if (!userId) {
-          console.error('❌ ID do usuário não encontrado nos metadados');
-          return res.status(200).send("Evento recebido, mas ID do usuário não foi encontrado");
+          console.log('⚠️ ID do usuário não encontrado nos metadados, buscando pelo email...');
+          const dbUserByEmail = await storage.getUserByEmail(userEmail);
+          
+          if (dbUserByEmail) {
+            console.log(`✅ Usuário encontrado pelo email: ${dbUserByEmail.id}`);
+            // Continue o processamento com esse usuário
+            await processFirebaseUser(dbUserByEmail, userEmail, encodedPassword);
+            return res.status(200).send("Evento processado com sucesso");
+          } else {
+            console.error(`❌ Usuário não encontrado pelo email: ${userEmail}`);
+            
+            // Tente criar um novo usuário
+            console.log(`⚠️ Tentando criar novo usuário para: ${userEmail}`);
+            try {
+              const newUser = await storage.createUser({
+                email: userEmail,
+                name: userEmail.split('@')[0],
+                status: 'pendente'
+              });
+              
+              console.log(`✅ Novo usuário criado: ${newUser.id}`);
+              await processFirebaseUser(newUser, userEmail, encodedPassword);
+              return res.status(200).send("Novo usuário criado e processado com sucesso");
+            } catch (createError) {
+              console.error(`❌ Erro ao criar novo usuário:`, createError);
+              return res.status(200).send("Erro ao criar novo usuário");
+            }
+          }
         }
         
-        // Obter usuário do banco
+        // Obter usuário do banco pelo ID
         const dbUser = await storage.getUser(parseInt(userId));
         
         if (!dbUser) {
@@ -48,54 +80,80 @@ router.post('/api/webhook-direto', express.json(), async (req: Request, res: Res
           return res.status(200).send("Evento recebido, mas usuário não encontrado no banco");
         }
         
-        // Decodificar senha se disponível
-        let password;
-        if (encodedPassword) {
-          password = Buffer.from(encodedPassword, 'base64').toString('utf-8');
-        } else if (dbUser.senha_hash) {
-          password = dbUser.senha_hash;
-        } else {
-          // Gerar senha aleatória como último recurso
-          password = Math.random().toString(36).slice(-10) + 
-                    Math.random().toString(36).toUpperCase().slice(-2) + 
-                    Math.floor(Math.random() * 10) + 
-                    '!';
-        }
+        // Processar o usuário do Firebase
+        await processFirebaseUser(dbUser, userEmail, encodedPassword);
+      } else {
+        console.error('❌ Email não encontrado na sessão de checkout');
+        return res.status(200).send("Email não encontrado na sessão");
+      }
+    }
+    
+    // Responder com sucesso para o Stripe
+    return res.status(200).send('Evento processado com sucesso');
+  } catch (error) {
+    console.error('❌ Erro ao processar webhook:', error);
+    // Ainda retornamos 200 para o Stripe não reenviar o evento
+    return res.status(200).send('Evento recebido com erros no processamento');
+  }
+});
+
+// Função auxiliar para processar usuário do Firebase
+async function processFirebaseUser(dbUser: any, userEmail: string, encodedPassword: string | undefined) {
+  console.log(`⏳ Processando usuário do Firebase para: ${userEmail}`);
+  
+  // Decodificar senha se disponível
+  let password;
+  if (encodedPassword) {
+    password = Buffer.from(encodedPassword, 'base64').toString('utf-8');
+  } else if (dbUser.senha_hash) {
+    password = dbUser.senha_hash;
+  } else {
+    // Gerar senha aleatória como último recurso
+    password = Math.random().toString(36).slice(-10) + 
+              Math.random().toString(36).toUpperCase().slice(-2) + 
+              Math.floor(Math.random() * 10) + 
+              '!';
+  }
+  
+  // Verificar se o usuário já existe no Firebase
+  try {
+    const userRecord = await firebaseAuth.getUserByEmail(userEmail);
+    console.log(`⚠️ Usuário já existe no Firebase: ${userRecord.uid}`);
+    
+    // Atualizar o usuário no banco se necessário
+    if (!dbUser.firebaseUid || dbUser.firebaseUid !== userRecord.uid) {
+      await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
+      console.log(`✅ Firebase UID atualizado no banco de dados`);
+    }
+    
+    // Atualizar status para ativo
+    await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
+    console.log(`✅ Status do usuário atualizado para 'ativo'`);
+    
+    return true;
+  } catch (firebaseError: any) {
+    // Se o usuário não existir no Firebase, criar um novo
+    if (firebaseError.code === 'auth/user-not-found') {
+      try {
+        // Criar o usuário no Firebase com força
+        console.log('🔄 Criando NOVO usuário no Firebase com força...');
         
-        // Verificar se o usuário já existe no Firebase
-        try {
-          const userRecord = await firebaseAuth.getUserByEmail(userEmail);
-          console.log(`⚠️ Usuário já existe no Firebase: ${userRecord.uid}`);
-          
-          // Atualizar o usuário no banco se necessário
-          if (!dbUser.firebaseUid || dbUser.firebaseUid !== userRecord.uid) {
-            await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
-            console.log(`✅ Firebase UID atualizado no banco de dados`);
-          }
-          
-          // Atualizar status para ativo
-          await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
-          console.log(`✅ Status do usuário atualizado para 'ativo'`);
-        } catch (firebaseError: any) {
-          // Se o usuário não existir no Firebase, criar um novo
-          if (firebaseError.code === 'auth/user-not-found') {
-            try {
-              // Criar o usuário no Firebase
-              const userRecord = await firebaseAuth.createUser({
-                email: userEmail,
-                password: password,
-                displayName: dbUser.name || userEmail.split('@')[0]
-              });
-              
-              console.log(`✅ USUÁRIO CRIADO NO FIREBASE: ${userRecord.uid}`);
-              
-              // Atualizar o usuário no banco
-              await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
-              console.log(`✅ Firebase UID salvo no banco de dados`);
-              
-              // Atualizar status para ativo
-              await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
-              console.log(`✅ Status do usuário atualizado para 'ativo'`);
+        // Criar o usuário no Firebase
+        const userRecord = await firebaseAuth.createUser({
+          email: userEmail,
+          password: password,
+          displayName: dbUser.name || userEmail.split('@')[0]
+        });
+        
+        console.log(`✅ USUÁRIO CRIADO NO FIREBASE: ${userRecord.uid}`);
+        
+        // Atualizar o usuário no banco
+        await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
+        console.log(`✅ Firebase UID salvo no banco de dados`);
+        
+        // Atualizar status para ativo
+        await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
+        console.log(`✅ Status do usuário atualizado para 'ativo'`);
               
               // Enviar email de boas-vindas
               try {
