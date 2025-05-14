@@ -9,6 +9,9 @@ export const planTypeEnum = pgEnum('plan_type', ['monthly', 'annual', 'lifetime'
 // Enum for subscription status
 export const subscriptionStatusEnum = pgEnum('subscription_status', ['active', 'canceled', 'past_due', 'unpaid']);
 
+// Enum para status do usuário
+export const userStatusEnum = pgEnum('user_status', ['pendente', 'ativo', 'bloqueado']);
+
 // Users table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -16,6 +19,8 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   name: text("name").notNull(),
   firebaseUid: text("firebase_uid").unique(),
+  status: userStatusEnum("status").notNull().default('pendente'),
+  senha_hash: text("senha_hash").default(''),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

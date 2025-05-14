@@ -23,6 +23,7 @@ export interface IStorage {
   getUserByFirebaseUid(firebaseUid: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateFirebaseUid(userId: number, firebaseUid: string): Promise<User>;
+  updateUserStatus(userId: number | undefined, email: string | undefined, status: string): Promise<User | undefined>;
   
   // Lead operations
   createLead(lead: LeadFormData): Promise<Lead>;
@@ -84,16 +85,21 @@ export class DatabaseStorage implements IStorage {
     try {
       // Usando consulta SQL direta para compatibilidade com Render
       const query = `
-        INSERT INTO users (email, name, firebase_uid, password, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO users (email, name, firebase_uid, password, status, senha_hash, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;
       `;
       const now = new Date();
+      const status = insertUser.status || 'pendente';
+      const senha_hash = insertUser.senha_hash || '';
+      
       const values = [
         insertUser.email, 
         insertUser.name, 
         insertUser.firebaseUid, 
         insertUser.password,
+        status,
+        senha_hash,
         now,
         now
       ];
@@ -107,6 +113,8 @@ export class DatabaseStorage implements IStorage {
         .insert(users)
         .values({
           ...insertUser,
+          status: insertUser.status || 'pendente',
+          senha_hash: insertUser.senha_hash || '',
           createdAt: new Date(),
           updatedAt: new Date()
         })
