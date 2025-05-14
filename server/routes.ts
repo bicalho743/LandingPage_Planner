@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import express from "express";
-import { createFirebaseUser, generatePasswordResetLink } from "./firebase";
+import { createFirebaseUser, generatePasswordResetLink, firebaseAuth } from "./firebase";
 import nodemailer from "nodemailer";
 import { addContactToBrevo } from "./brevo";
 
@@ -531,10 +531,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
             
             // Enviar link de redefinição de senha (opcional)
-            const resetLink = await generatePasswordResetLink(email);
-            console.log(`✅ Link de redefinição de senha gerado`);
-            
             try {
+              const resetLink = await generatePasswordResetLink(email);
+              console.log(`✅ Link de redefinição de senha gerado`);
+              
+              // Usar a função sendWelcomeEmail já existente no arquivo
               await sendWelcomeEmail(email, resetLink);
               console.log(`✅ Email de boas-vindas enviado`);
             } catch (emailError) {

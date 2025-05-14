@@ -1,0 +1,51 @@
+// Função auxiliar para enviar email de boas-vindas com link de redefinição de senha
+async function sendWelcomeEmail(email: string, resetLink: string) {
+  try {
+    const htmlContent = `
+      <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+      <p>Seu pagamento foi confirmado e sua conta está ativa.</p>
+      <p>Para acessar o sistema, defina sua senha clicando no link abaixo:</p>
+      <p><a href="${resetLink}" style="display: inline-block; padding: 10px 20px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">Definir Senha</a></p>
+      <p>Se o botão acima não funcionar, copie e cole o link a seguir no seu navegador:</p>
+      <p>${resetLink}</p>
+      <p>Este link expira em 24 horas.</p>
+      <p>Agradecemos por escolher o PlannerPro Organizer!</p>
+    `;
+    
+    const textContent = `
+      Bem-vindo ao PlannerPro Organizer!
+      
+      Seu pagamento foi confirmado e sua conta está ativa.
+      
+      Para acessar o sistema, defina sua senha através do link abaixo:
+      ${resetLink}
+      
+      Este link expira em 24 horas.
+      
+      Agradecemos por escolher o PlannerPro Organizer!
+    `;
+    
+    // Verificar se estamos em modo de teste (desenvolvimento)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 MODO DE DESENVOLVIMENTO: Email simulado');
+      console.log('📧 Para:', email);
+      console.log('📑 Assunto: Bem-vindo ao PlannerPro Organizer - Ative sua conta');
+      console.log('🔗 Link de redefinição:', resetLink);
+      // Em desenvolvimento, apenas simulamos o envio
+      return true;
+    }
+    
+    // Em produção, enviamos o email de verdade
+    await sendTransactionalEmail(
+      email,
+      "Bem-vindo ao PlannerPro Organizer - Ative sua conta",
+      htmlContent,
+      textContent
+    );
+    
+    return true;
+  } catch (error) {
+    console.error("Erro ao enviar email de boas-vindas:", error);
+    return false;
+  }
+}
