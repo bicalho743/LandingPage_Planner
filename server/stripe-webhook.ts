@@ -90,32 +90,132 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   const email = session.customer_email;
   const userId = session.client_reference_id;
+  const firebaseUid = session.metadata?.firebaseUid;
+  const planType = session.metadata?.plan_type || 'mensal';
   
   try {
-    // 1. Atualizando status do lead para 'pago'
+    // 1. Verificar se o usuário já existe no Firebase
+    let userRecord;
+    try {
+      // Verificar se já temos o usuário no Firebase
+      if (firebaseUid) {
+        userRecord = await firebaseAuth.getUser(firebaseUid);
+        console.log(`✅ Usuário encontrado no Firebase com UID: ${firebaseUid}`);
+      } else {
+        // Tentar obter pelo email
+        userRecord = await firebaseAuth.getUserByEmail(email);
+        console.log(`✅ Usuário encontrado no Firebase pelo email: ${email}`);
+      }
+    } catch (firebaseError) {
+      console.log(`⚠️ Usuário não encontrado no Firebase: ${firebaseError.message}`);
+      
+      // Se não existe no Firebase, criar com senha aleatória
+      try {
+        // Gerar senha aleatória segura
+        const randomPassword = Math.random().toString(36).slice(-10) + 
+                             Math.random().toString(36).toUpperCase().slice(-2) + 
+                             Math.floor(Math.random() * 10) + 
+                             '!';
+        
+        userRecord = await firebaseAuth.createUser({
+          email: email,
+          password: randomPassword,
+          displayName: email.split('@')[0] // Nome provisório baseado no email
+        });
+        
+        console.log(`✅ Novo usuário criado no Firebase: ${userRecord.uid}`);
+        
+        // Enviar email com instruções para definir senha
+        try {
+          const resetLink = await firebaseAuth.generatePasswordResetLink(email);
+          
+          const htmlContent = `
+            <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+            <p>Olá,</p>
+            <p>Seu pagamento foi confirmado com sucesso e criamos uma conta para você.</p>
+            <p>Para definir sua senha, clique no link abaixo:</p>
+            <p><a href="${resetLink}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">Definir minha senha</a></p>
+            <p>Este link irá expirar em 24 horas.</p>
+            <p>Atenciosamente,<br>Equipe PlannerPro</p>
+          `;
+          
+          await sendTransactionalEmail(
+            email,
+            'Bem-vindo ao PlannerPro - Configure sua senha',
+            htmlContent,
+            'Seu pagamento foi confirmado e sua conta foi criada. Clique no link para definir sua senha.'
+          );
+          
+          console.log(`✅ Email com link para definir senha enviado para: ${email}`);
+        } catch (emailError) {
+          console.error('❌ Erro ao enviar email com link para definir senha:', emailError);
+        }
+      } catch (createError) {
+        console.error('❌ Erro ao criar usuário no Firebase:', createError);
+      }
+    }
+
+    // 2. Atualizar ou criar usuário no banco de dados
+    let user;
+    try {
+      // Verificar se já existe no banco
+      user = await storage.getUserByEmail(email);
+      
+      if (user) {
+        console.log(`✅ Usuário encontrado no banco de dados: ${user.id}`);
+        
+        // Atualizar o firebaseUid se necessário
+        if (userRecord && (!user.firebaseUid || user.firebaseUid !== userRecord.uid)) {
+          user = await storage.updateFirebaseUid(user.id, userRecord.uid);
+          console.log(`✅ Firebase UID atualizado para usuário: ${user.id}`);
+        }
+      } else {
+        // Criar usuário no banco se não existe
+        user = await storage.createUser({
+          email,
+          name: userRecord?.displayName || email.split('@')[0],
+          password: 'senha_gerenciada_pelo_firebase',
+          firebaseUid: userRecord?.uid || ''
+        });
+        
+        console.log(`✅ Novo usuário criado no banco de dados: ${user.id}`);
+      }
+    } catch (dbError) {
+      console.error('❌ Erro ao gerenciar usuário no banco de dados:', dbError);
+    }
+
+    // 3. Atualizar status do lead para 'pago'
     try {
       await pool.query(
-        'UPDATE leads SET status = $1 WHERE email = $2',
-        ['pago', email]
+        'UPDATE leads SET status = $1, converted_to_user = $2 WHERE email = $3',
+        ['pago', true, email]
       );
       console.log(`✅ Status de lead atualizado para ${email}`);
     } catch (error) {
       console.error('❌ Erro ao atualizar status do lead:', error);
-      // Continuar mesmo com erro, pois o usuário é mais importante
     }
 
-    // 2. Se temos referência do usuário, atualizar status da assinatura
-    if (userId) {
-      try {
-        // Atualizar status da assinatura para ativo
-        await storage.updateSubscriptionStatus(Number(userId), 'active');
-        console.log(`✅ Status de assinatura atualizado para usuário ${userId}`);
-      } catch (error) {
-        console.error('❌ Erro ao atualizar status da assinatura:', error);
+    // 4. Criar ou atualizar assinatura
+    try {
+      if (user) {
+        // Verificar se já existe assinatura
+        const existingSubscription = await storage.getSubscriptionByUserId(user.id);
+        
+        if (existingSubscription) {
+          // Atualizar status da assinatura existente
+          await storage.updateSubscriptionStatus(user.id, 'active');
+          console.log(`✅ Status de assinatura atualizado para usuário ${user.id}`);
+        } else {
+          // Criar nova assinatura
+          await storage.createSubscription(user.id, planType as any);
+          console.log(`✅ Nova assinatura criada para usuário ${user.id} com plano ${planType}`);
+        }
       }
+    } catch (subscriptionError) {
+      console.error('❌ Erro ao gerenciar assinatura:', subscriptionError);
     }
 
-    // 3. Enviar e-mail de boas-vindas via Brevo
+    // 5. Enviar e-mail de boas-vindas via Brevo
     try {
       const htmlContent = `
         <h1>Bem-vindo ao PlannerPro Organizer!</h1>
@@ -137,9 +237,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       console.error('❌ Erro ao enviar e-mail de boas-vindas:', error);
     }
 
-    // 4. Adicionar contato à lista do Brevo para e-mail marketing
+    // 6. Adicionar contato à lista do Brevo para e-mail marketing
     try {
-      const name = email.split('@')[0]; // Nome provisório baseado no email
+      const name = userRecord?.displayName || email.split('@')[0]; 
       await addContactToBrevo(name, email);
       console.log(`✅ Contato adicionado ao Brevo para email marketing: ${email}`);
     } catch (error) {
