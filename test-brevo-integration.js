@@ -47,10 +47,40 @@ async function testBrevoIntegration() {
     
     // Criar instâncias de API
     const contactsApi = new SibApiV3Sdk.ContactsApi();
-    const listsApi = new SibApiV3Sdk.ListsApi();
-    const accountApi = new SibApiV3Sdk.AccountApi();
-    const emailCampaignsApi = new SibApiV3Sdk.EmailCampaignsApi();
-    const transactionalEmailsApi = new SibApiV3Sdk.TransactionalEmailsApi();
+    
+    // Verificamos se as APIs existem antes de instanciá-las
+    let listsApi;
+    let accountApi;
+    let emailCampaignsApi;
+    let transactionalEmailsApi;
+    
+    // Verificar se ListsApi existe
+    if (typeof SibApiV3Sdk.ListsApi === 'function') {
+      listsApi = new SibApiV3Sdk.ListsApi();
+    } else {
+      console.log('⚠️ ListsApi não disponível na versão atual do SDK');
+    }
+    
+    // Verificar se AccountApi existe
+    if (typeof SibApiV3Sdk.AccountApi === 'function') {
+      accountApi = new SibApiV3Sdk.AccountApi();
+    } else {
+      console.log('⚠️ AccountApi não disponível na versão atual do SDK');
+    }
+    
+    // Verificar se EmailCampaignsApi existe
+    if (typeof SibApiV3Sdk.EmailCampaignsApi === 'function') {
+      emailCampaignsApi = new SibApiV3Sdk.EmailCampaignsApi();
+    } else {
+      console.log('⚠️ EmailCampaignsApi não disponível na versão atual do SDK');
+    }
+    
+    // Verificar se TransactionalEmailsApi existe
+    if (typeof SibApiV3Sdk.TransactionalEmailsApi === 'function') {
+      transactionalEmailsApi = new SibApiV3Sdk.TransactionalEmailsApi();
+    } else {
+      console.log('⚠️ TransactionalEmailsApi não disponível na versão atual do SDK');
+    }
     
     // 3. Testar API de contatos
     try {
