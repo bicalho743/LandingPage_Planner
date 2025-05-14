@@ -10,6 +10,7 @@ import syncUsersRouter from "./sync-users";
 import migrationsRouter from "./migrations";
 import trialRouter from "./trial";
 import stripeTestRouter from "./stripe-test";
+import testeEmailRouter from "./teste-email";
 import { pool } from "./db";
 
 const app = express();
@@ -35,6 +36,7 @@ app.use(syncUsersRouter);
 app.use(migrationsRouter);
 app.use(trialRouter);
 app.use(stripeTestRouter); // Endpoints para testar o Stripe
+app.use(testeEmailRouter); // Endpoint para testar envio de emails
 console.log("✅ Routers de registro, webhooks do Stripe, sincronização de usuários, trial e migração adicionados");
 
 app.use((req, res, next) => {
