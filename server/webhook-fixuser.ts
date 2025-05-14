@@ -114,8 +114,13 @@ router.post('/api/webhook-fixuser', async (req: Request, res: Response) => {
           
           let password;
           if (encodedPassword) {
-            password = Buffer.from(encodedPassword, 'base64').toString('utf-8');
-            console.log('✅ Senha recuperada dos metadados');
+            try {
+              password = Buffer.from(encodedPassword, 'base64').toString('utf-8');
+              console.log('✅ Senha recuperada dos metadados');
+            } catch (e) {
+              console.log('⚠️ Erro ao decodificar senha, usando valor original:', e);
+              password = encodedPassword; // Usar o valor direto se não for possível decodificar
+            }
           } else if (dbUser.senha_hash) {
             password = dbUser.senha_hash;
             console.log('✅ Senha recuperada do banco de dados');

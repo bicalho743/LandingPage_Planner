@@ -65,8 +65,8 @@ export default function TesteWebhookPage() {
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
     try {
-      // Codificar senha em base64 se fornecida
-      const encodedPassword = data.password ? Buffer.from(data.password).toString('base64') : undefined;
+      // Codificar senha em base64 se fornecida usando btoa (função nativa do browser)
+      const encodedPassword = data.password ? btoa(data.password) : undefined;
       
       // Construir o payload do webhook com base no tipo
       let payload: any = {
