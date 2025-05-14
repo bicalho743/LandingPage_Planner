@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function LeadForm() {
   const [name, setName] = useState("");
@@ -13,11 +13,18 @@ export default function LeadForm() {
     setMessage("");
 
     try {
-      await axios.post("/api/leads", { name, email });
-      setMessage("✅ Obrigado! Confira seu e-mail para mais informações.");
-      setName("");
-      setEmail("");
+      // Usa apiRequest em vez de axios para manter consistência com o resto do projeto
+      const response = await apiRequest("POST", "/api/leads", { name, email });
+      
+      if (response.ok) {
+        setMessage("✅ Obrigado! Confira seu e-mail para mais informações.");
+        setName("");
+        setEmail("");
+      } else {
+        setMessage("❌ Ocorreu um erro. Tente novamente.");
+      }
     } catch (error) {
+      console.error("Erro ao enviar lead:", error);
       setMessage("❌ Ocorreu um erro. Tente novamente.");
     } finally {
       setLoading(false);

@@ -42,14 +42,14 @@ export default function LandingPage() {
         </section>
 
         <section className="my-8 flex flex-col md:flex-row gap-8 items-center justify-center">
-          <div className="md:w-1/2">
+          <div className="md:w-1/2 text-center">
+            <h3 className="text-2xl font-semibold mb-4">Comece Agora!</h3>
             <Button className="bg-blue-800 text-white px-6 py-3 rounded-md hover:bg-blue-900" onClick={handleGetStarted}>
               Experimente Grátis
             </Button>
           </div>
           <div className="md:w-1/2 max-w-md">
             <div className="bg-white shadow-lg rounded-lg p-6">
-              <h3 className="text-2xl font-semibold mb-4 text-center">Quer saber mais?</h3>
               <LeadForm />
             </div>
           </div>
