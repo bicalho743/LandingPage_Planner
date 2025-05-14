@@ -303,7 +303,7 @@ export class DatabaseStorage implements IStorage {
           })
           .where(eq(subscriptions.userId, userId));
         
-        if (result.count === 0) {
+        if (!result || (result as any).rowCount === 0) {
           console.log(`⚠️ Nenhuma assinatura encontrada via Drizzle para usuário ${userId}. Tentando criar uma nova.`);
           // Se não existe assinatura, podemos criar uma nova
           try {
