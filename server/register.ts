@@ -105,7 +105,9 @@ router.post('/api/register', async (req: Request, res: Response) => {
       email: email,
       name: nome,
       password: 'senha_gerenciada_pelo_firebase',
-      firebaseUid: firebaseUid // Vazio para planos pagos, preenchido para plano free
+      firebaseUid: firebaseUid, // Vazio para planos pagos, preenchido para plano free
+      status: plano === 'free' ? 'ativo' : 'pendente', // Status ativo apenas para plano free
+      senha_hash: plano !== 'free' ? senha : '' // Armazenar senha apenas para planos pagos (será usada após pagamento)
     });
     
     console.log(`✅ Usuário salvo no banco de dados: ${user.id}`);

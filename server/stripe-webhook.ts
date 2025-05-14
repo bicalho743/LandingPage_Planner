@@ -94,20 +94,39 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   const planType = session.metadata?.plan_type || 'mensal';
   
   // Para obter a senha que enviamos nos metadados
-  const encodedPassword = session.metadata?.senha;
   let password;
   
-  if (encodedPassword) {
-    // Decodificar a senha
-    password = Buffer.from(encodedPassword, 'base64').toString();
-    console.log('✅ Senha recuperada dos metadados da sessão');
-  } else {
-    // Gerar senha aleatória caso não tenha sido enviada
+  try {
+    // Verificar se o usuário existe no banco e obter a senha armazenada
+    const user = await storage.getUserByEmail(email);
+    if (user && user.senha_hash) {
+      // Usar a senha armazenada no campo senha_hash
+      password = user.senha_hash;
+      console.log('✅ Senha recuperada do banco de dados');
+    } else {
+      // Verificar se tem no metadata da sessão
+      const encodedPassword = session.metadata?.senha;
+      if (encodedPassword) {
+        // Decodificar a senha
+        password = Buffer.from(encodedPassword, 'base64').toString();
+        console.log('✅ Senha recuperada dos metadados da sessão');
+      } else {
+        // Gerar senha aleatória caso não tenha sido enviada
+        password = Math.random().toString(36).slice(-10) + 
+                 Math.random().toString(36).toUpperCase().slice(-2) + 
+                 Math.floor(Math.random() * 10) + 
+                 '!';
+        console.log('⚠️ Senha não encontrada, gerando senha aleatória');
+      }
+    }
+  } catch (error) {
+    console.error('❌ Erro ao recuperar senha:', error);
+    // Gerar senha aleatória em caso de erro
     password = Math.random().toString(36).slice(-10) + 
-               Math.random().toString(36).toUpperCase().slice(-2) + 
-               Math.floor(Math.random() * 10) + 
-               '!';
-    console.log('⚠️ Senha não encontrada nos metadados, gerando senha aleatória');
+             Math.random().toString(36).toUpperCase().slice(-2) + 
+             Math.floor(Math.random() * 10) + 
+             '!';
+    console.log('⚠️ Erro ao obter senha, gerando senha aleatória');
   }
   
   try {
