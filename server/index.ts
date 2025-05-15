@@ -22,6 +22,7 @@ app.use("/api/webhooks/stripe", express.raw({ type: "application/json" }));
 app.use("/api/stripe-webhook", express.raw({ type: "application/json" }));
 app.use("/api/stripe-webhook-new", express.raw({ type: "application/json" }));
 app.use("/api/webhook-fixuser", express.raw({ type: "application/json" }));
+app.use("/api/webhook-direto", express.raw({ type: "application/json" }));
 
 // Outros middlewares para parsing de JSON
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(registerRouter);
 app.use(stripeWebhookRouter);
 app.use(stripeWebhookFixRouter); // Novo webhook com correções
+app.use(webhookDiretoRouter); // Router do webhook direto para Stripe
 app.use(webhookFixUserRouter); // Nova implementação do webhook para criar usuário
 app.use(syncUsersRouter);
 app.use(migrationsRouter);

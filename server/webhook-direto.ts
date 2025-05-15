@@ -17,86 +17,6 @@ if (!stripeKey) {
 
 const stripe = new Stripe(stripeKey);
 
-// Rota para processar webhook do Stripe - versão direta sem verificação
-router.post('/api/webhook-direto', express.json(), async (req: Request, res: Response) => {
-  console.log('✅ Webhook recebido em /api/webhook-direto:', JSON.stringify(req.body));
-  
-  try {
-    // Verificar se é um evento de checkout concluído
-    if (req.body && req.body.type === 'checkout.session.completed') {
-      const session = req.body.data.object;
-      console.log('✅ Sessão completa:', JSON.stringify(session));
-      
-      // Obter email do usuário de várias formas possíveis
-      const userEmail = session.customer_email || 
-                       (session.customer_details ? session.customer_details.email : null) ||
-                       (session.metadata ? session.metadata.email : null);
-      
-      if (userEmail) {
-        console.log(`✅ Processando checkout para ${userEmail}`);
-        
-        // Obter dados dos metadados
-        const metadata = session.metadata || {};
-        const userId = metadata.userId || metadata.user_id;
-        const encodedPassword = metadata.senha;
-        
-        // Se não houver userId nos metadados, tentamos buscar pelo email
-        if (!userId) {
-          console.log('⚠️ ID do usuário não encontrado nos metadados, buscando pelo email...');
-          const dbUserByEmail = await storage.getUserByEmail(userEmail);
-          
-          if (dbUserByEmail) {
-            console.log(`✅ Usuário encontrado pelo email: ${dbUserByEmail.id}`);
-            // Continue o processamento com esse usuário
-            await processFirebaseUser(dbUserByEmail, userEmail, encodedPassword);
-            return res.status(200).send("Evento processado com sucesso");
-          } else {
-            console.error(`❌ Usuário não encontrado pelo email: ${userEmail}`);
-            
-            // Tente criar um novo usuário
-            console.log(`⚠️ Tentando criar novo usuário para: ${userEmail}`);
-            try {
-              const newUser = await storage.createUser({
-                email: userEmail,
-                name: userEmail.split('@')[0],
-                status: 'pendente'
-              });
-              
-              console.log(`✅ Novo usuário criado: ${newUser.id}`);
-              await processFirebaseUser(newUser, userEmail, encodedPassword);
-              return res.status(200).send("Novo usuário criado e processado com sucesso");
-            } catch (createError) {
-              console.error(`❌ Erro ao criar novo usuário:`, createError);
-              return res.status(200).send("Erro ao criar novo usuário");
-            }
-          }
-        }
-        
-        // Obter usuário do banco pelo ID
-        const dbUser = await storage.getUser(parseInt(userId));
-        
-        if (!dbUser) {
-          console.error(`❌ Usuário não encontrado no banco: ${userId}`);
-          return res.status(200).send("Evento recebido, mas usuário não encontrado no banco");
-        }
-        
-        // Processar o usuário do Firebase
-        await processFirebaseUser(dbUser, userEmail, encodedPassword);
-      } else {
-        console.error('❌ Email não encontrado na sessão de checkout');
-        return res.status(200).send("Email não encontrado na sessão");
-      }
-    }
-    
-    // Responder com sucesso para o Stripe
-    return res.status(200).send('Evento processado com sucesso');
-  } catch (error) {
-    console.error('❌ Erro ao processar webhook:', error);
-    // Ainda retornamos 200 para o Stripe não reenviar o evento
-    return res.status(200).send('Evento recebido com erros no processamento');
-  }
-});
-
 // Função auxiliar para processar usuário do Firebase
 async function processFirebaseUser(dbUser: any, userEmail: string, encodedPassword: string | undefined) {
   console.log(`⏳ Processando usuário do Firebase para: ${userEmail}`);
@@ -155,44 +75,220 @@ async function processFirebaseUser(dbUser: any, userEmail: string, encodedPasswo
         await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
         console.log(`✅ Status do usuário atualizado para 'ativo'`);
               
-              // Enviar email de boas-vindas
+        // Enviar email de boas-vindas
+        try {
+          const htmlContent = `
+            <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+            <p>Olá,</p>
+            <p>Seu pagamento foi confirmado com sucesso e sua conta está pronta para uso.</p>
+            <p>Você pode acessar sua conta usando seu email e senha.</p>
+            <p>Atenciosamente,<br>Equipe PlannerPro</p>
+          `;
+          
+          await sendTransactionalEmail(
+            userEmail,
+            "Bem-vindo ao PlannerPro - Sua conta está pronta!",
+            htmlContent,
+            "Seu pagamento foi confirmado e sua conta está pronta para uso."
+          );
+          
+          console.log(`✅ Email de boas-vindas enviado para: ${userEmail}`);
+        } catch (emailError) {
+          console.error(`❌ Erro ao enviar email:`, emailError);
+        }
+        
+        // Adicionar ao Brevo para marketing
+        try {
+          await addContactToBrevo(dbUser.name || userEmail.split('@')[0], userEmail);
+          console.log(`✅ Contato adicionado ao Brevo`);
+        } catch (brevoError) {
+          console.error(`❌ Erro ao adicionar contato ao Brevo:`, brevoError);
+        }
+        
+        return true;
+      } catch (createError) {
+        console.error(`❌ ERRO AO CRIAR USUÁRIO NO FIREBASE:`, createError);
+        return false;
+      }
+    } else {
+      console.error(`❌ Erro ao verificar usuário no Firebase:`, firebaseError);
+      return false;
+    }
+  }
+}
+
+// Rota para processar webhook do Stripe - versão direta sem verificação
+router.post('/api/webhook-direto', async (req: Request, res: Response) => {
+  console.log('✅ Webhook recebido em /api/webhook-direto:', JSON.stringify(req.body).substring(0, 200) + '...');
+  
+  try {
+    // Verificar se é um evento de checkout concluído
+    if (req.body && req.body.type === 'checkout.session.completed') {
+      const session = req.body.data.object;
+      console.log('✅ Detalhes da sessão (parcial):', JSON.stringify(session).substring(0, 500) + '...');
+      
+      // Obter email do usuário de várias formas possíveis
+      const userEmail = session.customer_email || 
+                       (session.customer_details ? session.customer_details.email : null) ||
+                       (session.metadata ? session.metadata.email : null);
+      
+      if (userEmail) {
+        console.log(`✅ Processando checkout para ${userEmail}`);
+        
+        // Obter dados dos metadados
+        const metadata = session.metadata || {};
+        const userId = metadata.userId || metadata.user_id;
+        const encodedPassword = metadata.senha;
+        
+        // Se não houver userId nos metadados, tentamos buscar pelo email
+        if (!userId) {
+          console.log('⚠️ ID do usuário não encontrado nos metadados, buscando pelo email...');
+          const dbUserByEmail = await storage.getUserByEmail(userEmail);
+          
+          if (dbUserByEmail) {
+            console.log(`✅ Usuário encontrado pelo email: ${dbUserByEmail.id}`);
+            // Continue o processamento com esse usuário
+            await processFirebaseUser(dbUserByEmail, userEmail, encodedPassword);
+            
+            // Criar registro na tabela de assinaturas se for um checkout de assinatura
+            if (session.mode === 'subscription' && session.subscription) {
               try {
-                const htmlContent = `
-                  <h1>Bem-vindo ao PlannerPro Organizer!</h1>
-                  <p>Olá,</p>
-                  <p>Seu pagamento foi confirmado com sucesso e sua conta está pronta para uso.</p>
-                  <p>Você pode acessar sua conta usando seu email e senha.</p>
-                  <p>Atenciosamente,<br>Equipe PlannerPro</p>
-                `;
+                console.log(`⏳ Criando registro de assinatura para usuário encontrado pelo email ${dbUserByEmail.id} - Assinatura: ${session.subscription}`);
                 
-                await sendTransactionalEmail(
-                  userEmail,
-                  "Bem-vindo ao PlannerPro - Sua conta está pronta!",
-                  htmlContent,
-                  "Seu pagamento foi confirmado e sua conta está pronta para uso."
-                );
+                // Determinar o tipo de plano com base no preço
+                let planType = 'monthly'; // valor padrão
+                if (session.metadata && session.metadata.planType) {
+                  planType = session.metadata.planType;
+                } else if (session.amount_total) {
+                  // Lógica baseada no valor (aproximada)
+                  if (session.amount_total >= 10000) {
+                    planType = 'lifetime';
+                  } else if (session.amount_total >= 1000) {
+                    planType = 'annual';
+                  }
+                }
                 
-                console.log(`✅ Email de boas-vindas enviado para: ${userEmail}`);
-              } catch (emailError) {
-                console.error(`❌ Erro ao enviar email:`, emailError);
+                // Criar o registro de assinatura
+                await storage.createSubscription(dbUserByEmail.id, planType);
+                console.log(`✅ Registro de assinatura criado com sucesso para usuário encontrado pelo email: ${userEmail}`);
+                
+                // Atualizar datas de trial se necessário
+                try {
+                  await storage.updateUserTrialDates(dbUserByEmail.id);
+                  console.log(`✅ Datas de trial atualizadas para usuário encontrado pelo email: ${dbUserByEmail.id}`);
+                } catch (trialDatesError) {
+                  console.error(`❌ Erro ao atualizar datas de trial:`, trialDatesError);
+                }
+              } catch (subscriptionError) {
+                console.error(`❌ Erro ao criar registro de assinatura:`, subscriptionError);
+              }
+            }
+            
+            return res.status(200).send("Evento processado com sucesso");
+          } else {
+            console.error(`❌ Usuário não encontrado pelo email: ${userEmail}`);
+            
+            // Tente criar um novo usuário
+            console.log(`⚠️ Tentando criar novo usuário para: ${userEmail}`);
+            try {
+              const newUser = await storage.createUser({
+                email: userEmail,
+                name: userEmail.split('@')[0],
+                status: 'pendente'
+              });
+              
+              console.log(`✅ Novo usuário criado: ${newUser.id}`);
+              await processFirebaseUser(newUser, userEmail, encodedPassword);
+              
+              // Criar registro na tabela de assinaturas se for um checkout de assinatura
+              if (session.mode === 'subscription' && session.subscription) {
+                try {
+                  console.log(`⏳ Criando registro de assinatura para novo usuário ${newUser.id} - Assinatura: ${session.subscription}`);
+                  
+                  // Determinar o tipo de plano com base no preço
+                  let planType = 'monthly'; // valor padrão
+                  if (session.metadata && session.metadata.planType) {
+                    planType = session.metadata.planType;
+                  } else if (session.amount_total) {
+                    // Lógica baseada no valor (aproximada)
+                    if (session.amount_total >= 10000) {
+                      planType = 'lifetime';
+                    } else if (session.amount_total >= 1000) {
+                      planType = 'annual';
+                    }
+                  }
+                  
+                  // Criar o registro de assinatura
+                  await storage.createSubscription(newUser.id, planType);
+                  console.log(`✅ Registro de assinatura criado com sucesso para novo usuário: ${userEmail}`);
+                  
+                  // Atualizar datas de trial se necessário
+                  try {
+                    await storage.updateUserTrialDates(newUser.id);
+                    console.log(`✅ Datas de trial atualizadas para novo usuário: ${newUser.id}`);
+                  } catch (trialDatesError) {
+                    console.error(`❌ Erro ao atualizar datas de trial para novo usuário:`, trialDatesError);
+                  }
+                } catch (subscriptionError) {
+                  console.error(`❌ Erro ao criar registro de assinatura para novo usuário:`, subscriptionError);
+                }
               }
               
-              // Adicionar ao Brevo para marketing
-              try {
-                await addContactToBrevo(dbUser.name || userEmail.split('@')[0], userEmail);
-                console.log(`✅ Contato adicionado ao Brevo`);
-              } catch (brevoError) {
-                console.error(`❌ Erro ao adicionar contato ao Brevo:`, brevoError);
-              }
+              return res.status(200).send("Novo usuário criado e processado com sucesso");
             } catch (createError) {
-              console.error(`❌ ERRO AO CRIAR USUÁRIO NO FIREBASE:`, createError);
+              console.error(`❌ Erro ao criar novo usuário:`, createError);
+              return res.status(200).send("Erro ao criar novo usuário");
             }
-          } else {
-            console.error(`❌ Erro ao verificar usuário no Firebase:`, firebaseError);
+          }
+        }
+        
+        // Obter usuário do banco pelo ID
+        const dbUser = await storage.getUser(parseInt(userId));
+        
+        if (!dbUser) {
+          console.error(`❌ Usuário não encontrado no banco: ${userId}`);
+          return res.status(200).send("Evento recebido, mas usuário não encontrado no banco");
+        }
+        
+        // Processar o usuário do Firebase
+        await processFirebaseUser(dbUser, userEmail, encodedPassword);
+        
+        // Criar registro na tabela de assinaturas se for um checkout de assinatura
+        if (session.mode === 'subscription' && session.subscription) {
+          try {
+            console.log(`⏳ Criando registro de assinatura para usuário ${dbUser.id} - Assinatura: ${session.subscription}`);
+            
+            // Determinar o tipo de plano com base no preço
+            let planType = 'monthly'; // valor padrão
+            if (session.metadata && session.metadata.planType) {
+              planType = session.metadata.planType;
+            } else if (session.amount_total) {
+              // Lógica baseada no valor (aproximada)
+              if (session.amount_total >= 10000) {
+                planType = 'lifetime';
+              } else if (session.amount_total >= 1000) {
+                planType = 'annual';
+              }
+            }
+            
+            // Criar o registro de assinatura
+            await storage.createSubscription(dbUser.id, planType);
+            console.log(`✅ Registro de assinatura criado com sucesso para: ${userEmail}`);
+            
+            // Atualizar datas de trial se necessário
+            try {
+              await storage.updateUserTrialDates(dbUser.id);
+              console.log(`✅ Datas de trial atualizadas para usuário com nova assinatura: ${dbUser.id}`);
+            } catch (trialDatesError) {
+              console.error(`❌ Erro ao atualizar datas de trial para nova assinatura:`, trialDatesError);
+            }
+          } catch (subscriptionError) {
+            console.error(`❌ Erro ao criar registro de assinatura:`, subscriptionError);
           }
         }
       } else {
         console.error('❌ Email não encontrado na sessão de checkout');
+        return res.status(200).send("Email não encontrado na sessão");
       }
     }
     
