@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { CheckCircle, ChevronLeft, Sparkles, Calendar, Infinity } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Planos() {
   const [_, setLocation] = useLocation();
@@ -58,104 +63,166 @@ export default function Planos() {
     }
   };
 
+  const plans = [
+    {
+      id: "mensal",
+      name: "Plano Mensal",
+      price: "R$ 9,70",
+      color: "blue",
+      icon: <Calendar className="h-5 w-5 text-blue-600" />,
+      description: "Acesso total, perfeito para testar todas as funcionalidades",
+      features: ["Acesso a todos os recursos", "Suporte por e-mail", "Atualizações mensais"],
+      popular: false
+    },
+    {
+      id: "anual",
+      name: "Plano Anual",
+      price: "R$ 97,00",
+      color: "green",
+      icon: <Sparkles className="h-5 w-5 text-green-600" />,
+      description: "Nosso plano mais popular, com economia de 17%",
+      features: ["Tudo do plano mensal", "Economia de 17%", "Suporte prioritário", "Atualizações prioritárias"],
+      popular: true
+    },
+    {
+      id: "vitalicio",
+      name: "Plano Vitalício",
+      price: "R$ 247,00",
+      color: "yellow",
+      icon: <Infinity className="h-5 w-5 text-yellow-600" />,
+      description: "Acesso permanente sem mensalidades",
+      features: ["Pagamento único", "Acesso vitalício", "Todas as atualizações futuras", "Suporte premium"],
+      popular: false
+    }
+  ];
+
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-4">Escolha seu Plano</h2>
-      
-      {/* Input de email */}
-      <input
-        type="email"
-        placeholder="Seu e-mail"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className={`w-full p-3 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-          errorMessage ? 'border-red-500' : ''
-        }`}
-        disabled={loading !== null}
-      />
-      
-      {/* Mensagem de erro */}
-      {errorMessage && (
-        <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
-          {errorMessage}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4">
+      <div className="container mx-auto max-w-6xl">
+        <Button 
+          variant="ghost" 
+          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-blue-700"
+          onClick={() => setLocation("/")}
+          disabled={loading !== null}
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Voltar para a página inicial
+        </Button>
+        
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-blue-800 mb-4">
+            Escolha o Plano Perfeito para Você
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Todos os planos incluem trial de 7 dias e acesso completo a todas as funcionalidades.
+            Cancele a qualquer momento.
+          </p>
         </div>
-      )}
+        
+        <div className="mb-12">
+          <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden mb-8 p-6 border border-blue-100">
+            <h3 className="text-xl font-semibold mb-4 text-blue-800">Comece sua experiência</h3>
+            <p className="text-gray-600 mb-4">Digite seu e-mail para continuar com a assinatura</p>
+            
+            {/* Input de email */}
+            <Input
+              type="email"
+              placeholder="Seu e-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className={`mb-4 ${errorMessage ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+              disabled={loading !== null}
+            />
+            
+            {/* Mensagem de erro */}
+            {errorMessage && (
+              <Alert className="mb-4 border-red-200 bg-red-50 text-red-800">
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {plans.map((plan) => (
+              <Card key={plan.id} className={`border-${plan.color}-100 hover:shadow-xl transition-all duration-300 ${plan.popular ? 'ring-2 ring-green-500 ring-opacity-50' : ''}`}>
+                {plan.popular && (
+                  <div className="bg-green-500 text-white text-xs font-bold uppercase tracking-wider py-1 text-center">
+                    Mais Popular
+                  </div>
+                )}
+                <CardHeader className={`bg-${plan.color}-50`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className={`rounded-full bg-${plan.color}-100 p-2`}>
+                      {plan.icon}
+                    </div>
+                    <div className="text-right">
+                      <span className="text-gray-500 text-sm">Preço total</span>
+                      <div className="text-3xl font-bold text-gray-900">{plan.price}</div>
+                    </div>
+                  </div>
+                  <CardTitle className={`text-${plan.color}-800`}>{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <CheckCircle className={`h-4 w-4 text-${plan.color}-500`} />
+                        <span className="text-gray-600">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    className={`w-full bg-${plan.color}-600 hover:bg-${plan.color}-700 text-white font-semibold py-3`}
+                    onClick={() => iniciarCheckout(plan.id)}
+                    disabled={loading !== null}
+                  >
+                    {loading === plan.id ? (
+                      <div className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processando...
+                      </div>
+                    ) : (
+                      `Escolher ${plan.name}`
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
 
-      <div className="flex flex-col space-y-3">
-        {/* Botão Plano Mensal */}
-        <button 
-          className="bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition flex justify-center items-center"
-          onClick={() => iniciarCheckout("mensal")}
-          disabled={loading !== null}
-        >
-          {loading === "mensal" ? (
-            <div className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Processando...
+        {/* Feedback adicional durante o carregamento */}
+        {loading && (
+          <div className="text-center mt-8">
+            <div className="max-w-md mx-auto bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800">
+                Preparando checkout seguro... Você será redirecionado para o Stripe em instantes.
+              </p>
             </div>
-          ) : (
-            "Plano Mensal"
-          )}
-        </button>
-
-        {/* Botão Plano Anual */}
-        <button 
-          className="bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700 transition flex justify-center items-center"
-          onClick={() => iniciarCheckout("anual")}
-          disabled={loading !== null}
-        >
-          {loading === "anual" ? (
-            <div className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Processando...
-            </div>
-          ) : (
-            "Plano Anual"
-          )}
-        </button>
-
-        {/* Botão Plano Vitalício */}
-        <button 
-          className="bg-yellow-600 text-white p-3 rounded-md font-semibold hover:bg-yellow-700 transition flex justify-center items-center"
-          onClick={() => iniciarCheckout("vitalicio")}
-          disabled={loading !== null}
-        >
-          {loading === "vitalicio" ? (
-            <div className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Processando...
-            </div>
-          ) : (
-            "Plano Vitalício"
-          )}
-        </button>
+          </div>
+        )}
+        
+        {/* Seção de garantia */}
+        <div className="mt-16 text-center">
+          <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-6 shadow-md">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">Garantia de Satisfação</h3>
+            <p className="text-gray-600 mb-2">
+              Experimente o PlannerPro por 7 dias sem compromisso. 
+              Se não gostar, cancele facilmente e não será cobrado.
+            </p>
+            <p className="text-gray-500 text-sm">
+              Cancele sua assinatura a qualquer momento diretamente na sua conta.
+            </p>
+          </div>
+        </div>
       </div>
-      
-      {/* Botão Voltar */}
-      <button 
-        className="mt-6 w-full p-2 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition"
-        onClick={() => setLocation("/")}
-        disabled={loading !== null}
-      >
-        Voltar
-      </button>
-
-      {/* Feedback adicional durante o carregamento */}
-      {loading && (
-        <p className="text-center text-sm text-gray-500 mt-4">
-          Preparando checkout seguro... Você será redirecionado para o Stripe.
-        </p>
-      )}
     </div>
   );
 }
