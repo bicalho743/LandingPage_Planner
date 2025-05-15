@@ -1,0 +1,76 @@
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, Clock, Users, TrendingUp } from "lucide-react";
+
+export default function LandingPage() {
+  return (
+    <div className="bg-white text-gray-900">
+      <header className="bg-blue-700 text-white text-center py-8 relative">
+        <h1 className="text-3xl font-bold">PlannerPro - Organize sua vida com estilo</h1>
+        <p className="mt-2 text-lg">A solução completa para Personal Organizers</p>
+        <a href="https://promo.plannerorganiza.com.br/register" target="_blank" className="absolute top-4 right-4">
+          <Button className="bg-white text-blue-700 font-bold py-2 px-4 rounded-md">Experimente Grátis</Button>
+        </a>
+      </header>
+
+      <section className="py-8 text-center">
+        <h2 className="text-2xl font-bold">Benefícios do Sistema</h2>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          {[
+            "Quero uma Base de Clientes Fiéis e Lucrativos!",
+            "Não Quero Mais Esquecer Datas Importantes!",
+            "Quero Controlar Minhas Finanças com Facilidade!",
+            "Quero Simplificar Minha Rotina e Crescer!",
+            "Quero Enviar Propostas Profissionais em Segundos!",
+            "Não Vou Mais Perder Oportunidades de Vendas!",
+            "Quero Ter Relatórios Claros e Precisos!",
+            "Não Quero Mais Planilhas Confusas!",
+          ].map((cta) => (
+            <a href="https://promo.plannerorganiza.com.br/register" target="_blank">
+              <Button className="mt-4 bg-blue-600 text-white w-full text-left">✅ {cta}</Button>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-8 text-center bg-gray-50">
+        <h2 className="text-2xl font-bold">Recursos Exclusivos</h2>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <Card className="p-4">
+            <CardContent>
+              <CheckCircle className="text-green-500 mb-2" />
+              <h3 className="font-bold">Design Intuitivo</h3>
+              <p className="text-sm text-gray-600">Interface simples e elegante, fácil de usar.</p>
+            </CardContent>
+          </Card>
+          <Card className="p-4">
+            <CardContent>
+              <Clock className="text-green-500 mb-2" />
+              <h3 className="font-bold">Economia de Tempo</h3>
+              <p className="text-sm text-gray-600">Automatize tarefas e ganhe horas valiosas.</p>
+            </CardContent>
+          </Card>
+          <Card className="p-4">
+            <CardContent>
+              <Users className="text-green-500 mb-2" />
+              <h3 className="font-bold">Gestão de Clientes</h3>
+              <p className="text-sm text-gray-600">Organize e acompanhe seu relacionamento com clientes.</p>
+            </CardContent>
+          </Card>
+          <Card className="p-4">
+            <CardContent>
+              <TrendingUp className="text-green-500 mb-2" />
+              <h3 className="font-bold">Crescimento Garantido</h3>
+              <p className="text-sm text-gray-600">Aumente seu faturamento e expanda seu negócio.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <footer className="bg-gray-800 text-white text-center py-4">
+        <p>&copy; 2025 Planner Organizer. Todos os direitos reservados.</p>
+      </footer>
+    </div>
+  );
+}
