@@ -16,7 +16,9 @@ if (!stripeKey) {
 }
 
 const stripe = new Stripe(stripeKey);
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+// Defina a webhook secret (específica para este endpoint - elegant-rhythm)
+// whsec_GXJLDCh03QNkhQOYRANC2vlneLItCfZ8
+const endpointSecret = 'whsec_GXJLDCh03QNkhQOYRANC2vlneLItCfZ8';
 
 const router = express.Router();
 

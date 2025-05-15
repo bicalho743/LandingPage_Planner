@@ -15,6 +15,10 @@ if (!stripeKey) {
   throw new Error('STRIPE_SECRET_KEY não configurado');
 }
 
+// Defina a webhook secret (específica para este endpoint)
+// whsec_jdOvfRuggg7gR2vCyZebZ2LEoEQ0Ig57
+const webhookDiretoSecret = 'whsec_jdOvfRuggg7gR2vCyZebZ2LEoEQ0Ig57';
+
 const stripe = new Stripe(stripeKey);
 
 // Função auxiliar para processar usuário do Firebase
@@ -117,14 +121,40 @@ async function processFirebaseUser(dbUser: any, userEmail: string, encodedPasswo
   }
 }
 
-// Rota para processar webhook do Stripe - versão direta sem verificação
+// Rota para processar webhook do Stripe - com verificação de assinatura
 router.post('/api/webhook-direto', async (req: Request, res: Response) => {
-  console.log('✅ Webhook recebido em /api/webhook-direto:', JSON.stringify(req.body).substring(0, 200) + '...');
+  console.log('🔔 Webhook recebido em /api/webhook-direto');
+  
+  let event;
+  const sig = req.headers['stripe-signature'];
+  
+  // Verificar se o corpo da requisição é um Buffer
+  if (!req.body || Buffer.isBuffer(req.body) === false) {
+    console.error("❌ ERRO CRÍTICO: Corpo da requisição não é um Buffer! Middleware express.raw() não está funcionando corretamente.");
+    console.log("Tipo do corpo recebido:", typeof req.body);
+    console.log("É Buffer?", Buffer.isBuffer(req.body));
+    return res.status(400).send("Formato de requisição inválido");
+  }
+
+  // Verificar se a assinatura está presente
+  if (!sig) {
+    console.error("❌ Assinatura do Stripe ausente no cabeçalho");
+    return res.status(400).send("Assinatura ausente");
+  }
+
+  try {
+    // Verificar a assinatura usando webhookDiretoSecret
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookDiretoSecret);
+    console.log(`✅ Assinatura do webhook verificada com sucesso: ${event.type}`);
+  } catch (err: any) {
+    console.error(`❌ Erro ao verificar assinatura do webhook: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
   
   try {
     // Verificar se é um evento de checkout concluído
-    if (req.body && req.body.type === 'checkout.session.completed') {
-      const session = req.body.data.object;
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
       console.log('✅ Detalhes da sessão (parcial):', JSON.stringify(session).substring(0, 500) + '...');
       
       // Obter email do usuário de várias formas possíveis
