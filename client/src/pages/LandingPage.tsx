@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import LeadForm from "../components/LeadForm";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, Clock, Users, TrendingUp, Calendar, FileText, PieChart, BarChart } from "lucide-react";
+import { CheckCircle, Clock, Users, Star, Sun, BarChart2 } from "lucide-react";
 
 export default function LandingPage() {
   // Usando o router do Next.js de forma compatível com wouter
@@ -20,204 +20,482 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white text-gray-800 font-sans min-h-screen">
-      {/* Hero Section com gradiente */}
-      <header className="bg-gradient-to-r from-blue-800 to-blue-600 text-white py-16">
-        <div className="container mx-auto text-center px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">
-            PlannerPro - Organize sua vida com estilo
+    <div className="bg-white text-gray-900 font-sans min-h-screen">
+      {/* Navbar */}
+      <nav className="container mx-auto py-4 px-4 flex justify-between items-center">
+        <div className="flex items-center">
+          <h1 className="text-xl font-semibold">
+            <span className="text-gray-800">Personal</span>
+            <span className="text-yellow-500">Manager</span>
           </h1>
-          <p className="mt-2 text-xl md:text-2xl max-w-2xl mx-auto text-blue-100">
-            A solução completa para Personal Organizers que querem crescer
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-700 hover:bg-blue-50 font-bold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300" 
-              onClick={handleGetStarted}
-            >
-              Experimente Grátis
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="bg-transparent border-white text-white hover:bg-white/10 font-semibold px-8 py-6 text-lg" 
-              onClick={() => document.getElementById('beneficios')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Conheça os Benefícios
-            </Button>
-          </div>
         </div>
-      </header>
+        <div className="hidden md:flex space-x-6">
+          <a href="#" className="text-gray-600 hover:text-gray-800">Início</a>
+          <a href="#funcionalidades" className="text-gray-600 hover:text-gray-800">Funcionalidades</a>
+          <a href="#depoimentos" className="text-gray-600 hover:text-gray-800">Depoimentos</a>
+          <a href="#contato" className="text-gray-600 hover:text-gray-800">Contato</a>
+        </div>
+      </nav>
 
-      <main className="container mx-auto px-4 py-12">
-        {/* Seção de recursos com cards */}
-        <section className="mb-20">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">
-            Por que escolher o <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-green-600">PlannerPro?</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white overflow-hidden">
-              <div className="h-2 bg-blue-600"></div>
-              <CardContent className="pt-6">
-                <div className="rounded-full bg-blue-100 p-3 w-12 h-12 flex items-center justify-center mb-4">
-                  <CheckCircle className="text-blue-600 h-6 w-6" />
-                </div>
-                <h3 className="font-bold text-xl mb-2">Design Intuitivo</h3>
-                <p className="text-gray-600">Interface simples e elegante, fácil de usar, projetada para aumentar sua produtividade.</p>
-              </CardContent>
-            </Card>
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white overflow-hidden">
-              <div className="h-2 bg-green-600"></div>
-              <CardContent className="pt-6">
-                <div className="rounded-full bg-green-100 p-3 w-12 h-12 flex items-center justify-center mb-4">
-                  <Clock className="text-green-600 h-6 w-6" />
-                </div>
-                <h3 className="font-bold text-xl mb-2">Economia de Tempo</h3>
-                <p className="text-gray-600">Automatize tarefas repetitivas e ganhe horas valiosas todo mês para focar no que importa.</p>
-              </CardContent>
-            </Card>
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white overflow-hidden">
-              <div className="h-2 bg-purple-600"></div>
-              <CardContent className="pt-6">
-                <div className="rounded-full bg-purple-100 p-3 w-12 h-12 flex items-center justify-center mb-4">
-                  <Users className="text-purple-600 h-6 w-6" />
-                </div>
-                <h3 className="font-bold text-xl mb-2">Gestão de Clientes</h3>
-                <p className="text-gray-600">Organize e acompanhe seu relacionamento com clientes para nunca perder uma oportunidade.</p>
-              </CardContent>
-            </Card>
-            <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white overflow-hidden">
-              <div className="h-2 bg-yellow-600"></div>
-              <CardContent className="pt-6">
-                <div className="rounded-full bg-yellow-100 p-3 w-12 h-12 flex items-center justify-center mb-4">
-                  <TrendingUp className="text-yellow-600 h-6 w-6" />
-                </div>
-                <h3 className="font-bold text-xl mb-2">Crescimento Garantido</h3>
-                <p className="text-gray-600">Aumente seu faturamento e expanda seu negócio com ferramentas focadas em resultados.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Seção de benefícios com botões grandes */}
-        <section id="beneficios" className="mb-20 py-10 px-4 md:px-8 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl shadow-md">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-blue-800">
-            Benefícios do Sistema
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex gap-4 items-start group hover:bg-white p-4 rounded-lg transition-all duration-300">
-              <div className="rounded-full bg-blue-100 p-2 group-hover:bg-blue-200 transition-all">
-                <Users className="text-blue-600 h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-xl mb-2 text-blue-800 group-hover:text-blue-700">Base de Clientes Fiéis e Lucrativos</h3>
-                <p className="text-gray-600 mb-3">Gerencie seus clientes de forma eficiente e transforme leads em clientes fiéis</p>
-                <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleGetStarted}>Quero começar agora</Button>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 items-start group hover:bg-white p-4 rounded-lg transition-all duration-300">
-              <div className="rounded-full bg-green-100 p-2 group-hover:bg-green-200 transition-all">
-                <Calendar className="text-green-600 h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-xl mb-2 text-green-800 group-hover:text-green-700">Controle de Datas Importantes</h3>
-                <p className="text-gray-600 mb-3">Nunca mais esqueça datas importantes com nosso sistema de lembretes inteligentes</p>
-                <Button className="bg-green-600 text-white hover:bg-green-700" onClick={handleGetStarted}>Quero começar agora</Button>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 items-start group hover:bg-white p-4 rounded-lg transition-all duration-300">
-              <div className="rounded-full bg-purple-100 p-2 group-hover:bg-purple-200 transition-all">
-                <PieChart className="text-purple-600 h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-xl mb-2 text-purple-800 group-hover:text-purple-700">Controle Financeiro Simplificado</h3>
-                <p className="text-gray-600 mb-3">Gerencie suas finanças com facilidade e tenha uma visão clara das suas receitas e despesas</p>
-                <Button className="bg-purple-600 text-white hover:bg-purple-700" onClick={handleGetStarted}>Quero começar agora</Button>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 items-start group hover:bg-white p-4 rounded-lg transition-all duration-300">
-              <div className="rounded-full bg-yellow-100 p-2 group-hover:bg-yellow-200 transition-all">
-                <Clock className="text-yellow-600 h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-xl mb-2 text-yellow-800 group-hover:text-yellow-700">Rotina Simplificada</h3>
-                <p className="text-gray-600 mb-3">Otimize seu tempo e foque no crescimento do seu negócio com processos automatizados</p>
-                <Button className="bg-yellow-600 text-white hover:bg-yellow-700" onClick={handleGetStarted}>Quero começar agora</Button>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 items-start group hover:bg-white p-4 rounded-lg transition-all duration-300">
-              <div className="rounded-full bg-red-100 p-2 group-hover:bg-red-200 transition-all">
-                <FileText className="text-red-600 h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-xl mb-2 text-red-800 group-hover:text-red-700">Propostas Profissionais</h3>
-                <p className="text-gray-600 mb-3">Crie propostas profissionais em segundos e impressione seus clientes</p>
-                <Button className="bg-red-600 text-white hover:bg-red-700" onClick={handleGetStarted}>Quero começar agora</Button>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 items-start group hover:bg-white p-4 rounded-lg transition-all duration-300">
-              <div className="rounded-full bg-indigo-100 p-2 group-hover:bg-indigo-200 transition-all">
-                <BarChart className="text-indigo-600 h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-xl mb-2 text-indigo-800 group-hover:text-indigo-700">Relatórios Claros e Precisos</h3>
-                <p className="text-gray-600 mb-3">Tenha acesso a relatórios detalhados e tome decisões baseadas em dados concretos</p>
-                <Button className="bg-indigo-600 text-white hover:bg-indigo-700" onClick={handleGetStarted}>Quero começar agora</Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA + Formulário Lead */}
-        <section className="my-20 flex flex-col md:flex-row gap-8 items-center justify-center bg-white rounded-xl shadow-xl p-8">
-          <div className="md:w-1/2 text-center md:text-left">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-blue-800">
-              Transforme seu negócio <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-green-600">hoje mesmo!</span>
+      <main>
+        {/* Bloco 1 - Hero Section */}
+        <section className="container mx-auto px-4 py-16 flex flex-col md:flex-row items-center">
+          <div className="md:w-1/2 md:pr-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">
+              Nunca Mais Perca Clientes e Oportunidades
             </h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-lg">
-              Junte-se a milhares de profissionais que estão economizando tempo e aumentando seus lucros com o PlannerPro.
+            <p className="text-gray-600 mb-8 text-lg">
+              Você é uma Personal Organizer e já perdeu a conta dos clientes que não retornaram? Seu faturamento parece um mistério? Chega de confusão e incerteza. O PersonalManager é a solução que você precisava.
             </p>
-            <Button 
-              size="lg" 
-              className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg shadow-lg font-bold" 
-              onClick={handleGetStarted}
-            >
-              Começar Trial de 7 Dias
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                className="bg-green-500 text-white hover:bg-green-600 w-full md:w-auto px-6 py-3 text-left flex items-center"
+                onClick={handleGetStarted}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Quero uma Base de Clientes Fiéis e Lucrativos!
+              </Button>
+              <Button 
+                className="bg-green-500 text-white hover:bg-green-600 w-full md:w-auto px-6 py-3 text-left flex items-center"
+                onClick={handleGetStarted}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Não Quero Mais Esquecer Datas Importantes!
+              </Button>
+            </div>
+            <div className="mt-6">
+              <a href="#recursos" className="text-gray-500 hover:text-gray-700 font-medium">
+                Ver Mais Recursos
+              </a>
+            </div>
           </div>
-          <div className="md:w-1/2 max-w-md">
-            <div className="bg-gradient-to-br from-blue-50 to-green-50 shadow-lg rounded-lg p-8 border border-blue-100">
-              <h3 className="text-2xl font-bold mb-4 text-center text-blue-800">
-                Receba Novidades
-              </h3>
-              <LeadForm />
+          <div className="md:w-1/2 mt-8 md:mt-0">
+            <div className="relative">
+              <p className="text-sm text-right text-gray-500 mb-2">
+                Vida organizada com planner e acessórios
+              </p>
+              <div className="bg-gray-100 rounded-lg p-8 h-64 flex items-center justify-center text-gray-400">
+                [Imagem de planner e organização]
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bloco 2 - Recursos exclusivos */}
+        <section id="recursos" className="bg-gray-50 py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <p className="text-sm uppercase tracking-wider text-gray-600 mb-2">RECURSOS EXCLUSIVOS PARA PERSONAL ORGANIZERS</p>
+              <h2 className="text-3xl font-bold text-gray-900">Nunca Mais Perca um Cliente</h2>
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                Desenvolvido especialmente para Personal Organizers que querem manter contato constante com seus clientes e ter controle total do negócio.
+              </p>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">
+              <Button 
+                className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 text-left flex items-center"
+                onClick={handleGetStarted}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Quero Controlar Minhas Finanças com Facilidade!
+              </Button>
+              <Button 
+                className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 text-left flex items-center"
+                onClick={handleGetStarted}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Quero Simplificar Minha Rotina e Crescer!
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="flex items-start">
+                <div className="mr-4 text-yellow-500">
+                  <Sun className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Design Intuitivo</h3>
+                  <p className="text-gray-600">
+                    Interface simples e elegante, projetada para tornar o gerenciamento de clientes e projetos mais prático.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="mr-4 text-green-500">
+                  <CheckCircle className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Organização Completa</h3>
+                  <p className="text-gray-600">
+                    Controle total em um só lugar: clientes, propostas, finanças e tarefas, tudo organizado de forma clara e acessível.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="mr-4 text-purple-500">
+                  <Users className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Personalização Flexível</h3>
+                  <p className="text-gray-600">
+                    Adapte o sistema às suas necessidades, criando fluxos e modelos que combinam com seu estilo de trabalho.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="mr-4 text-blue-500">
+                  <Clock className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Economia de Tempo</h3>
+                  <p className="text-gray-600">
+                    Automatize tarefas repetitivas e foque no que realmente importa: seu negócio e seus clientes. Ganhe horas valiosas em sua semana.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bloco 3 - Benefícios */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <p className="text-sm uppercase tracking-wider text-gray-600 mb-2">BENEFÍCIOS</p>
+              <h2 className="text-3xl font-bold text-gray-900">Transforme sua produtividade</h2>
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                Descubra como o Planner Organizer pode revolucionar sua vida e ajudar a alcançar seus objetivos.
+              </p>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-8 items-center">
+              <div className="md:w-1/2">
+                <div className="bg-gray-100 rounded-lg p-8 h-64 flex items-center justify-center text-gray-400">
+                  [Espaço de trabalho produtivo com planner]
+                </div>
+              </div>
+              <div className="md:w-1/2 space-y-6">
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Redução do Estresse Mental</h3>
+                  <p className="text-gray-600">
+                    Ter tudo registrado e organizado libera espaço mental, reduzindo a ansiedade e aumentando a sensação de controle.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Economia de Tempo</h3>
+                  <p className="text-gray-600">
+                    Planejamento eficiente pode economizar até 10 horas por semana, permitindo que você foque no que realmente importa.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Alcance de Metas</h3>
+                  <p className="text-gray-600">
+                    Estudos mostram que pessoas que escrevem seus objetivos têm 42% mais chances de alcançá-los.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bloco 4 - Conheça o Planner */}
+        <section className="bg-gray-50 py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900">Conheça o Planner Organizer</h2>
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                Elegante, funcional e totalmente adaptado às suas necessidades
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Card className="shadow-md">
+                <CardContent className="p-6">
+                  <div className="bg-gray-100 mb-4 h-40 flex items-center justify-center text-gray-400 rounded">
+                    [Design Intuitivo]
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Design Intuitivo</h3>
+                  <p className="text-gray-600">
+                    Interface simples e elegante, projetada para tornar o gerenciamento de clientes e projetos mais prático.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-md">
+                <CardContent className="p-6">
+                  <div className="bg-gray-100 mb-4 h-40 flex items-center justify-center text-gray-400 rounded">
+                    [Organização Completa]
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Organização Completa</h3>
+                  <p className="text-gray-600">
+                    Controle total em um só lugar: clientes, propostas, finanças e tarefas, tudo organizado de forma clara e acessível.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-md">
+                <CardContent className="p-6">
+                  <div className="bg-gray-100 mb-4 h-40 flex items-center justify-center text-gray-400 rounded">
+                    [Personalização Flexível]
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Personalização Flexível</h3>
+                  <p className="text-gray-600">
+                    Adapte o sistema às suas necessidades, criando fluxos e modelos que combinam com seu estilo de trabalho.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Bloco 5 - Depoimentos */}
+        <section id="depoimentos" className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900">O Que Nossos Clientes Dizem</h2>
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                Personal Organizers que transformaram seu negócio com o PersonalManager
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              <Card className="shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                  </div>
+                  <p className="text-gray-600 mb-6">
+                    "Eu nunca mais esqueci o aniversário de um cliente, e meu faturamento cresceu 40%! Antes, eu perdia clientes por não manter contato no momento certo. O PersonalManager é meu parceiro de negócios e me ajuda a controlar tudo."
+                  </p>
+                  <div className="flex items-center">
+                    <div className="bg-gray-200 w-10 h-10 rounded-full mr-3 flex items-center justify-center">
+                      <span className="font-semibold text-gray-700">AC</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Ana Costa</p>
+                      <p className="text-sm text-gray-500">Personal Organizer</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                  </div>
+                  <p className="text-gray-600 mb-6">
+                    "Antes, eu gastava horas tentando organizar meus clientes e finanças em planilhas confusas. Agora, faço tudo em minutos e nunca mais perdi oportunidades de recontrataçāo. O sistema de lembretes automáticos é simplesmente incrível!"
+                  </p>
+                  <div className="flex items-center">
+                    <div className="bg-gray-200 w-10 h-10 rounded-full mr-3 flex items-center justify-center">
+                      <span className="font-semibold text-gray-700">JS</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Julia Santos</p>
+                      <p className="text-sm text-gray-500">Personal Organizer</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <Star className="h-4 w-4 text-yellow-500" />
+                  </div>
+                  <p className="text-gray-600 mb-6">
+                    "Meus clientes estavam sumindo e eu não sabia por quê. Desde que comecei a usar o PersonalManager, tenho controle total sobre quem precisa de follow-up e quando foi a última organização. Meu negócio cresceu 35% em 3 meses!"
+                  </p>
+                  <div className="flex items-center">
+                    <div className="bg-gray-200 w-10 h-10 rounded-full mr-3 flex items-center justify-center">
+                      <span className="font-semibold text-gray-700">CM</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Carla Mendes</p>
+                      <p className="text-sm text-gray-500">Personal Organizer</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-center gap-4">
+              <Button 
+                className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 text-left flex items-center"
+                onClick={handleGetStarted}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Quero Enviar Propostas Profissionais em Segundos!
+              </Button>
+              <Button 
+                className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 text-left flex items-center"
+                onClick={handleGetStarted}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Não Vou Mais Perder Oportunidades de Vendas!
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Bloco 6 - FAQ */}
+        <section className="bg-gray-50 py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900">Perguntas Frequentes</h2>
+            </div>
+
+            <div className="max-w-3xl mx-auto">
+              <div className="space-y-4">
+                <div className="border-b border-gray-200 pb-4">
+                  <button className="flex justify-between items-center w-full text-left focus:outline-none">
+                    <h3 className="font-semibold text-lg">Como o PersonalManager me ajuda a manter o contato com meus clientes?</h3>
+                    <span className="text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </span>
+                  </button>
+                </div>
+                <div className="border-b border-gray-200 pb-4">
+                  <button className="flex justify-between items-center w-full text-left focus:outline-none">
+                    <h3 className="font-semibold text-lg">Preciso instalar algum software no meu computador?</h3>
+                    <span className="text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </span>
+                  </button>
+                </div>
+                <div className="border-b border-gray-200 pb-4">
+                  <button className="flex justify-between items-center w-full text-left focus:outline-none">
+                    <h3 className="font-semibold text-lg">Como funciona o período de teste gratuito?</h3>
+                    <span className="text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </span>
+                  </button>
+                </div>
+                <div className="border-b border-gray-200 pb-4">
+                  <button className="flex justify-between items-center w-full text-left focus:outline-none">
+                    <h3 className="font-semibold text-lg">Quando serei cobrado após escolher um plano?</h3>
+                    <span className="text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </span>
+                  </button>
+                </div>
+                <div className="border-b border-gray-200 pb-4">
+                  <button className="flex justify-between items-center w-full text-left focus:outline-none">
+                    <h3 className="font-semibold text-lg">O sistema guarda histórico de atendimentos aos clientes?</h3>
+                    <span className="text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row justify-center gap-4 mt-12">
+                <Button 
+                  className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 text-left flex items-center"
+                  onClick={handleGetStarted}
+                >
+                  <CheckCircle className="mr-2 h-5 w-5" /> Quero Ter Relatórios Claros e Precisos!
+                </Button>
+                <Button 
+                  className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 text-left flex items-center"
+                  onClick={handleGetStarted}
+                >
+                  <CheckCircle className="mr-2 h-5 w-5" /> Não Quero Mais Planilhas Confusas!
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bloco 7 - CTA Final + Form */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="p-8">
+                <div className="mb-6">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                    Cansada de Anotar em Papéis Soltos e Esquecer Aniversários de Clientes?
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Você é uma Personal Organizer e sente que está perdendo o controle? Seus clientes somem e você não sabe o que aconteceu? Datas importantes passam despercebidas, e você fica sem saber quando foi a última organização realizada?
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                      <span>Controle Financeiro Completo: Visualize receitas, despesas e lucros em tempo real.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                      <span>Gestão de Clientes Simplificada: Cadastre clientes, acompanhe aniversários e veja o histórico de atendimento.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                      <span>Lembretes Automáticos Inteligentes: Receba alertas de aniversário e saiba quando foi realizada a última organização.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                      <span>Envio de Propostas Profissionais: Crie e envie em PDF com apenas um clique.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                      <span>Relatórios Poderosos: Visualize métricas de desempenho e crescimento.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="mb-6">
+                  <h3 className="font-semibold text-lg flex items-center mb-4">
+                    <span className="mr-2 text-yellow-500">💡</span> Como Funciona?
+                  </h3>
+                  <ol className="space-y-2 list-decimal pl-5">
+                    <li>Cadastre seus clientes com todas as informações importantes, incluindo datas de aniversário e última organização.</li>
+                    <li>Crie e envie propostas personalizadas diretamente pela plataforma.</li>
+                    <li>Controle suas finanças e visualize seu lucro.</li>
+                    <li>Tenha relatórios automáticos e métricas de desempenho.</li>
+                  </ol>
+                </div>
+
+                <div className="mt-8">
+                  <div className="mb-4">
+                    <input 
+                      type="email" 
+                      placeholder="Digite seu e-mail" 
+                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <Button 
+                    className="w-full bg-blue-800 text-white hover:bg-blue-900 py-3 text-center font-semibold"
+                    onClick={handleGetStarted}
+                  >
+                    Sim, Quero Resolver Meu Negócio!
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-12">
+      <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between">
-            <div className="mb-8 md:mb-0">
-              <h3 className="text-2xl font-bold mb-4">PlannerPro</h3>
-              <p className="text-blue-200 max-w-xs">
-                A melhor solução para personal organizers que querem crescer e se destacar no mercado.
-              </p>
+          <div className="text-center">
+            <p className="mb-4">&copy; 2025 PersonalManager. Todos os direitos reservados.</p>
+            <div className="flex justify-center space-x-4">
+              <a href="#" className="text-gray-400 hover:text-white">Termos de Uso</a>
+              <a href="#" className="text-gray-400 hover:text-white">Política de Privacidade</a>
+              <a href="#" className="text-gray-400 hover:text-white">Suporte</a>
             </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Entre em Contato</h4>
-              <p className="text-blue-200">contato@plannerorganiza.com.br</p>
-            </div>
-          </div>
-          <div className="border-t border-blue-700 mt-8 pt-8 text-center">
-            <p className="text-blue-200">© 2025 PlannerPro Organizer. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
