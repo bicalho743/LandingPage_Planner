@@ -55,79 +55,89 @@ router.post('/api/register', async (req: Request, res: Response) => {
     // Verificar se o usuário já existe no Firebase apenas para planos gratuitos
     // Para planos pagos, verificamos apenas no banco de dados
     let firebaseUid = '';
-    
-    if (plano === 'free') {
-      try {
-        console.log(`🔍 VERIFICAÇÃO DE EMAIL (FIREBASE): Buscando ${email} no Firebase Authentication`);
-        // Para plano free, checamos primeiro no Firebase
-        const existingUser = await firebaseAuth.getUserByEmail(email);
-        console.log(`⚠️ VERIFICAÇÃO DE EMAIL (FIREBASE): Usuário existe no Firebase: ${existingUser.uid}`);
-        return res.status(400).json({
-          success: false,
-          message: "Este email já está cadastrado. Tente fazer login."
-        });
-      } catch (error: any) {
-        if (error.code !== 'auth/user-not-found') {
-          console.error("❌ VERIFICAÇÃO DE EMAIL (FIREBASE): Erro ao verificar usuário no Firebase:", error);
-          return res.status(500).json({
-            success: false,
-            message: "Erro ao verificar cadastro existente."
-          });
-        }
-        console.log(`✅ VERIFICAÇÃO DE EMAIL (FIREBASE): Usuário NÃO encontrado no Firebase Authentication`);
-        // Usuário não existe no Firebase, podemos prosseguir
-      }
+    let skipExistingChecks = false;
+      
+    // Exceção especial para o email do remetente do Brevo
+    if (email.toLowerCase() === 'solanobicalho@yahoo.com.br') {
+      console.log(`🔄 Email especial de remetente do Brevo detectado. Permitindo novo cadastro.`);
+      // Para este email específico, ignoramos as verificações de existência
+      skipExistingChecks = true;
     }
-
-    // Verificar se o usuário já existe no banco de dados
-    const existingUserInDB = await storage.getUserByEmail(email);
-    if (existingUserInDB) {
-      console.log(`⚠️ Usuário já existe no banco de dados: ${existingUserInDB.id}`);
-      
-      // Caso especial: usuário existe no banco mas não tem Firebase UID
-      if (!existingUserInDB.firebaseUid && plano === 'free') {
-        // Sincronização automática APENAS para plano gratuito
-        console.log(`⚠️ Usuário existe no banco de dados mas não tem uma conta Firebase. Criando conta (plano gratuito)...`);
+    
+    if (!skipExistingChecks) {
+      if (plano === 'free') {
         try {
-          // Criar o usuário no Firebase
-          const userRecord = await firebaseAuth.createUser({
-            email: email,
-            password: senha,
-            displayName: nome
-          });
-          
-          // Atualizar o registro no banco de dados com o Firebase UID
-          await storage.updateFirebaseUid(existingUserInDB.id, userRecord.uid);
-          await storage.updateUserStatus(existingUserInDB.id, undefined, 'ativo');
-          
-          console.log(`✅ Usuário sincronizado com Firebase UID: ${userRecord.uid}`);
-          
-          return res.status(200).json({
-            success: true,
-            message: "Conta sincronizada com sucesso! Agora você pode fazer login.",
-            redirectTo: "/login"
-          });
-        } catch (syncError) {
-          console.error("❌ Erro ao sincronizar conta:", syncError);
-          return res.status(500).json({
+          console.log(`🔍 VERIFICAÇÃO DE EMAIL (FIREBASE): Buscando ${email} no Firebase Authentication`);
+          // Para plano free, checamos primeiro no Firebase
+          const existingUser = await firebaseAuth.getUserByEmail(email);
+          console.log(`⚠️ VERIFICAÇÃO DE EMAIL (FIREBASE): Usuário existe no Firebase: ${existingUser.uid}`);
+          return res.status(400).json({
             success: false,
-            message: "Erro ao sincronizar sua conta. Tente usar o link 'Problemas com login?' na página de login."
+            message: "Este email já está cadastrado. Tente fazer login."
+          });
+        } catch (error: any) {
+          if (error.code !== 'auth/user-not-found') {
+            console.error("❌ VERIFICAÇÃO DE EMAIL (FIREBASE): Erro ao verificar usuário no Firebase:", error);
+            return res.status(500).json({
+              success: false,
+              message: "Erro ao verificar cadastro existente."
+            });
+          }
+          console.log(`✅ VERIFICAÇÃO DE EMAIL (FIREBASE): Usuário NÃO encontrado no Firebase Authentication`);
+          // Usuário não existe no Firebase, podemos prosseguir
+        }
+      }
+
+      // Verificar se o usuário já existe no banco de dados
+      const existingUserInDB = await storage.getUserByEmail(email);
+      if (existingUserInDB) {
+        console.log(`⚠️ Usuário já existe no banco de dados: ${existingUserInDB.id}`);
+      
+        // Caso especial: usuário existe no banco mas não tem Firebase UID
+        if (!existingUserInDB.firebaseUid && plano === 'free') {
+          // Sincronização automática APENAS para plano gratuito
+          console.log(`⚠️ Usuário existe no banco de dados mas não tem uma conta Firebase. Criando conta (plano gratuito)...`);
+          try {
+            // Criar o usuário no Firebase
+            const userRecord = await firebaseAuth.createUser({
+              email: email,
+              password: senha,
+              displayName: nome
+            });
+            
+            // Atualizar o registro no banco de dados com o Firebase UID
+            await storage.updateFirebaseUid(existingUserInDB.id, userRecord.uid);
+            await storage.updateUserStatus(existingUserInDB.id, undefined, 'ativo');
+            
+            console.log(`✅ Usuário sincronizado com Firebase UID: ${userRecord.uid}`);
+            
+            return res.status(200).json({
+              success: true,
+              message: "Conta sincronizada com sucesso! Agora você pode fazer login.",
+              redirectTo: "/login"
+            });
+          } catch (syncError) {
+            console.error("❌ Erro ao sincronizar conta:", syncError);
+            return res.status(500).json({
+              success: false,
+              message: "Erro ao sincronizar sua conta. Tente usar o link 'Problemas com login?' na página de login."
+            });
+          }
+        } else if (!existingUserInDB.firebaseUid && plano !== 'free') {
+          // Para planos pagos, informamos que o usuário já existe e precisa usar a página de sincronização
+          console.log(`⚠️ Usuário existe no banco mas sem conta Firebase. Solicitando sincronização (plano pago).`);
+          return res.status(400).json({
+            success: false,
+            message: "Este email já está cadastrado mas precisa ser sincronizado. Use o link 'Problemas com login?' na página de login."
           });
         }
-      } else if (!existingUserInDB.firebaseUid && plano !== 'free') {
-        // Para planos pagos, informamos que o usuário já existe e precisa usar a página de sincronização
-        console.log(`⚠️ Usuário existe no banco mas sem conta Firebase. Solicitando sincronização (plano pago).`);
+        
+        // Caso normal: usuário já existe
         return res.status(400).json({
           success: false,
-          message: "Este email já está cadastrado mas precisa ser sincronizado. Use o link 'Problemas com login?' na página de login."
+          message: "Este email já está cadastrado. Por favor, use 'Já possui uma conta? Faça login' abaixo do formulário."
         });
       }
-      
-      // Caso normal: usuário já existe
-      return res.status(400).json({
-        success: false,
-        message: "Este email já está cadastrado. Por favor, use 'Já possui uma conta? Faça login' abaixo do formulário."
-      });
     }
 
     // Criar usuário no Firebase APENAS para plano gratuito
