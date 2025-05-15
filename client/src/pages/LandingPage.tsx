@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import LeadForm from "../components/LeadForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Clock, Users, Star, Sun, BarChart2 } from "lucide-react";
+import { StarFilled } from "../components/ui/icons";
 import { 
   PlannerHeroImage, 
   WorkspaceImage, 
@@ -179,8 +180,8 @@ export default function LandingPage() {
 
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="md:w-1/2">
-                <div className="bg-gray-100 rounded-lg p-8 h-64 flex items-center justify-center text-gray-400">
-                  [Espaço de trabalho produtivo com planner]
+                <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
+                  <WorkspaceImage />
                 </div>
               </div>
               <div className="md:w-1/2 space-y-6">
@@ -220,8 +221,8 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="shadow-md">
                 <CardContent className="p-6">
-                  <div className="bg-gray-100 mb-4 h-40 flex items-center justify-center text-gray-400 rounded">
-                    [Design Intuitivo]
+                  <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
+                    <DesignIntuitiveImage />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Design Intuitivo</h3>
                   <p className="text-gray-600">
@@ -232,8 +233,8 @@ export default function LandingPage() {
 
               <Card className="shadow-md">
                 <CardContent className="p-6">
-                  <div className="bg-gray-100 mb-4 h-40 flex items-center justify-center text-gray-400 rounded">
-                    [Organização Completa]
+                  <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
+                    <OrganizationCompleteImage />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Organização Completa</h3>
                   <p className="text-gray-600">
@@ -244,8 +245,8 @@ export default function LandingPage() {
 
               <Card className="shadow-md">
                 <CardContent className="p-6">
-                  <div className="bg-gray-100 mb-4 h-40 flex items-center justify-center text-gray-400 rounded">
-                    [Personalização Flexível]
+                  <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
+                    <PersonalizationFlexibleImage />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Personalização Flexível</h3>
                   <p className="text-gray-600">
