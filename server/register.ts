@@ -58,21 +58,23 @@ router.post('/api/register', async (req: Request, res: Response) => {
     
     if (plano === 'free') {
       try {
+        console.log(`🔍 VERIFICAÇÃO DE EMAIL (FIREBASE): Buscando ${email} no Firebase Authentication`);
         // Para plano free, checamos primeiro no Firebase
         const existingUser = await firebaseAuth.getUserByEmail(email);
-        console.log(`⚠️ Usuário já existe no Firebase: ${existingUser.uid}`);
+        console.log(`⚠️ VERIFICAÇÃO DE EMAIL (FIREBASE): Usuário existe no Firebase: ${existingUser.uid}`);
         return res.status(400).json({
           success: false,
           message: "Este email já está cadastrado. Tente fazer login."
         });
       } catch (error: any) {
         if (error.code !== 'auth/user-not-found') {
-          console.error("❌ Erro ao verificar usuário no Firebase:", error);
+          console.error("❌ VERIFICAÇÃO DE EMAIL (FIREBASE): Erro ao verificar usuário no Firebase:", error);
           return res.status(500).json({
             success: false,
             message: "Erro ao verificar cadastro existente."
           });
         }
+        console.log(`✅ VERIFICAÇÃO DE EMAIL (FIREBASE): Usuário NÃO encontrado no Firebase Authentication`);
         // Usuário não existe no Firebase, podemos prosseguir
       }
     }

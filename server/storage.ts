@@ -58,12 +58,24 @@ export class DatabaseStorage implements IStorage {
   async getUserByEmail(email: string): Promise<User | undefined> {
     try {
       // Usando consulta SQL direta para compatibilidade com Render
+      console.log(`🔍 VERIFICAÇÃO DE EMAIL: Buscando ${email} na tabela users via SQL direto`);
       const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+      if (result.rows[0]) {
+        console.log(`✅ VERIFICAÇÃO DE EMAIL: Encontrado usuário via SQL direto: ${result.rows[0].id}`);
+      } else {
+        console.log(`❌ VERIFICAÇÃO DE EMAIL: Usuário NÃO encontrado via SQL direto`);
+      }
       return result.rows[0] || undefined;
     } catch (error) {
       console.error("Erro ao buscar usuário por email:", error);
       // Fallback para Drizzle
+      console.log(`🔍 VERIFICAÇÃO DE EMAIL: Tentando busca via Drizzle para ${email}`);
       const [user] = await db.select().from(users).where(eq(users.email, email));
+      if (user) {
+        console.log(`✅ VERIFICAÇÃO DE EMAIL: Encontrado usuário via Drizzle: ${user.id}`);
+      } else {
+        console.log(`❌ VERIFICAÇÃO DE EMAIL: Usuário NÃO encontrado via Drizzle`);
+      }
       return user;
     }
   }
