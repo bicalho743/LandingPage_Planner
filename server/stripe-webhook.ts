@@ -206,31 +206,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
           await storage.updateFirebaseUid(dbUser.id, userRecord.uid);
           
           // Enviar email de boas-vindas com instruções (opcional)
-          try {
-            // Se for usuário novo e precisar redefinir senha
-            const resetLink = await generatePasswordResetLink(email);
-            
-            const htmlContent = `
-              <h1>Bem-vindo ao PlannerPro Organizer!</h1>
-              <p>Olá,</p>
-              <p>Seu pagamento foi confirmado com sucesso e criamos uma conta para você.</p>
-              <p>Para definir sua senha, clique no link abaixo:</p>
-              <p><a href="${resetLink}" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">Definir minha senha</a></p>
-              <p>Este link irá expirar em 24 horas.</p>
-              <p>Atenciosamente,<br>Equipe PlannerPro</p>
-            `;
-            
-            await sendTransactionalEmail(
-              email,
-              'Bem-vindo ao PlannerPro - Configure sua senha',
-              htmlContent,
-              'Seu pagamento foi confirmado e sua conta foi criada. Clique no link para definir sua senha.'
-            );
-            
-            console.log(`✅ Email com link para definir senha enviado para: ${email}`);
-          } catch (emailError) {
-            console.error('❌ Erro ao enviar email com link para definir senha:', emailError);
-          }
+          // Não enviamos email aqui para evitar múltiplos emails
+          console.log(`ℹ️ Email de configuração de senha não será enviado (será enviado apenas um email de boas-vindas no final)`);
+          // O email de boas-vindas será enviado mais abaixo no código
         } catch (createError) {
           console.error('❌ Erro ao criar usuário no Firebase:', createError);
         }
@@ -319,7 +297,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       console.error('❌ Erro ao gerenciar assinatura:', subscriptionError);
     }
 
-    // 5. Enviar e-mail de boas-vindas via Brevo
+    // 5. Enviar e-mail de boas-vindas via Brevo (formato exato conforme solicitado)
     try {
       const htmlContent = `
         <h1>Bem-vindo ao PlannerPro Organizer!</h1>
@@ -333,7 +311,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         email,
         'Bem-vindo ao PlannerPro Organizer!',
         htmlContent,
-        'Obrigado por se cadastrar. Seu pagamento foi confirmado com sucesso!'
+        'Obrigado por se cadastrar na nossa plataforma. Seu pagamento foi confirmado com sucesso!'
       );
       
       console.log(`✅ E-mail de boas-vindas enviado para ${email}`);

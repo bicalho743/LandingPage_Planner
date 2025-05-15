@@ -79,27 +79,10 @@ async function processFirebaseUser(dbUser: any, userEmail: string, encodedPasswo
         await storage.updateUserStatus(dbUser.id, undefined, 'ativo');
         console.log(`✅ Status do usuário atualizado para 'ativo'`);
               
-        // Enviar email de boas-vindas
-        try {
-          const htmlContent = `
-            <h1>Bem-vindo ao PlannerPro Organizer!</h1>
-            <p>Olá,</p>
-            <p>Seu pagamento foi confirmado com sucesso e sua conta está pronta para uso.</p>
-            <p>Você pode acessar sua conta usando seu email e senha.</p>
-            <p>Atenciosamente,<br>Equipe PlannerPro</p>
-          `;
-          
-          await sendTransactionalEmail(
-            userEmail,
-            "Bem-vindo ao PlannerPro - Sua conta está pronta!",
-            htmlContent,
-            "Seu pagamento foi confirmado e sua conta está pronta para uso."
-          );
-          
-          console.log(`✅ Email de boas-vindas enviado para: ${userEmail}`);
-        } catch (emailError) {
-          console.error(`❌ Erro ao enviar email:`, emailError);
-        }
+        // Não enviar email daqui para evitar duplicação
+        // O email oficial de boas-vindas será enviado pelo webhook principal em stripe-webhook.ts
+        console.log(`ℹ️ Email de boas-vindas não será enviado a partir deste endpoint`);
+        console.log(`ℹ️ O email será enviado pelo endpoint principal /api/stripe-webhook`);
         
         // Adicionar ao Brevo para marketing
         try {
