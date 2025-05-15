@@ -288,9 +288,29 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
           await storage.updateSubscriptionStatus(user.id, 'active');
           console.log(`✅ Status de assinatura atualizado para usuário ${user.id}`);
         } else {
+          // Determinar o tipo de plano com base nos metadados ou preço
+          if (session.metadata && session.metadata.planType) {
+            planType = session.metadata.planType;
+          } else if (session.amount_total) {
+            // Lógica baseada no valor (aproximada)
+            if (session.amount_total >= 10000) {
+              planType = 'lifetime';
+            } else if (session.amount_total >= 1000) {
+              planType = 'annual';
+            }
+          }
+          
           // Criar nova assinatura
           await storage.createSubscription(user.id, planType as any);
           console.log(`✅ Nova assinatura criada para usuário ${user.id} com plano ${planType}`);
+          
+          // Atualizar datas de trial se necessário
+          try {
+            await storage.updateUserTrialDates(user.id);
+            console.log(`✅ Datas de trial atualizadas para usuário com nova assinatura: ${user.id}`);
+          } catch (trialDatesError) {
+            console.error(`❌ Erro ao atualizar datas de trial para nova assinatura:`, trialDatesError);
+          }
         }
       }
     } catch (subscriptionError) {
