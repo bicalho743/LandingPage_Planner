@@ -32,18 +32,18 @@ export default function LandingPage() {
   return (
     <div className="bg-white text-gray-900 font-sans min-h-screen">
       {/* Navbar */}
-      <nav className="container mx-auto py-4 px-4 flex justify-between items-center">
+      <nav className="container mx-auto py-4 px-4 flex justify-between items-center sticky top-0 z-50 bg-white shadow-sm">
         <div className="flex items-center">
           <h1 className="text-xl font-semibold">
             <span className="text-gray-800">Personal</span>
-            <span className="text-yellow-500">Manager</span>
+            <span className="text-green-600">Manager</span>
           </h1>
         </div>
         <div className="hidden md:flex space-x-6">
-          <a href="#" className="text-gray-600 hover:text-gray-800">Início</a>
-          <a href="#funcionalidades" className="text-gray-600 hover:text-gray-800">Funcionalidades</a>
-          <a href="#depoimentos" className="text-gray-600 hover:text-gray-800">Depoimentos</a>
-          <a href="#contato" className="text-gray-600 hover:text-gray-800">Contato</a>
+          <a href="#" className="text-gray-600 hover:text-green-600 font-medium">Início</a>
+          <a href="#funcionalidades" className="text-gray-600 hover:text-green-600 font-medium">Funcionalidades</a>
+          <a href="#depoimentos" className="text-gray-600 hover:text-green-600 font-medium">Depoimentos</a>
+          <a href="#contato" className="text-gray-600 hover:text-green-600 font-medium">Contato</a>
         </div>
       </nav>
 
