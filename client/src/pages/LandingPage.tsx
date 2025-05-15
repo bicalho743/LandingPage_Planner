@@ -4,6 +4,15 @@ import { useLocation } from "wouter";
 import LeadForm from "../components/LeadForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Clock, Users, Star, Sun, BarChart2 } from "lucide-react";
+import { 
+  PlannerHeroImage, 
+  WorkspaceImage, 
+  DesignIntuitiveImage, 
+  OrganizationCompleteImage, 
+  PersonalizationFlexibleImage,
+  ChevronDownIcon,
+  FullStar
+} from "../components/PlannerIcons";
 
 export default function LandingPage() {
   // Usando o router do Next.js de forma compatível com wouter
@@ -72,8 +81,8 @@ export default function LandingPage() {
               <p className="text-sm text-right text-gray-500 mb-2">
                 Vida organizada com planner e acessórios
               </p>
-              <div className="bg-gray-100 rounded-lg p-8 h-64 flex items-center justify-center text-gray-400">
-                [Imagem de planner e organização]
+              <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
+                <PlannerHeroImage />
               </div>
             </div>
           </div>
@@ -262,11 +271,11 @@ export default function LandingPage() {
               <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
                   </div>
                   <p className="text-gray-600 mb-6">
                     "Eu nunca mais esqueci o aniversário de um cliente, e meu faturamento cresceu 40%! Antes, eu perdia clientes por não manter contato no momento certo. O PersonalManager é meu parceiro de negócios e me ajuda a controlar tudo."
@@ -286,11 +295,11 @@ export default function LandingPage() {
               <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
                   </div>
                   <p className="text-gray-600 mb-6">
                     "Antes, eu gastava horas tentando organizar meus clientes e finanças em planilhas confusas. Agora, faço tudo em minutos e nunca mais perdi oportunidades de recontrataçāo. O sistema de lembretes automáticos é simplesmente incrível!"
@@ -310,11 +319,11 @@ export default function LandingPage() {
               <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <Star className="h-4 w-4 text-yellow-500" />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
+                    <FullStar />
                   </div>
                   <p className="text-gray-600 mb-6">
                     "Meus clientes estavam sumindo e eu não sabia por quê. Desde que comecei a usar o PersonalManager, tenho controle total sobre quem precisa de follow-up e quando foi a última organização. Meu negócio cresceu 35% em 3 meses!"
