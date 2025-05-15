@@ -120,7 +120,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   const email = session.customer_email;
   const userId = session.client_reference_id ? parseInt(session.client_reference_id) : undefined;
-  const planType = session.metadata?.plan_type || 'mensal';
+  let planType = session.metadata?.plan_type || 'mensal';
   
   // Para obter a senha que enviamos nos metadados
   let password;
