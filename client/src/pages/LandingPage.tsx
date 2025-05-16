@@ -103,8 +103,8 @@ export default function LandingPage() {
               </p>
               <div className="bg-gray-50 rounded-lg p-4 h-auto md:h-80 flex items-center justify-center">
                 <img 
-                  src="/relaxed-woman.png" 
-                  alt="Mulher tranquila lendo um livro" 
+                  src="/stressed-woman.png" 
+                  alt="Mulher estressada com papéis e planilhas" 
                   className="max-w-full h-auto rounded shadow-lg"
                 />
               </div>
@@ -212,11 +212,20 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="md:w-1/2 space-y-6">
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Redução do Estresse Mental</h3>
-                  <p className="text-gray-600">
-                    Ter tudo registrado e organizado libera espaço mental, reduzindo a ansiedade e aumentando a sensação de controle.
-                  </p>
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                  <div className="md:w-1/3">
+                    <img 
+                      src="/stress-reduction.png" 
+                      alt="Redução do estresse mental" 
+                      className="w-full h-auto rounded"
+                    />
+                  </div>
+                  <div className="md:w-2/3">
+                    <h3 className="font-semibold text-lg mb-2">Redução do Estresse Mental</h3>
+                    <p className="text-gray-600">
+                      Ter tudo registrado e organizado libera espaço mental, reduzindo a ansiedade e aumentando a sensação de controle.
+                    </p>
+                  </div>
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Economia de Tempo</h3>

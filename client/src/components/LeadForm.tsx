@@ -53,7 +53,7 @@ export default function LeadForm() {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition"
+          className="w-full bg-[#1e40af] text-white p-3 rounded-md font-bold text-lg hover:bg-[#1e3a8a] transition"
           disabled={loading}
         >
           {loading ? "Enviando..." : "Conheça Mais Sobre!"}
