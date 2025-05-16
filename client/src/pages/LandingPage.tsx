@@ -252,7 +252,11 @@ export default function LandingPage() {
               <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
-                    <DesignIntuitiveImage />
+                    <img 
+                      src="/design-intuitivo.svg" 
+                      alt="Design Intuitivo" 
+                      className="max-w-full h-auto"
+                    />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Design Intuitivo</h3>
                   <p className="text-gray-600">
@@ -264,7 +268,11 @@ export default function LandingPage() {
               <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
-                    <OrganizationCompleteImage />
+                    <img 
+                      src="/organizacao-completa.svg" 
+                      alt="Organização Completa" 
+                      className="max-w-full h-auto"
+                    />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Organização Completa</h3>
                   <p className="text-gray-600">
@@ -276,7 +284,11 @@ export default function LandingPage() {
               <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
-                    <PersonalizationFlexibleImage />
+                    <img 
+                      src="/personalizacao-flexivel.svg" 
+                      alt="Personalização Flexível" 
+                      className="max-w-full h-auto"
+                    />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Personalização Flexível</h3>
                   <p className="text-gray-600">
