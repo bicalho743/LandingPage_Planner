@@ -95,8 +95,11 @@ export default function LandingPage() {
             Depoimentos
           </a>
           <a 
-            href="javascript:void(0)" 
-            onClick={() => scrollToSection("contato")} 
+            href="#contato" 
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection("contato");
+            }} 
             className="text-gray-600 hover:text-[#1e40af] font-medium"
           >
             Contato
@@ -556,7 +559,7 @@ export default function LandingPage() {
                   </ol>
                 </div>
 
-                <div className="mt-8">
+                <div id="contato" className="mt-8">
                   <div className="mb-4">
                     <input 
                       type="email" 
