@@ -4,18 +4,18 @@ Para garantir que a aplicação funcione corretamente no Render, siga estas inst
 
 ## 1. Configuração do Banco de Dados
 
-No painel do Render, adicione as seguintes variáveis de ambiente:
+No painel do Render, adicione as seguintes variáveis de ambiente para conectar ao seu banco de dados Neon "Planner Organizer Produção" (ID: frosty-grass-19472062):
 
 ```
-DATABASE_URL=postgres://AcessoPlanner_owner:***@ep-bold-dream-a5zrfji-pooler.us-east-2.aws.neon.tech/AcessoPlannerTailwind
-PGHOST=ep-bold-dream-a5zrfji-pooler.us-east-2.aws.neon.tech
-PGUSER=AcessoPlanner_owner
-PGPASSWORD=sua_senha_aqui
-PGDATABASE=AcessoPlannerTailwind
+DATABASE_URL=postgres://[seu_username]:***@[endpoint-neon]/neondb
+PGHOST=[seu-endpoint-neon.region.aws.neon.tech]
+PGUSER=[seu_username]
+PGPASSWORD=[sua_senha_aqui]
+PGDATABASE=neondb
 PGPORT=5432
 ```
 
-Certifique-se de substituir `sua_senha_aqui` pela senha real do seu banco de dados.
+Certifique-se de substituir os valores entre colchetes com as informações reais do seu banco de dados Neon. Você pode obter essas informações na interface do Neon.tech, na seção "Connection Details".
 
 ## 2. Configuração do Firebase
 
