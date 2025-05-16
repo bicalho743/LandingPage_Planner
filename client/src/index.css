@@ -50,7 +50,7 @@ p {
 button, .button {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 1rem; /* 16px */
+  font-size: 1.125rem; /* 18px */
 }
 
 .text-primary {
@@ -75,7 +75,7 @@ button, .button {
   }
   
   .btn-primary {
-    @apply bg-[#1e40af] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#1e3a8a] transition-colors;
+    @apply bg-[#1e40af] text-white font-bold px-6 py-3 rounded-md hover:bg-[#1e3a8a] transition-colors text-lg;
   }
   
   .section-title {
