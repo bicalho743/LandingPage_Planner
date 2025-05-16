@@ -245,7 +245,7 @@ export default function Registro() {
             
             <Button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md transition duration-300 flex items-center justify-center"
+              className="w-full bg-[#1e40af] hover:bg-blue-800 text-white py-3 rounded-md transition duration-300 flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
