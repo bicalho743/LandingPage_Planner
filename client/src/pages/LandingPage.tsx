@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import LeadForm from "../components/LeadForm";
@@ -25,9 +25,47 @@ export default function LandingPage() {
   } as any;
   
   const [_, setLocation] = useLocation();
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const handleGetStarted = () => {
     router.push("/planos");
+  };
+  
+  const handleSubscribe = async () => {
+    if (!email || !email.includes('@')) {
+      setSubmitMessage("Por favor, insira um email válido.");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setSubmitMessage("");
+    
+    try {
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email, 
+          name: email.split('@')[0] // Usar parte do email como nome temporário
+        }),
+      });
+      
+      if (response.ok) {
+        setEmail("");
+        setSubmitMessage("✅ Obrigado! Confira seu email para mais informações.");
+      } else {
+        setSubmitMessage("❌ Ocorreu um erro. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar email:", error);
+      setSubmitMessage("❌ Ocorreu um erro. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -523,15 +561,21 @@ export default function LandingPage() {
                     <input 
                       type="email" 
                       placeholder="Digite seu e-mail" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <Button 
-                    className="w-full bg-blue-800 text-white hover:bg-blue-900 py-3 text-center font-semibold"
-                    onClick={handleGetStarted}
+                    className="w-full bg-[#1e40af] text-white hover:bg-[#1e3a8a] py-3 text-center font-bold text-lg"
+                    onClick={handleSubscribe}
+                    disabled={isSubmitting}
                   >
-                    Sim, Quero Resolver Meu Negócio!
+                    {isSubmitting ? "Enviando..." : "Sim, Quero Resolver Meu Negócio!"}
                   </Button>
+                  {submitMessage && (
+                    <p className="mt-2 text-center font-medium">{submitMessage}</p>
+                  )}
                 </div>
               </div>
             </div>
