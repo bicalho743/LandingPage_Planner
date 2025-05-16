@@ -18,23 +18,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <nav>
             <ul className="flex space-x-6">
               <li>
-                <Link href="/webhook-manual">
-                  <a className={`hover:text-blue-200 ${location === '/webhook-manual' ? 'font-bold' : ''}`}>
-                    Webhook Manual
+                <Link href="/">
+                  <a className={`hover:text-blue-200 ${location === '/' ? 'font-bold' : ''}`}>
+                    Início
                   </a>
                 </Link>
               </li>
               <li>
-                <Link href="/teste-webhook">
-                  <a className={`hover:text-blue-200 ${location === '/teste-webhook' ? 'font-bold' : ''}`}>
-                    Teste Webhook
+                <Link href="/planos">
+                  <a className={`hover:text-blue-200 ${location === '/planos' ? 'font-bold' : ''}`}>
+                    Planos
                   </a>
                 </Link>
               </li>
               <li>
-                <Link href="/testar-stripe">
-                  <a className={`hover:text-blue-200 ${location === '/testar-stripe' ? 'font-bold' : ''}`}>
-                    Stripe CLI
+                <Link href="/login">
+                  <a className={`hover:text-blue-200 ${location === '/login' ? 'font-bold' : ''}`}>
+                    Entrar
                   </a>
                 </Link>
               </li>
