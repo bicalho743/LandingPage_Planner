@@ -1,0 +1,99 @@
+==> Cloning from https://github.com/bicalho743/LandingPage_Planner
+==> Checking out commit abf964871ed16b504d82cf7e6f13709543db6f06 in branch main
+==> Downloading cache...
+==> Transferred 534MB in 8s. Extraction took 9s.
+==> Using Node.js version 22.14.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Using Bun version 1.1.0 (default)
+==> Docs on specifying a bun version: https://render.com/docs/bun-version
+==> Running build command 'npm install; npm run build'...
+up to date, audited 716 packages in 1s
+85 packages are looking for funding
+  run `npm fund` for details
+7 moderate severity vulnerabilities
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+vite v5.4.14 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1804 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                           1.34 kB │ gzip:   0.58 kB
+../dist/public/assets/index-BwlNQrZN.css           74.70 kB │ gzip:  12.83 kB
+../dist/public/assets/check-C5CN7u-0.js             0.29 kB │ gzip:   0.25 kB
+../dist/public/assets/index-CYbWudYk.js             0.31 kB │ gzip:   0.25 kB
+../dist/public/assets/MainLayout-DKweUkx5.js        0.50 kB │ gzip:   0.32 kB
+../dist/public/assets/label-BQ09DqHK.js             0.55 kB │ gzip:   0.38 kB
+../dist/public/assets/checkout-BfIpTdnm.js          2.61 kB │ gzip:   1.15 kB
+../dist/public/assets/teste-CaE11DNm.js             3.15 kB │ gzip:   1.44 kB
+../dist/public/assets/cancelado-eS41FEt8.js         3.67 kB │ gzip:   1.48 kB
+../dist/public/assets/teste-email-C83fzDOL.js       3.85 kB │ gzip:   1.69 kB
+../dist/public/assets/sucesso-D4oIT_uV.js           3.96 kB │ gzip:   1.65 kB
+../dist/public/assets/sincronizar-BMQhnw2n.js       4.17 kB │ gzip:   1.69 kB
+../dist/public/assets/login-DhlwIfCa.js             4.84 kB │ gzip:   1.83 kB
+../dist/public/assets/dashboard-BZ4efjWb.js         5.79 kB │ gzip:   1.99 kB
+../dist/public/assets/registro-B6xfbsC4.js          6.24 kB │ gzip:   2.21 kB
+../dist/public/assets/testar-stripe-B8_Raz0i.js    13.33 kB │ gzip:   4.80 kB
+../dist/public/assets/form--OiP4R-Q.js             28.16 kB │ gzip:  10.51 kB
+../dist/public/assets/webhook-manual-CAUwHk_r.js   37.65 kB │ gzip:  15.10 kB
+../dist/public/assets/teste-webhook-DC0tKs1n.js    43.15 kB │ gzip:  14.81 kB
+../dist/public/assets/index-TqX-GDwW.js           539.24 kB │ gzip: 145.74 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.26s
+  dist/index.js  162.7kb
+⚡ Done in 9ms
+==> Uploading build...
+==> Uploaded in 11.4s. Compression took 5.5s
+==> Build successful 🎉
+==> Deploying...
+==> Running 'npm run start'
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+Conectando ao banco de dados PostgreSQL (Ambiente: Produção)...
+⚠️ Credenciais do Firebase Admin não encontradas no ambiente
+⚠️ Algumas funcionalidades relacionadas ao Firebase podem não funcionar corretamente
+✅ Firebase Admin SDK pronto para uso
+Iniciando Stripe no modo PRODUÇÃO
+Usando chave de produção
+✅ Configurando middleware raw para Stripe webhook
+✅ Routers de registro, webhooks do Stripe, sincronização de usuários, trial e migração adicionados
+⏳ Aplicando migrações do banco de dados...
+❌ Falha ao conectar ao PostgreSQL: database "plannerorganizer_db" does not exist
+❌ Erro ao aplicar migrações: error: database "plannerorganizer_db" does not exist
+    at /opt/render/project/src/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async applyMigrations (file:///opt/render/project/src/dist/index.js:3503:28)
+    at async file:///opt/render/project/src/dist/index.js:3536:3 {
+  length: 105,
+  severity: 'FATAL',
+  code: '3D000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'postinit.c',
+  line: '1021',
+  routine: 'InitPostgres'
+}
+✅ Servidor rodando na porta 10000
+==> Your service is live 🎉
+==> Detected service running on port 10000
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
