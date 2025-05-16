@@ -101,8 +101,12 @@ export default function LandingPage() {
               <p className="text-sm text-right text-gray-500 mb-2">
                 Vida organizada com planner e acessórios
               </p>
-              <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
-                <PlannerHeroImage />
+              <div className="bg-gray-50 rounded-lg p-4 h-auto md:h-80 flex items-center justify-center">
+                <img 
+                  src="/stressed-woman.png" 
+                  alt="Mulher estressada com papéis e planilhas" 
+                  className="max-w-full h-auto rounded shadow-lg"
+                />
               </div>
             </div>
           </div>
@@ -200,7 +204,11 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="md:w-1/2">
                 <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
-                  <WorkspaceImage />
+                  <img 
+                    src="/planner-illustration.png" 
+                    alt="Ilustração de planner e acessórios de organização" 
+                    className="max-w-full h-auto rounded"
+                  />
                 </div>
               </div>
               <div className="md:w-1/2 space-y-6">
