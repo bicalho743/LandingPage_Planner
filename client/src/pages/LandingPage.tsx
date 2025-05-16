@@ -203,21 +203,12 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
               <div className="md:col-span-5">
-                <div className="flex flex-col gap-6">
-                  <div className="bg-gray-50 rounded-lg p-4 h-auto flex items-center justify-center shadow-md">
-                    <img 
-                      src="/planner-illustration.png" 
-                      alt="Ilustração de planner e acessórios de organização" 
-                      className="max-w-full h-auto rounded"
-                    />
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4 h-auto flex items-center justify-center shadow-md">
-                    <img 
-                      src="/relaxed-reading.png" 
-                      alt="Mulher tranquila lendo um livro" 
-                      className="max-w-full h-auto rounded"
-                    />
-                  </div>
+                <div className="bg-gray-50 rounded-lg p-4 h-auto flex items-center justify-center shadow-md">
+                  <img 
+                    src="/relaxed-reading.png" 
+                    alt="Mulher tranquila lendo um livro" 
+                    className="max-w-full h-auto rounded"
+                  />
                 </div>
               </div>
               
