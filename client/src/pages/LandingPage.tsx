@@ -213,20 +213,11 @@ export default function LandingPage() {
               </div>
               
               <div className="md:col-span-7 space-y-6">
-                <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
-                  <div className="md:w-1/3">
-                    <img 
-                      src="/stress-reduction.png" 
-                      alt="Redução do estresse mental" 
-                      className="w-full h-auto rounded"
-                    />
-                  </div>
-                  <div className="md:w-2/3">
-                    <h3 className="font-semibold text-lg mb-2">Redução do Estresse Mental</h3>
-                    <p className="text-gray-600">
-                      Ter tudo registrado e organizado libera espaço mental, reduzindo a ansiedade e aumentando a sensação de controle.
-                    </p>
-                  </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <h3 className="font-semibold text-lg mb-2">Redução do Estresse Mental</h3>
+                  <p className="text-gray-600">
+                    Ter tudo registrado e organizado libera espaço mental, reduzindo a ansiedade e aumentando a sensação de controle.
+                  </p>
                 </div>
                 
                 <div className="bg-white p-4 rounded-lg shadow-sm">
