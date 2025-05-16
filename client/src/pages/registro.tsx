@@ -160,7 +160,7 @@ export default function Registro() {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg border border-blue-100">
+        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold text-center mb-6 text-blue-800">Criar conta no PlannerOrganiza</h1>
           
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -245,7 +245,7 @@ export default function Registro() {
             
             <Button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md transition duration-300 flex items-center justify-center"
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-md transition duration-300 flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (

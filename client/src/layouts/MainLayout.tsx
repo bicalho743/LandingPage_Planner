@@ -10,13 +10,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <header className="bg-blue-600 text-white shadow-md">
+      <header className="bg-blue-700 text-white shadow-md">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/">
-            <a className="text-xl font-bold">PlannerPro</a>
+            <a className="text-xl font-bold">PlannerOrganiza</a>
           </Link>
           <nav>
-            <ul className="flex space-x-4">
+            <ul className="flex space-x-6">
               <li>
                 <Link href="/webhook-manual">
                   <a className={`hover:text-blue-200 ${location === '/webhook-manual' ? 'font-bold' : ''}`}>
@@ -51,7 +51,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-4 md:mb-0">
-              <h3 className="text-lg font-bold mb-2">PlannerPro Organizer</h3>
+              <h3 className="text-lg font-bold mb-2">PlannerOrganiza</h3>
               <p className="text-blue-200 text-sm">
                 Ferramentas para teste de integrações do Stripe
               </p>
