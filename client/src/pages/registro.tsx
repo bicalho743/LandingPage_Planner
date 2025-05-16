@@ -160,8 +160,8 @@ export default function Registro() {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
-          <h1 className="text-2xl font-bold text-center mb-6">Criar conta no PlannerPro</h1>
+        <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg border border-blue-100">
+          <h1 className="text-2xl font-bold text-center mb-6 text-blue-800">Criar conta no PlannerOrganiza</h1>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -245,7 +245,7 @@ export default function Registro() {
             
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-2 rounded-md hover:from-blue-700 hover:to-blue-900 transition duration-300 flex items-center justify-center"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md transition duration-300 flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -263,10 +263,21 @@ export default function Registro() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Já possui uma conta?{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
+              <a href="/login" className="text-blue-600 hover:underline font-medium">
                 Faça login
               </a>
             </p>
+          </div>
+          
+          <div className="mt-4 border-t border-gray-200 pt-4">
+            <p className="text-sm text-gray-500 text-center">
+              O PlannerOrganiza é sua solução completa para organização pessoal e profissional.
+            </p>
+            <div className="flex justify-center mt-2 space-x-2">
+              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+              <span className="w-2 h-2 rounded-full bg-green-500"></span>
+              <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+            </div>
           </div>
         </div>
       </div>
