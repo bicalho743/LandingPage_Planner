@@ -15,7 +15,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {children}
       </main>
       
-      <footer className="bg-blue-800 text-white py-4">
+      <footer className="bg-[#1e40af] text-white py-4">
         <div className="container mx-auto px-4">
           <div className="text-center text-sm text-blue-200">
             &copy; {new Date().getFullYear()} PlannerOrganiza. Todos os direitos reservados.
