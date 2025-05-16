@@ -209,7 +209,7 @@ export default function LandingPage() {
         </section>
 
         {/* Bloco 4 - Conheça o Planner */}
-        <section className="bg-gray-50 py-16">
+        <section id="planner-organizer" className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900">Conheça o Planner Organizer</h2>
@@ -434,7 +434,10 @@ export default function LandingPage() {
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="p-8">
                 <div className="mb-6">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  <h2 
+                    className="text-3xl font-bold text-gray-900 mb-4 cursor-pointer hover:text-blue-700"
+                    onClick={() => scrollToSection("planner-organizer")}
+                  >
                     Cansada de Anotar em Papéis Soltos e Esquecer Aniversários de Clientes?
                   </h2>
                   <p className="text-gray-600 mb-6">
