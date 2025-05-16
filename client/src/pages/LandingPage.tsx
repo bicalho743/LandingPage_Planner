@@ -201,18 +201,28 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="md:w-1/2">
-                <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
-                  <img 
-                    src="/planner-illustration.png" 
-                    alt="Ilustração de planner e acessórios de organização" 
-                    className="max-w-full h-auto rounded"
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+              <div className="md:col-span-5">
+                <div className="flex flex-col gap-6">
+                  <div className="bg-gray-50 rounded-lg p-4 h-auto flex items-center justify-center shadow-md">
+                    <img 
+                      src="/planner-illustration.png" 
+                      alt="Ilustração de planner e acessórios de organização" 
+                      className="max-w-full h-auto rounded"
+                    />
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 h-auto flex items-center justify-center shadow-md">
+                    <img 
+                      src="/relaxed-reading.png" 
+                      alt="Mulher tranquila lendo um livro" 
+                      className="max-w-full h-auto rounded"
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="md:w-1/2 space-y-6">
-                <div className="flex flex-col md:flex-row gap-4 items-center">
+              
+              <div className="md:col-span-7 space-y-6">
+                <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
                   <div className="md:w-1/3">
                     <img 
                       src="/stress-reduction.png" 
@@ -227,13 +237,15 @@ export default function LandingPage() {
                     </p>
                   </div>
                 </div>
-                <div>
+                
+                <div className="bg-white p-4 rounded-lg shadow-sm">
                   <h3 className="font-semibold text-lg mb-2">Economia de Tempo</h3>
                   <p className="text-gray-600">
                     Planejamento eficiente pode economizar até 10 horas por semana, permitindo que você foque no que realmente importa.
                   </p>
                 </div>
-                <div>
+                
+                <div className="bg-white p-4 rounded-lg shadow-sm">
                   <h3 className="font-semibold text-lg mb-2">Alcance de Metas</h3>
                   <p className="text-gray-600">
                     Estudos mostram que pessoas que escrevem seus objetivos têm 42% mais chances de alcançá-los.
