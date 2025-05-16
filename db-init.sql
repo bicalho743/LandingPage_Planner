@@ -1,9 +1,21 @@
 -- Script para criar as tabelas necessárias no banco de dados
 
--- Criação de tipos enumerados
-CREATE TYPE plan_type AS ENUM ('monthly', 'annual', 'lifetime');
-CREATE TYPE subscription_status AS ENUM ('active', 'canceled', 'past_due', 'unpaid');
-CREATE TYPE user_status AS ENUM ('pendente', 'ativo', 'bloqueado');
+-- Criação de tipos enumerados (se não existirem)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'plan_type') THEN
+        CREATE TYPE plan_type AS ENUM ('monthly', 'annual', 'lifetime');
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'subscription_status') THEN
+        CREATE TYPE subscription_status AS ENUM ('active', 'canceled', 'past_due', 'unpaid');
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_status') THEN
+        CREATE TYPE user_status AS ENUM ('pendente', 'ativo', 'bloqueado');
+    END IF;
+END
+$$;
 
 -- Tabela users
 CREATE TABLE IF NOT EXISTS users (
