@@ -103,8 +103,8 @@ export default function LandingPage() {
               </p>
               <div className="bg-gray-50 rounded-lg p-4 h-auto md:h-80 flex items-center justify-center">
                 <img 
-                  src="/stressed-woman.png" 
-                  alt="Mulher estressada com papéis e planilhas" 
+                  src="/relaxed-woman.png" 
+                  alt="Mulher tranquila lendo um livro" 
                   className="max-w-full h-auto rounded shadow-lg"
                 />
               </div>
