@@ -10,38 +10,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <header className="bg-blue-700 text-white shadow-md">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link href="/">
-            <a className="text-xl font-bold">PlannerOrganiza</a>
-          </Link>
-          <nav>
-            <ul className="flex space-x-6">
-              <li>
-                <Link href="/">
-                  <a className={`hover:text-blue-200 ${location === '/' ? 'font-bold' : ''}`}>
-                    Início
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/planos">
-                  <a className={`hover:text-blue-200 ${location === '/planos' ? 'font-bold' : ''}`}>
-                    Planos
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/login">
-                  <a className={`hover:text-blue-200 ${location === '/login' ? 'font-bold' : ''}`}>
-                    Entrar
-                  </a>
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
       
       <main className="flex-1">
         {children}
