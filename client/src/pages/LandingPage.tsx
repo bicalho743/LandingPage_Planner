@@ -35,8 +35,8 @@ export default function LandingPage() {
       <nav className="container mx-auto py-4 px-4 flex justify-between items-center sticky top-0 z-50 bg-white shadow-sm">
         <div className="flex items-center">
           <h1 className="text-xl font-semibold">
-            <span className="text-gray-800">Personal</span>
-            <span className="text-green-600">Manager</span>
+            <span className="text-gray-800">Planner</span>
+            <span className="text-green-600">Organiza</span>
           </h1>
         </div>
         <div className="hidden md:flex space-x-6">
@@ -55,7 +55,7 @@ export default function LandingPage() {
               Nunca Mais Perca Clientes e Oportunidades
             </h2>
             <p className="text-gray-600 mb-8 text-lg">
-              Você é uma Personal Organizer e já perdeu a conta dos clientes que não retornaram? Seu faturamento parece um mistério? Chega de confusão e incerteza. O PersonalManager é a solução que você precisava.
+              Você é uma Personal Organizer e já perdeu a conta dos clientes que não retornaram? Seu faturamento parece um mistério? Chega de confusão e incerteza. O PlannerOrganiza é a solução que você precisava.
             </p>
             <div className="space-y-3">
               <Button 
@@ -264,7 +264,7 @@ export default function LandingPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900">O Que Nossos Clientes Dizem</h2>
               <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-                Personal Organizers que transformaram seu negócio com o PersonalManager
+                Personal Organizers que transformaram seu negócio com o PlannerOrganiza
               </p>
             </div>
 
@@ -279,7 +279,7 @@ export default function LandingPage() {
                     <FullStar />
                   </div>
                   <p className="text-gray-600 mb-6">
-                    "Eu nunca mais esqueci o aniversário de um cliente, e meu faturamento cresceu 40%! Antes, eu perdia clientes por não manter contato no momento certo. O PersonalManager é meu parceiro de negócios e me ajuda a controlar tudo."
+                    "Eu nunca mais esqueci o aniversário de um cliente, e meu faturamento cresceu 40%! Antes, eu perdia clientes por não manter contato no momento certo. O PlannerOrganiza é meu parceiro de negócios e me ajuda a controlar tudo."
                   </p>
                   <div className="flex items-center">
                     <div className="bg-gray-200 w-10 h-10 rounded-full mr-3 flex items-center justify-center">
@@ -327,7 +327,7 @@ export default function LandingPage() {
                     <FullStar />
                   </div>
                   <p className="text-gray-600 mb-6">
-                    "Meus clientes estavam sumindo e eu não sabia por quê. Desde que comecei a usar o PersonalManager, tenho controle total sobre quem precisa de follow-up e quando foi a última organização. Meu negócio cresceu 35% em 3 meses!"
+                    "Meus clientes estavam sumindo e eu não sabia por quê. Desde que comecei a usar o PlannerOrganiza, tenho controle total sobre quem precisa de follow-up e quando foi a última organização. Meu negócio cresceu 35% em 3 meses!"
                   </p>
                   <div className="flex items-center">
                     <div className="bg-gray-200 w-10 h-10 rounded-full mr-3 flex items-center justify-center">
@@ -370,7 +370,7 @@ export default function LandingPage() {
               <div className="space-y-4">
                 <div className="border-b border-gray-200 pb-4">
                   <button className="flex justify-between items-center w-full text-left focus:outline-none">
-                    <h3 className="font-semibold text-lg">Como o PersonalManager me ajuda a manter o contato com meus clientes?</h3>
+                    <h3 className="font-semibold text-lg">Como o PlannerOrganiza me ajuda a manter o contato com meus clientes?</h3>
                     <span className="text-gray-400">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="w-5 h-5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </span>
@@ -500,7 +500,7 @@ export default function LandingPage() {
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <p className="mb-4">&copy; 2025 PersonalManager. Todos os direitos reservados.</p>
+            <p className="mb-4">&copy; 2025 PlannerOrganiza. Todos os direitos reservados.</p>
             <div className="flex justify-center space-x-4">
               <a href="#" className="text-gray-400 hover:text-white">Termos de Uso</a>
               <a href="#" className="text-gray-400 hover:text-white">Política de Privacidade</a>
