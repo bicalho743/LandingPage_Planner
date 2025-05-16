@@ -5,6 +5,7 @@ import LeadForm from "../components/LeadForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Clock, Users, Star, Sun, BarChart2 } from "lucide-react";
 import { StarFilled } from "../components/ui/icons";
+import { scrollToSection } from "@/lib/utils";
 import { 
   PlannerHeroImage, 
   WorkspaceImage, 
@@ -40,10 +41,28 @@ export default function LandingPage() {
           </h1>
         </div>
         <div className="hidden md:flex space-x-6">
-          <a href="#" className="text-gray-600 hover:text-green-600 font-medium">Início</a>
-          <a href="#funcionalidades" className="text-gray-600 hover:text-green-600 font-medium">Funcionalidades</a>
-          <a href="#depoimentos" className="text-gray-600 hover:text-green-600 font-medium">Depoimentos</a>
-          <a href="#contato" className="text-gray-600 hover:text-green-600 font-medium">Contato</a>
+          <a href="#" className="text-gray-600 hover:text-[#1e40af] font-medium">Início</a>
+          <a 
+            href="javascript:void(0)" 
+            onClick={() => scrollToSection("funcionalidades")} 
+            className="text-gray-600 hover:text-[#1e40af] font-medium"
+          >
+            Funcionalidades
+          </a>
+          <a 
+            href="javascript:void(0)" 
+            onClick={() => scrollToSection("depoimentos")} 
+            className="text-gray-600 hover:text-[#1e40af] font-medium"
+          >
+            Depoimentos
+          </a>
+          <a 
+            href="javascript:void(0)" 
+            onClick={() => scrollToSection("contato")} 
+            className="text-gray-600 hover:text-[#1e40af] font-medium"
+          >
+            Contato
+          </a>
         </div>
       </nav>
 
@@ -429,15 +448,12 @@ export default function LandingPage() {
         </section>
 
         {/* Bloco 7 - CTA Final + Form */}
-        <section className="py-16">
+        <section id="funcionalidades" className="py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="p-8">
                 <div className="mb-6">
-                  <h2 
-                    className="text-3xl font-bold text-gray-900 mb-4 cursor-pointer hover:text-blue-700"
-                    onClick={() => scrollToSection("planner-organizer")}
-                  >
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
                     Cansada de Anotar em Papéis Soltos e Esquecer Aniversários de Clientes?
                   </h2>
                   <p className="text-gray-600 mb-6">
