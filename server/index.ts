@@ -11,7 +11,7 @@ import migrationsRouter from "./migrations";
 import trialRouter from "./trial";
 import stripeTestRouter from "./stripe-test";
 import testeEmailRouter from "./teste-email";
-import { pool } from "./db";
+import { pool, updateDrizzleInstance } from "./db";
 
 const app = express();
 
