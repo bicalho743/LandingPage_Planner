@@ -57,6 +57,10 @@ export default function LandingPage() {
       if (response.ok) {
         setEmail("");
         setSubmitMessage("✅ Obrigado! Confira seu email para mais informações.");
+        // Redirecionar para a página de planos após um breve intervalo
+        setTimeout(() => {
+          router.push("/planos");
+        }, 1500); // Espera 1.5 segundos antes de redirecionar
       } else {
         setSubmitMessage("❌ Ocorreu um erro. Tente novamente.");
       }
