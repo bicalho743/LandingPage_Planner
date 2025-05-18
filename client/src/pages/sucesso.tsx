@@ -86,7 +86,7 @@ export default function Sucesso() {
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
             <h1 className="text-4xl font-bold text-green-600">Pagamento Confirmado!</h1>
-            <p className="mt-4 text-lg">Obrigado por se inscrever no PlannerPro Organizer.</p>
+            <p className="mt-4 text-lg">Obrigado por se inscrever no PlannerOrganiza.</p>
           </div>
           
           <div className="bg-blue-50 p-4 rounded-lg mb-6">
@@ -128,7 +128,7 @@ export default function Sucesso() {
           <div className="flex justify-center">
             <Button 
               className="bg-blue-800 hover:bg-blue-900 text-white px-8 py-3 rounded-md"
-              onClick={() => setLocation("/login")}
+              onClick={() => window.open('https://www.plannerorganiza.com.br', '_blank')}
             >
               Acessar o Sistema
             </Button>
