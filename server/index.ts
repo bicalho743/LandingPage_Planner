@@ -15,6 +15,21 @@ import { pool, updateDrizzleInstance } from "./db";
 
 const app = express();
 
+// Middleware para forçar HTTPS em produção
+const forceHttps = (req: Request, res: Response, next: NextFunction) => {
+  // Apenas em produção e se não for uma requisição local
+  if (process.env.NODE_ENV === 'production' &&
+      req.headers['x-forwarded-proto'] === 'http') {
+    // Remove a porta da URL se estiver presente
+    const host = req.headers.host?.split(':')[0];
+    return res.redirect(301, `https://${host}${req.url}`);
+  }
+  next();
+};
+
+// Aplica o middleware de redirecionamento HTTPS
+app.use(forceHttps);
+
 // Webhook configurado para aceitar payload RAW
 // IMPORTANTE: Este middleware deve vir ANTES de express.json()
 console.log("✅ Configurando middleware raw para Stripe webhook");
