@@ -68,8 +68,8 @@ export async function sendTransactionalEmail(
     const sendSmtpEmail = {
       to: [{email: to}],
       sender: {
-        name: "PlannerPro Organizer",
-        email: "solanobicalho@yahoo.com.br" // Email verificado no Brevo
+        name: "PlannerOrganiza",
+        email: "contato@plannerorganiza.com.br" // Email verificado no Brevo
       },
       subject: subject,
       htmlContent: htmlContent,
