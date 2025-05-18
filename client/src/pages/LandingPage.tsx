@@ -557,6 +557,15 @@ export default function LandingPage() {
                     <li>Controle suas finanças e visualize seu lucro.</li>
                     <li>Tenha relatórios automáticos e métricas de desempenho.</li>
                   </ol>
+                  
+                  <div className="mt-6">
+                    <Button 
+                      className="bg-green-500 text-white hover:bg-green-600 w-full px-6 py-3 text-left flex items-center"
+                      onClick={handleGetStarted}
+                    >
+                      <CheckCircle className="mr-2 h-5 w-5" /> Não Vou Mais Perder Oportunidades de Vendas!
+                    </Button>
+                  </div>
                 </div>
 
                 <div id="contato" className="mt-8">
