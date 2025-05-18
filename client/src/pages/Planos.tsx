@@ -254,7 +254,7 @@ export default function Planos() {
           <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-6 shadow-md">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Garantia de Satisfação</h3>
             <p className="text-gray-600 mb-2">
-              Experimente o PlannerPro por 7 dias sem compromisso. 
+              Experimente o PlannerOrganiza por 7 dias sem compromisso. 
               Se não gostar, cancele facilmente e não será cobrado.
             </p>
             <p className="text-gray-500 text-sm">

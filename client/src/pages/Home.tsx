@@ -8,7 +8,7 @@ export default function Home() {
     <div className="container mx-auto py-12 px-4 md:px-6">
       <section className="py-12 md:py-24 flex flex-col items-center text-center">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">
-          PlannerPro Organizer
+          PlannerOrganiza
         </h1>
         <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-[800px]">
           A solução completa para organizar sua vida, tarefas e projetos em um só lugar.

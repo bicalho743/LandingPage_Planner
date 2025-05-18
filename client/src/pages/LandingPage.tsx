@@ -283,7 +283,7 @@ export default function LandingPage() {
         <section id="planner-organizer" className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900">Conheça o Planner Organizer</h2>
+              <h2 className="text-3xl font-bold text-gray-900">Conheça o PlannerOrganiza</h2>
               <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
                 Elegante, funcional e totalmente adaptado às suas necessidades
               </p>

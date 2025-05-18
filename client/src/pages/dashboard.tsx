@@ -84,7 +84,7 @@ export default function Dashboard() {
     <div className="bg-gray-100 text-gray-800 font-sans min-h-screen">
       <header className="bg-blue-800 text-white py-4">
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">PlannerPro Dashboard</h1>
+          <h1 className="text-2xl font-bold">PlannerOrganiza Dashboard</h1>
           <Button 
             variant="outline" 
             className="border-white text-white hover:bg-blue-700"
@@ -120,7 +120,7 @@ export default function Dashboard() {
             </div>
           </div>
           <p className="text-gray-600">
-            Você agora tem acesso a todas as funcionalidades do PlannerPro Organizer.
+            Você agora tem acesso a todas as funcionalidades do PlannerOrganiza.
             Este é um dashboard personalizado com suas informações e estatísticas.
           </p>
         </div>
@@ -203,7 +203,7 @@ export default function Dashboard() {
       </main>
 
       <footer className="bg-blue-800 text-white py-4 text-center">
-        <p>© 2025 PlannerPro Organizer. Todos os direitos reservados.</p>
+        <p>© 2025 PlannerOrganiza. Todos os direitos reservados.</p>
       </footer>
     </div>
   );

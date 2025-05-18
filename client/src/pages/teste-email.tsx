@@ -31,8 +31,8 @@ export default function TesteEmailPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
-      assunto: 'Teste de Email - PlannerPro',
-      mensagem: 'Olá, este é um email de teste do sistema PlannerPro. Obrigado por testar nossa plataforma!',
+      assunto: 'Teste de Email - PlannerOrganiza',
+      mensagem: 'Olá, este é um email de teste do sistema PlannerOrganiza. Obrigado por testar nossa plataforma!',
     },
   });
 
@@ -47,7 +47,7 @@ export default function TesteEmailPage() {
           <h1 style="color: #0066cc;">${data.assunto}</h1>
           <p>${data.mensagem.replace(/\n/g, '<br/>')}</p>
           <p>Atenciosamente,</p>
-          <p><strong>Equipe PlannerPro</strong></p>
+          <p><strong>Equipe PlannerOrganiza</strong></p>
         </div>`,
         textContent: data.mensagem
       });

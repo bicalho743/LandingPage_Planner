@@ -88,7 +88,7 @@ export default function Checkout() {
       </main>
       
       <footer className="bg-blue-800 text-white py-4 text-center">
-        <p>© 2025 PlannerPro Organizer. Todos os direitos reservados.</p>
+        <p>© 2025 PlannerOrganiza. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
