@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de Testes de Integração para PlannerPro
+# Script de Testes de Integração para PlannerOrganiza
 # Este script verifica todas as integrações principais do sistema em ambiente de produção.
 
 # Configuração

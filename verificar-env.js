@@ -15,7 +15,7 @@ const yellow = '\x1b[33m';
 const blue = '\x1b[34m';
 const magenta = '\x1b[35m';
 
-console.log(`${blue}=== Verificador de Variáveis de Ambiente para PlannerPro ===${reset}\n`);
+console.log(`${blue}=== Verificador de Variáveis de Ambiente para PlannerOrganiza ===${reset}\n`);
 
 // Função para verificar uma variável de ambiente
 function checkEnv(name, pattern = null, required = true) {

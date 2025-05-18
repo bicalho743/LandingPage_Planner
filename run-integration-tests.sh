@@ -2,7 +2,7 @@
 
 # Script para executar todos os testes de integração em sequência
 
-echo "🚀 Iniciando testes de integração completos para PlannerPro"
+echo "🚀 Iniciando testes de integração completos para PlannerOrganiza"
 echo "==========================================================="
 echo
 

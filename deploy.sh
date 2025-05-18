@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script para implantar o PlannerPro em produção
+# Script para implantar o PlannerOrganiza em produção
 
 echo "🚀 Iniciando o processo de deploy..."
 

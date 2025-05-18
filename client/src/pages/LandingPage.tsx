@@ -238,7 +238,7 @@ export default function LandingPage() {
               <p className="text-sm uppercase tracking-wider text-gray-600 mb-2">BENEFÍCIOS</p>
               <h2 className="text-3xl font-bold text-gray-900">Transforme sua produtividade</h2>
               <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-                Descubra como o Planner Organizer pode revolucionar sua vida e ajudar a alcançar seus objetivos.
+                Descubra como o PlannerOrganiza pode revolucionar sua vida e ajudar a alcançar seus objetivos.
               </p>
             </div>
 

@@ -1,6 +1,6 @@
-# Testes de Integração do PlannerPro
+# Testes de Integração do PlannerOrganiza
 
-Este documento explica como executar e interpretar os testes de integração para garantir que o PlannerPro esteja corretamente configurado e integrado com todos os serviços de terceiros.
+Este documento explica como executar e interpretar os testes de integração para garantir que o PlannerOrganiza esteja corretamente configurado e integrado com todos os serviços de terceiros.
 
 ## Pré-requisitos
 
