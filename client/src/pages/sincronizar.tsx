@@ -82,7 +82,7 @@ export default function Sincronizar() {
     <div className="bg-white text-gray-800 font-sans min-h-screen">
       <header className="bg-blue-800 text-white py-6">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold">PlannerPro</h1>
+          <h1 className="text-4xl font-bold">PlannerOrganiza</h1>
           <p className="mt-2 text-lg">Sincronização de Conta</p>
         </div>
       </header>
@@ -183,7 +183,7 @@ export default function Sincronizar() {
       </main>
 
       <footer className="bg-blue-800 text-white py-4 text-center">
-        <p>© 2025 PlannerPro Organizer. Todos os direitos reservados.</p>
+        <p>© 2025 PlannerOrganiza. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
