@@ -128,7 +128,7 @@ export default function Sucesso() {
           <div className="flex justify-center">
             <Button 
               className="bg-blue-800 hover:bg-blue-900 text-white px-8 py-3 rounded-md"
-              onClick={() => window.open('https://www.plannerorganiza.com.br', '_blank')}
+              onClick={() => window.open('https://plannerorganiza.com.br', '_blank')}
             >
               Acessar o Sistema
             </Button>

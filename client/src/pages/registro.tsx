@@ -263,7 +263,7 @@ export default function Registro() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Já possui uma conta?{" "}
-              <a href="https://www.plannerorganiza.com.br" className="text-blue-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+              <a href="https://plannerorganiza.com.br" className="text-blue-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer">
                 Faça login
               </a>
             </p>
