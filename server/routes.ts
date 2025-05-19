@@ -691,21 +691,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      if (!email) {
-        console.log("❌ Email não especificado");
-        return res.status(400).json({
-          success: false,
-          message: "E-mail não especificado."
-        });
-      }
-
-      // Verificar se é um e-mail válido
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        console.log("❌ Email inválido:", email);
-        return res.status(400).json({
-          success: false,
-          message: "E-mail inválido."
-        });
+      // Email é opcional agora
+      if (email) {
+        // Verificar se é um e-mail válido quando fornecido
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          console.log("❌ Email inválido:", email);
+          return res.status(400).json({
+            success: false,
+            message: "E-mail inválido."
+          });
+        }
       }
 
       // Obter o ID do preço Stripe para o plano
@@ -721,31 +716,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.log("✅ ID do preço obtido:", priceId);
 
-      // Adicionar o e-mail à lista do Brevo em background
+      // Adicionar o e-mail à lista do Brevo em background, apenas se fornecido
       // Não esperamos isso terminar para não bloquear o checkout
-      (async () => {
-        try {
-          await addContactToBrevo("Cliente potencial", email);
-          console.log(`✅ Email adicionado ao Brevo antes do checkout: ${email}`);
-        } catch (error) {
-          console.error("❌ Erro ao adicionar e-mail ao Brevo:", error);
-        }
-      })();
+      if (email) {
+        (async () => {
+          try {
+            await addContactToBrevo("Cliente potencial", email);
+            console.log(`✅ Email adicionado ao Brevo antes do checkout: ${email}`);
+          } catch (error) {
+            console.error("❌ Erro ao adicionar e-mail ao Brevo:", error);
+          }
+        })();
+      }
 
       // Configurando o modo de pagamento com base no tipo de plano
       const mode = plan === 'vitalicio' ? 'payment' : 'subscription';
       console.log("📊 Modo de pagamento:", mode);
       
       // Montando URLs de sucesso e cancelamento
-      const successUrl = `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}&email=${encodeURIComponent(email)}`;
+      const successUrl = email 
+        ? `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}&email=${encodeURIComponent(email)}`
+        : `${req.protocol}://${req.headers.host}/sucesso?plan=${plan}`;
       const cancelUrl = `${req.protocol}://${req.headers.host}/cancelado`;
       
       console.log("⏳ Criando sessão de checkout no Stripe...");
       
       // Criando a sessão de checkout com um timeout para evitar bloqueios longos
-      const sessionPromise = stripe.checkout.sessions.create({
+      // Preparando a configuração da sessão com propriedades opcionais para o email
+      const sessionConfig: Stripe.Checkout.SessionCreateParams = {
         payment_method_types: ['card'],
-        customer_email: email, // Garantindo que o e-mail é capturado
         line_items: [
           {
             price: priceId,
@@ -760,9 +759,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cancel_url: cancelUrl,
         metadata: {
           plan_type: plan,
-          customer_email: email
         }
-      });
+      };
+      
+      // Adicionar email aos metadados e como customer_email apenas se foi fornecido
+      if (email) {
+        sessionConfig.customer_email = email;
+        sessionConfig.metadata!.customer_email = email;
+      }
+      
+      const sessionPromise = stripe.checkout.sessions.create(sessionConfig);
       
       // Adicionamos um timeout para não bloquear o servidor por muito tempo
       const timeoutPromise = new Promise((_, reject) => {

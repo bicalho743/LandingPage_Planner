@@ -18,24 +18,23 @@ export default function Planos() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const iniciarCheckout = async (plan: string) => {
-    if (!email) {
-      setErrorMessage("Por favor, insira seu e-mail.");
-      return;
-    }
-
+    // Email agora é opcional, removi a validação obrigatória
+    
     // Resetar qualquer erro anterior
     setErrorMessage(null);
     // Ativar loading para o plano específico
     setLoading(plan);
 
     try {
-      // Validar o e-mail com Zod
-      try {
-        z.string().email().parse(email);
-      } catch (error) {
-        setErrorMessage("Por favor, insira um e-mail válido.");
-        setLoading(null);
-        return;
+      // Validar o e-mail com Zod apenas se foi fornecido
+      if (email) {
+        try {
+          z.string().email().parse(email);
+        } catch (error) {
+          setErrorMessage("Por favor, insira um e-mail válido.");
+          setLoading(null);
+          return;
+        }
       }
 
       // Registrar lead antes do checkout 
@@ -131,14 +130,16 @@ export default function Planos() {
                 <p className="text-gray-600">Prosseguindo com o email: <strong>{email}</strong></p>
               </div>
             ) : (
-              <div className="bg-yellow-50 p-3 rounded-md mb-4 text-center">
-                <p className="text-yellow-700">Para escolher um plano, retorne à página inicial e cadastre seu email.</p>
-                <Button 
-                  className="mt-2 bg-blue-600 hover:bg-blue-700"
-                  onClick={() => setLocation("/")}
-                >
-                  Voltar para página inicial
-                </Button>
+              <div className="mb-4">
+                <p className="text-gray-600 mb-2">Digite seu e-mail para continuar (opcional)</p>
+                <Input
+                  type="email"
+                  placeholder="Seu e-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`${errorMessage ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                  disabled={loading !== null}
+                />
               </div>
             )}
             
