@@ -131,7 +131,7 @@ export default function Planos() {
               </div>
             ) : (
               <div className="mb-4">
-                <p className="text-gray-600 mb-2">Digite seu e-mail para continuar (opcional)</p>
+                <p className="text-gray-600 mb-2">QUER SABER MAIS? Digite seu e-mail para continuar</p>
                 <Input
                   type="email"
                   placeholder="Seu e-mail"
