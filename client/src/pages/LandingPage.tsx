@@ -55,6 +55,9 @@ export default function LandingPage() {
       });
       
       if (response.ok) {
+        // Salvar o email no localStorage antes de limpar o estado
+        localStorage.setItem("leadEmail", email);
+        
         setEmail("");
         setSubmitMessage("✅ Obrigado! Confira seu email para mais informações.");
         // Redirecionar para a página de planos após um breve intervalo

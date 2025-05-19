@@ -9,7 +9,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Planos() {
   const [_, setLocation] = useLocation();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    // Verificar se existe um email armazenado do formulário da landing page
+    const savedEmail = localStorage.getItem("leadEmail");
+    return savedEmail || "";
+  });
   const [loading, setLoading] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -122,18 +126,21 @@ export default function Planos() {
         <div className="mb-12">
           <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden mb-8 p-6 border border-blue-100">
             <h3 className="text-xl font-semibold mb-4 text-blue-800">Comece sua experiência</h3>
-            <p className="text-gray-600 mb-4">Digite seu e-mail para continuar com a assinatura</p>
-            
-            {/* Input de email */}
-            <Input
-              type="email"
-              placeholder="Seu e-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={`mb-4 ${errorMessage ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              disabled={loading !== null}
-            />
+            {email ? (
+              <div className="bg-blue-50 p-3 rounded-md mb-4 text-center">
+                <p className="text-gray-600">Prosseguindo com o email: <strong>{email}</strong></p>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 p-3 rounded-md mb-4 text-center">
+                <p className="text-yellow-700">Para escolher um plano, retorne à página inicial e cadastre seu email.</p>
+                <Button 
+                  className="mt-2 bg-blue-600 hover:bg-blue-700"
+                  onClick={() => setLocation("/")}
+                >
+                  Voltar para página inicial
+                </Button>
+              </div>
+            )}
             
             {/* Mensagem de erro */}
             {errorMessage && (
