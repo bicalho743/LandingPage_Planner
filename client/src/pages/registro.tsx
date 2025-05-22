@@ -77,6 +77,7 @@ export default function Registro() {
     
     try {
       // Enviar requisição para a API de registro
+      console.log('Enviando dados:', { nome, email, senha: '***', plano });
       const response = await apiRequest("POST", "/api/register", {
         nome,
         email,
