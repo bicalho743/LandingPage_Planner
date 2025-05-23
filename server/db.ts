@@ -5,7 +5,7 @@ import * as schema from "@shared/schema";
 const { Pool } = pg;
 
 // Força a nova conexão do banco Neon  
-process.env.DATABASE_URL = "postgresql://neondb_owner:npg_2EIcRV3QjOgy@ep-patient-mode-a6wlxjzv.us-west-2.aws.neon.tech:5432/neondb?sslmode=require";
+process.env.DATABASE_URL = "postgresql://AcessoPlanner_owner:npg_5Ol1JKHxYMSD@ep-bold-dream-a5zrffji-pooler.us-east-2.aws.neon.tech/AcessoPlanner?sslmode=require";
 
 // Verifica se temos uma URL de banco de dados válida
 if (!process.env.DATABASE_URL) {
