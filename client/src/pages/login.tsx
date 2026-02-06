@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { loginWithEmailPassword, sendPasswordReset } from "@/lib/firebase";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [_, setLocation] = useLocation();
@@ -13,13 +11,13 @@ export default function Login() {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Login real utilizando Firebase
       const user = await loginWithEmailPassword(email, password);
       
       toast({
@@ -27,14 +25,12 @@ export default function Login() {
         description: `Bem-vindo ao PlannerOrganiza, ${user.email}!`,
       });
       
-      // Redirecionar para o dashboard
       setLocation("/dashboard");
     } catch (error: any) {
       console.error("Erro ao fazer login:", error);
       let errorMessage = error.message || "Não foi possível fazer login. Verifique suas credenciais.";
       let needsSync = false;
       
-      // Verificar se é erro de usuário não encontrado ou credenciais inválidas
       if (error.code === 'auth/user-not-found' || 
           error.code === 'auth/wrong-password' ||
           error.message?.includes('user-not-found') ||
@@ -99,127 +95,155 @@ export default function Login() {
   };
 
   return (
-    <div className="bg-white text-gray-800 font-sans min-h-screen">
-      <header className="bg-blue-800 text-white py-6">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold">PlannerOrganiza</h1>
-          <p className="mt-2 text-lg">Acesse sua conta</p>
+    <div className="bg-gray-50 min-h-screen flex flex-col" style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+      {/* Header - barra navy escura */}
+      <header className="bg-[#1a1f4e] text-white py-3 shadow-md">
+        <div className="container mx-auto flex items-center justify-center gap-2">
+          <span className="text-xl">📋</span>
+          <h1 className="text-lg font-semibold tracking-wide">Planner Organizer</h1>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12 max-w-md">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+      {/* Conteúdo principal - duas colunas */}
+      <main className="flex-1 container mx-auto px-4 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 max-w-6xl mx-auto">
           
-          <div className="p-4 bg-blue-50 rounded-lg mb-6">
-            <p className="text-sm text-blue-700 mb-2">
-              <strong>Após pagar pelo plano:</strong>
-            </p>
-            <ul className="text-sm text-blue-600 list-disc pl-5 space-y-1">
-              <li>Você receberá um e-mail para definir sua senha</li>
-              <li>Use o mesmo e-mail fornecido durante o checkout</li>
-              <li>Caso não receba o e-mail, clique em "Esqueceu a senha?" abaixo</li>
-            </ul>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+          {/* Coluna esquerda - Marketing */}
+          <div className="space-y-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h2 className="text-3xl font-bold text-gray-900">Planner Organizer</h2>
+                <span className="text-gray-400 text-lg">🔗</span>
+              </div>
+              <p className="text-gray-500 text-sm">Sistema Profissional para Personal Organizers</p>
             </div>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <Label htmlFor="password">Senha</Label>
-                <div className="flex space-x-3">
-                  <a 
-                    href="#" 
-                    className="text-sm text-blue-600 hover:underline"
-                    onClick={() => setLocation(`/sincronizar${email ? `?email=${encodeURIComponent(email)}` : ''}`)}
-                  >
-                    Problemas com login?
-                  </a>
-                  <a 
-                    href="#" 
-                    className="text-sm text-blue-600 hover:underline"
-                    onClick={handlePasswordReset}
-                    aria-disabled={isResettingPassword}
-                  >
-                    {isResettingPassword ? (
-                      <span className="flex items-center">
-                        <span className="animate-spin w-3 h-3 border-2 border-t-transparent rounded-full mr-1"></span>
-                        Enviando...
-                      </span>
-                    ) : "Esqueceu a senha?"}
-                  </a>
+
+            {/* Cards de estatísticas */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="border border-gray-200 rounded-xl p-5 text-center bg-white">
+                <p className="text-3xl font-bold text-gray-800">+300%</p>
+                <p className="text-xs text-gray-500 mt-2">Aumento na produtividade</p>
+              </div>
+              <div className="border border-gray-200 rounded-xl p-5 text-center bg-white">
+                <p className="text-3xl font-bold text-gray-800">-25%</p>
+                <p className="text-xs text-gray-500 mt-2">Redução de retrabalho</p>
+              </div>
+              <div className="border border-gray-200 rounded-xl p-5 text-center bg-white">
+                <p className="text-3xl font-bold text-gray-800">+45%</p>
+                <p className="text-xs text-gray-500 mt-2">Aumento no faturamento</p>
+              </div>
+            </div>
+
+            {/* Seção Por que escolher */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Por que escolher o Planner Organizer?</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border border-gray-200 rounded-xl p-5 bg-white">
+                  <span className="text-2xl mb-2 block">📊</span>
+                  <h4 className="font-semibold text-sm text-gray-800 mb-1">Gestão Completa</h4>
+                  <p className="text-xs text-gray-500">Clientes, propostas e finanças em um só lugar</p>
+                </div>
+                <div className="border border-gray-200 rounded-xl p-5 bg-white">
+                  <span className="text-2xl mb-2 block">🔥</span>
+                  <h4 className="font-semibold text-sm text-gray-800 mb-1">Produtividade</h4>
+                  <p className="text-xs text-gray-500">Automatize tarefas e ganhe tempo</p>
+                </div>
+                <div className="border border-gray-200 rounded-xl p-5 bg-white">
+                  <span className="text-2xl mb-2 block">💰</span>
+                  <h4 className="font-semibold text-sm text-gray-800 mb-1">Controle Financeiro</h4>
+                  <p className="text-xs text-gray-500">Acompanhe receitas e despesas facilmente</p>
+                </div>
+                <div className="border border-gray-200 rounded-xl p-5 bg-white">
+                  <span className="text-2xl mb-2 block">📱</span>
+                  <h4 className="font-semibold text-sm text-gray-800 mb-1">Acesso Mobile</h4>
+                  <p className="text-xs text-gray-500">Use em qualquer dispositivo, a qualquer hora</p>
                 </div>
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="********"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
             </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <span className="animate-spin w-4 h-4 border-2 border-t-transparent rounded-full mr-2"></span>
-                  Entrando...
-                </span>
-              ) : "Entrar"}
-            </Button>
-          </form>
-          
-          <div className="mt-6 text-center space-y-3">
-            <p className="text-sm text-gray-600">
-              Ainda não tem uma conta?{" "}
-              <a 
-                href="#" 
-                className="text-blue-600 hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setLocation("/planos");
-                }}
-              >
-                Assine agora
-              </a>
-            </p>
-            
-            <p className="text-sm text-gray-600">
-              Problemas para acessar sua conta?{" "}
-              <a 
-                href="#" 
-                className="text-blue-600 hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setLocation("/sincronizar" + (email ? `?email=${encodeURIComponent(email)}` : ''));
-                }}
-              >
-                Clique aqui para sincronizar
-              </a>
-            </p>
+          </div>
+
+          {/* Coluna direita - Formulário de Login */}
+          <div className="flex items-start justify-center lg:justify-end">
+            <div className="w-full max-w-md">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Acesse sua conta</h2>
+                <p className="text-sm text-gray-500 mt-1">Entre com seu e-mail e senha para acessar o sistema</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-5">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    placeholder=""
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm pr-12"
+                      placeholder=""
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#1a1f4e] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#252b66] transition-colors disabled:opacity-60"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+                      Entrando...
+                    </span>
+                  ) : "Entrar na minha conta"}
+                </button>
+              </form>
+
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                <button
+                  onClick={handlePasswordReset}
+                  disabled={isResettingPassword}
+                  className="bg-[#dc3545] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#c82333] transition-colors disabled:opacity-60"
+                >
+                  {isResettingPassword ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                      Enviando...
+                    </span>
+                  ) : "Esqueceu sua senha?"}
+                </button>
+                <button
+                  onClick={() => setLocation("/planos")}
+                  className="bg-[#dc3545] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#c82333] transition-colors"
+                >
+                  Criar uma conta
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>
-
-      <footer className="bg-blue-800 text-white py-4 text-center">
-        <p>© 2025 PlannerOrganiza. Todos os direitos reservados.</p>
-      </footer>
     </div>
   );
 }
