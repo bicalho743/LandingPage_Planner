@@ -6,10 +6,13 @@ import { addContactToBrevo, sendTransactionalEmail } from './brevo';
 
 const router = express.Router();
 
-// Inicializando o Stripe
+const hasTestPricesFixuser = !!(process.env.STRIPE_PRICE_MONTHLY_TEST || process.env.STRIPE_PRICE_ANNUAL_TEST || process.env.STRIPE_PRICE_LIFETIME_TEST);
+
 const stripeKey = process.env.NODE_ENV === 'production'
   ? process.env.STRIPE_SECRET_KEY
-  : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
+  : (hasTestPricesFixuser && process.env.STRIPE_TEST_SECRET_KEY) 
+    ? process.env.STRIPE_TEST_SECRET_KEY 
+    : process.env.STRIPE_SECRET_KEY;
 
 if (!stripeKey) {
   throw new Error('STRIPE_SECRET_KEY não configurado');

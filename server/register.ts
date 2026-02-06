@@ -4,14 +4,19 @@ import { pool } from './db';
 import Stripe from 'stripe';
 import { storage } from './storage';
 
-// Inicializando o Stripe
+const hasTestPrices = !!(process.env.STRIPE_PRICE_MONTHLY_TEST || process.env.STRIPE_PRICE_ANNUAL_TEST || process.env.STRIPE_PRICE_LIFETIME_TEST);
+
 const stripeKey = process.env.NODE_ENV === 'production' 
   ? process.env.STRIPE_SECRET_KEY 
-  : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
+  : (hasTestPrices && process.env.STRIPE_TEST_SECRET_KEY) 
+    ? process.env.STRIPE_TEST_SECRET_KEY 
+    : process.env.STRIPE_SECRET_KEY;
 
 if (!stripeKey) {
   throw new Error('STRIPE_SECRET_KEY não configurado');
 }
+
+console.log(`Stripe: usando chave ${stripeKey === process.env.STRIPE_SECRET_KEY ? 'de PRODUÇÃO' : 'de TESTE'} (preços de teste ${hasTestPrices ? 'disponíveis' : 'NÃO disponíveis'})`);
 
 const stripe = new Stripe(stripeKey);
 

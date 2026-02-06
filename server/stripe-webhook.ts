@@ -6,10 +6,13 @@ import { addContactToBrevo, sendTransactionalEmail } from './brevo';
 import { firebaseAuth, generatePasswordResetLink } from './firebase';
 import { handleTrialCheckoutCompleted, handleTrialEndPaymentFailed } from './stripe-webhook-trial';
 
-// Inicializando o Stripe
+const hasTestPricesWebhook = !!(process.env.STRIPE_PRICE_MONTHLY_TEST || process.env.STRIPE_PRICE_ANNUAL_TEST || process.env.STRIPE_PRICE_LIFETIME_TEST);
+
 const stripeKey = process.env.NODE_ENV === 'production' 
   ? process.env.STRIPE_SECRET_KEY 
-  : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
+  : (hasTestPricesWebhook && process.env.STRIPE_TEST_SECRET_KEY) 
+    ? process.env.STRIPE_TEST_SECRET_KEY 
+    : process.env.STRIPE_SECRET_KEY;
 
 if (!stripeKey) {
   throw new Error('STRIPE_SECRET_KEY não configurado');

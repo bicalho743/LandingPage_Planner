@@ -5,11 +5,14 @@ import { addContactToBrevo } from './brevo';
 
 const router = express.Router();
 
-// Inicializando o Stripe
+const hasTestPrices = !!(process.env.STRIPE_PRICE_MONTHLY_TEST || process.env.STRIPE_PRICE_ANNUAL_TEST || process.env.STRIPE_PRICE_LIFETIME_TEST);
 const isProduction = process.env.NODE_ENV === 'production';
+
 const stripeKey = isProduction 
   ? process.env.STRIPE_SECRET_KEY 
-  : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
+  : (hasTestPrices && process.env.STRIPE_TEST_SECRET_KEY) 
+    ? process.env.STRIPE_TEST_SECRET_KEY 
+    : process.env.STRIPE_SECRET_KEY;
 
 if (!stripeKey) {
   throw new Error('STRIPE_SECRET_KEY não configurado');
@@ -17,27 +20,26 @@ if (!stripeKey) {
 
 const stripe = new Stripe(stripeKey);
 
-// Obter ID do preço com base no tipo de plano em teste ou produção
 function getPriceId(planType: string): string {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const useTestPrices = !isProduction && hasTestPrices;
   
   switch (planType) {
     case 'monthly':
-      return isProduction 
-        ? (process.env.STRIPE_PRICE_MONTHLY || '')
-        : (process.env.STRIPE_PRICE_MONTHLY_TEST || '');
+      return useTestPrices 
+        ? (process.env.STRIPE_PRICE_MONTHLY_TEST || '')
+        : (process.env.STRIPE_PRICE_MONTHLY || '');
     case 'annual':
-      return isProduction 
-        ? (process.env.STRIPE_PRICE_ANNUAL || '') 
-        : (process.env.STRIPE_PRICE_ANNUAL_TEST || '');
+      return useTestPrices 
+        ? (process.env.STRIPE_PRICE_ANNUAL_TEST || '') 
+        : (process.env.STRIPE_PRICE_ANNUAL || '');
     case 'lifetime':
-      return isProduction 
-        ? (process.env.STRIPE_PRICE_LIFETIME || '') 
-        : (process.env.STRIPE_PRICE_LIFETIME_TEST || '');
+      return useTestPrices 
+        ? (process.env.STRIPE_PRICE_LIFETIME_TEST || '') 
+        : (process.env.STRIPE_PRICE_LIFETIME || '');
     default:
-      return isProduction 
-        ? (process.env.STRIPE_PRICE_MONTHLY || '')
-        : (process.env.STRIPE_PRICE_MONTHLY_TEST || '');
+      return useTestPrices 
+        ? (process.env.STRIPE_PRICE_MONTHLY_TEST || '')
+        : (process.env.STRIPE_PRICE_MONTHLY || '');
   }
 }
 

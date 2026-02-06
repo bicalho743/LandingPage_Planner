@@ -12,30 +12,34 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const isProduction = process.env.NODE_ENV === 'production';
+const hasTestPricesRoutes = !!(process.env.STRIPE_PRICE_MONTHLY_TEST || process.env.STRIPE_PRICE_ANNUAL_TEST || process.env.STRIPE_PRICE_LIFETIME_TEST);
+
 const stripeKey = isProduction 
   ? process.env.STRIPE_SECRET_KEY 
-  : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
+  : (hasTestPricesRoutes && process.env.STRIPE_TEST_SECRET_KEY) 
+    ? process.env.STRIPE_TEST_SECRET_KEY 
+    : process.env.STRIPE_SECRET_KEY;
 
 console.log(`Iniciando Stripe no modo ${isProduction ? 'PRODUÇÃO' : 'DESENVOLVIMENTO'}`);
-console.log(`Usando chave ${isProduction ? 'de produção' : 'de teste'}`);
+console.log(`Usando chave ${stripeKey === process.env.STRIPE_SECRET_KEY ? 'de produção' : 'de teste'}`);
 
 const stripe = new Stripe(stripeKey);
 
-// Obter o ID do preço com base no tipo de plano e ambiente
 function getPriceId(planType: string): string {
-  // Usar os IDs de preço do ambiente de teste ou produção com base no modo atual
+  const useTestPrices = !isProduction && hasTestPricesRoutes;
+  
   if (planType === 'mensal') {
-    return isProduction 
-      ? process.env.STRIPE_PRICE_MONTHLY || ''
-      : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
+    return useTestPrices 
+      ? process.env.STRIPE_PRICE_MONTHLY_TEST || ''
+      : process.env.STRIPE_PRICE_MONTHLY || '';
   } else if (planType === 'anual') {
-    return isProduction 
-      ? process.env.STRIPE_PRICE_ANNUAL || ''
-      : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
+    return useTestPrices 
+      ? process.env.STRIPE_PRICE_ANNUAL_TEST || ''
+      : process.env.STRIPE_PRICE_ANNUAL || '';
   } else if (planType === 'vitalicio') {
-    return isProduction 
-      ? process.env.STRIPE_PRICE_LIFETIME || ''
-      : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
+    return useTestPrices 
+      ? process.env.STRIPE_PRICE_LIFETIME_TEST || ''
+      : process.env.STRIPE_PRICE_LIFETIME || '';
   }
   
   throw new Error(`Tipo de plano inválido: ${planType}`);
