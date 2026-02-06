@@ -202,15 +202,15 @@ router.post('/api/register', async (req: Request, res: Response) => {
         if (planType === 'mensal') {
           return isProduction 
             ? process.env.STRIPE_PRICE_MONTHLY || ''
-            : process.env.STRIPE_PRICE_MONTHLY_TEST || '';
+            : process.env.STRIPE_PRICE_MONTHLY_TEST || process.env.STRIPE_PRICE_MONTHLY || '';
         } else if (planType === 'anual') {
           return isProduction 
             ? process.env.STRIPE_PRICE_ANNUAL || ''
-            : process.env.STRIPE_PRICE_ANNUAL_TEST || '';
+            : process.env.STRIPE_PRICE_ANNUAL_TEST || process.env.STRIPE_PRICE_ANNUAL || '';
         } else if (planType === 'vitalicio') {
           return isProduction 
             ? process.env.STRIPE_PRICE_LIFETIME || ''
-            : process.env.STRIPE_PRICE_LIFETIME_TEST || '';
+            : process.env.STRIPE_PRICE_LIFETIME_TEST || process.env.STRIPE_PRICE_LIFETIME || '';
         }
         
         throw new Error(`Tipo de plano inválido: ${planType}`);
