@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Clock, Users, Star, Sun, BarChart2 } from "lucide-react";
 import { StarFilled } from "../components/ui/icons";
 import { scrollToSection } from "@/lib/utils";
+import designIntuitivoImg from "@assets/image_1770383921514.png";
 import { 
   PlannerHeroImage, 
   WorkspaceImage, 
@@ -299,11 +300,11 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="shadow-md">
                 <CardContent className="p-6">
-                  <div className="bg-gray-50 mb-4 h-40 flex items-center justify-center rounded">
+                  <div className="bg-gray-50 mb-4 h-48 flex items-center justify-center rounded overflow-hidden">
                     <img 
-                      src="/design-intuitivo.svg" 
-                      alt="Design Intuitivo" 
-                      className="max-w-full h-auto"
+                      src={designIntuitivoImg} 
+                      alt="Design Intuitivo - Dashboard do Planner Organizer" 
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Design Intuitivo</h3>
