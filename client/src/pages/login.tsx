@@ -25,7 +25,12 @@ export default function Login() {
         description: `Bem-vindo ao PlannerOrganiza, ${user.email}!`,
       });
       
-      setLocation("/dashboard");
+      const isProduction = import.meta.env.PROD;
+      if (isProduction) {
+        window.location.href = "https://plannerorganiza.com.br/";
+      } else {
+        setLocation("/dashboard");
+      }
     } catch (error: any) {
       console.error("Erro ao fazer login:", error);
       let errorMessage = error.message || "Não foi possível fazer login. Verifique suas credenciais.";
