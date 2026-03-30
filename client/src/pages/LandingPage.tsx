@@ -372,7 +372,7 @@ export default function LandingPage() {
             <li>Enviada por link, PDF ou WhatsApp</li>
             <li>Rastreável — saiba quando foi visualizada</li>
           </ul>
-          <button className="lp-proposal-cta" onClick={() => setLocation("/planos")}>
+          <button className="lp-proposal-cta" onClick={() => setLocation("/registro")}>
             Criar minha primeira proposta
           </button>
         </div>
@@ -619,10 +619,10 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <span>© 2025 Planner Organizer. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
-          <a href="#">Termos de Uso</a>
-          <a href="#">Política de Privacidade</a>
-          <a href="#">Suporte</a>
-          <a href="#">Contato</a>
+          <a href="https://plannerorganiza.com.br/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
+          <a href="https://plannerorganiza.com.br/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          <a href="https://wa.me/5531999999999" target="_blank" rel="noreferrer">Suporte</a>
+          <a href="https://wa.me/5531999999999" target="_blank" rel="noreferrer">Contato</a>
         </div>
       </footer>
 
