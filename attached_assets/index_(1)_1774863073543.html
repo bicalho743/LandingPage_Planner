@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Planner Organizer — Seu negócio, tão organizado quanto seus clientes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #F5F7FA;
+    --warm-white: #EEF1F7;
+    --terracota: #B8973C;
+    --terracota-light: #D4B05A;
+    --terracota-dark: #96790E;
+    --sage: #6B7FA8;
+    --sage-light: #A8B8D4;
+    --sage-dark: #2E4A7A;
+    --gold: #C9A96E;
+    --dark: #0D1B35;
+    --text: #1A2B45;
+    --text-mid: #3D5275;
+    --text-light: #6B82A8;
+    --border: #D0D9EA;
+    --shadow: rgba(13,27,53,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+    transition: box-shadow .3s;
+  }
+  header.scrolled { box-shadow: 0 4px 24px var(--shadow); }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 600;
+    color: var(--dark); text-decoration: none;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .logo span { color: var(--terracota); }
+
+  nav { display: flex; align-items: center; gap: 2rem; }
+  nav a {
+    font-size: .875rem; font-weight: 400; color: var(--text-mid);
+    text-decoration: none; transition: color .2s;
+  }
+  nav a:hover { color: var(--terracota); }
+
+  .header-cta {
+    background: var(--terracota); color: #fff;
+    border: none; border-radius: 50px;
+    padding: .55rem 1.4rem; font-size: .875rem; font-weight: 500;
+    cursor: pointer; text-decoration: none;
+    transition: background .2s, transform .15s;
+  }
+  .header-cta:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    padding-top: 68px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 70% 40%, rgba(184,151,60,.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 10% 80%, rgba(13,27,53,.05) 0%, transparent 60%);
+  }
+
+  /* decorative line */
+  .hero-bg::after {
+    content: '';
+    position: absolute; top: 20%; right: 45%;
+    width: 1px; height: 60%;
+    background: linear-gradient(to bottom, transparent, var(--border), transparent);
+  }
+
+  .hero-left {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 5rem 3rem 5rem 5rem;
+    animation: fadeUp .8s ease both;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .75rem; font-weight: 500; letter-spacing: .12em;
+    color: var(--terracota); text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 28px; height: 1px; background: var(--terracota);
+  }  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 4.5vw, 4rem);
+    font-weight: 300; line-height: 1.12;
+    color: var(--dark);
+    margin-bottom: 1.5rem;
+  }
+  h1 em { font-style: italic; color: var(--terracota); }
+
+  .hero-sub {
+    font-size: 1rem; color: var(--text-mid); font-weight: 300;
+    max-width: 440px; margin-bottom: 2.5rem;
+    line-height: 1.75;
+  }
+
+  .hero-capture {
+    display: flex; gap: .75rem; max-width: 420px;
+    margin-bottom: 2rem;
+  }
+  .hero-capture input {
+    flex: 1; border: 1px solid var(--border);
+    background: #fff; border-radius: 50px;
+    padding: .75rem 1.25rem; font-size: .875rem;
+    color: var(--text); outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .hero-capture input:focus {
+    border-color: var(--terracota);
+    box-shadow: 0 0 0 3px rgba(184,151,60,.12);
+  }
+  .hero-capture input::placeholder { color: var(--text-light); }
+  .btn-primary {
+    background: var(--terracota); color: #fff;
+    border: none; border-radius: 50px;
+    padding: .75rem 1.6rem; font-size: .875rem; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover {
+    background: var(--terracota-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(184,151,60,.2);
+  }
+
+  .hero-note {
+    font-size: .75rem; color: var(--text-light);
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .hero-note svg { opacity: .6; }
+
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-item { display: flex; flex-direction: column; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 600; color: var(--dark);
+    line-height: 1;
+  }
+  .stat-label { font-size: .75rem; color: var(--text-light); margin-top: .2rem; }
+
+  /* RIGHT: LOGIN CARD */
+  .hero-right {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 5rem 5rem 5rem 3rem;
+    animation: fadeUp .8s .15s ease both;
+  }
+
+  .login-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 20px 60px rgba(13,27,53,.15), 0 4px 16px rgba(184,151,60,.08);
+  }
+  .login-card-header {
+    text-align: center; margin-bottom: 2rem;
+  }
+  .login-card-header p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 500; color: var(--dark);
+  }
+  .login-card-header span {
+    font-size: .8rem; color: var(--text-light); font-weight: 300;
+  }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-group label {
+    display: block; font-size: .75rem; font-weight: 500;
+    color: var(--text-mid); margin-bottom: .4rem;
+    letter-spacing: .04em;
+  }
+  .form-group input {
+    width: 100%;
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: .7rem 1rem; font-size: .875rem;
+    background: var(--cream); color: var(--text);
+    outline: none; transition: border-color .2s, box-shadow .2s;
+    font-family: 'DM Sans', sans-serif;
+  }  .form-group input:focus {
+    border-color: var(--terracota);
+    box-shadow: 0 0 0 3px rgba(184,151,60,.1);
+    background: #fff;
+  }
+
+  .btn-login {
+    width: 100%;
+    background: var(--dark); color: #fff;
+    border: none; border-radius: 10px;
+    padding: .85rem; font-size: .9rem; font-weight: 500;
+    cursor: pointer; margin-top: .5rem;
+    transition: background .2s, transform .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-login:hover { background: var(--text); transform: translateY(-1px); }
+
+  .login-divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 1.25rem 0; color: var(--text-light); font-size: .75rem;
+  }
+  .login-divider::before, .login-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .btn-trial {
+    width: 100%;
+    background: transparent; color: var(--terracota);
+    border: 1.5px solid var(--terracota); border-radius: 10px;
+    padding: .8rem; font-size: .875rem; font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-trial:hover { background: var(--terracota); color: #fff; }
+
+  .login-footer {
+    text-align: center; margin-top: 1.25rem;
+    font-size: .75rem; color: var(--text-light);
+  }
+  .login-footer a { color: var(--terracota); text-decoration: none; }
+
+  /* ── TRUST BAR ───────────────────────────────────────── */
+  .trust-bar {
+    background: linear-gradient(90deg, #0D1B35, #1A2E55);
+    color: rgba(255,255,255,.55);
+    padding: 1.1rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+    font-size: .8rem; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .trust-item { display: flex; align-items: center; gap: .5rem; }
+  .trust-item strong { color: #fff; }
+
+  /* ── SECTIONS COMMON ─────────────────────────────────── */
+  section { padding: 6rem 5rem; }
+
+  .section-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .7rem; font-weight: 500; letter-spacing: .14em;
+    color: var(--terracota); text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300;
+    color: var(--dark); line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+  h2 em { font-style: italic; color: var(--terracota); }
+  h2 strong { font-weight: 600; }
+
+  .section-sub {
+    font-size: 1rem; color: var(--text-mid); font-weight: 300;
+    max-width: 520px; line-height: 1.8;
+  }
+
+  /* ── DORES ───────────────────────────────────────────── */
+  .pains {
+    background: var(--warm-white);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .pains-left {
+    padding: 6rem 4rem 6rem 5rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .pains-right {
+    padding: 6rem 5rem 6rem 4rem;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .pain-item {
+    display: flex; gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: #fff;
+    transition: border-color .3s, box-shadow .3s, transform .3s;
+    cursor: default;
+  }
+  .pain-item:hover {
+    border-color: var(--terracota-light);
+    box-shadow: 0 8px 32px var(--shadow);
+    transform: translateX(4px);
+  }
+  .pain-icon {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 10px; background: rgba(184,151,60,.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+  .pain-text h4 {
+    font-size: .9rem; font-weight: 500; color: var(--dark);
+    margin-bottom: .25rem;
+  }
+  .pain-text p { font-size: .8rem; color: var(--text-light); line-height: 1.6; }
+
+  /* ── FEATURES ────────────────────────────────────────── */
+  .features { background: var(--cream); }
+  .features-header { text-align: center; margin-bottom: 4rem; }
+  .features-header .section-sub { margin: 0 auto; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: transform .3s, box-shadow .3s, border-color .3s;
+    position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--terracota), var(--sage-dark));
+    opacity: 0; transition: opacity .3s;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px var(--shadow);
+    border-color: transparent;
+  }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(184,151,60,.1), rgba(13,27,53,.06));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 1.25rem;
+  }
+  .feature-card h3 {
+    font-size: 1rem; font-weight: 500; color: var(--dark);
+    margin-bottom: .5rem;
+  }
+  .feature-card p { font-size: .85rem; color: var(--text-mid); line-height: 1.7; }
+
+  .feature-tag {
+    display: inline-block; margin-top: 1rem;
+    font-size: .7rem; font-weight: 500;
+    color: var(--terracota); letter-spacing: .06em;
+    background: rgba(184,151,60,.08);
+    border-radius: 50px; padding: .2rem .7rem;
+  }
+
+  /* ── PROPOSTA PREVIEW ────────────────────────────────── */
+  .proposal-preview {
+    background: linear-gradient(135deg, #0D1B35 0%, #162B52 100%);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; color: #fff;
+  }
+  .proposal-left {
+    padding: 6rem 4rem 6rem 5rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .proposal-left .section-eyebrow { color: var(--gold); }
+  .proposal-left h2 { color: #fff; }
+  .proposal-left .section-sub { color: rgba(255,255,255,.6); }
+
+  .proposal-points {
+    list-style: none; margin-top: 2rem;
+    display: flex; flex-direction: column; gap: .85rem;
+  }
+  .proposal-points li {
+    display: flex; align-items: center; gap: .75rem;
+    font-size: .9rem; color: rgba(255,255,255,.7);
+  }
+  .proposal-points li::before {
+    content: ''; display: block;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--terracota-light); flex-shrink: 0;
+  }
+  .proposal-cta {
+    margin-top: 2.5rem;
+    background: var(--terracota); color: #fff;
+    border: none; border-radius: 50px;
+    padding: .85rem 2rem; font-size: .9rem; font-weight: 500;
+    cursor: pointer; width: fit-content;
+    transition: background .2s, transform .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .proposal-cta:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+
+  .proposal-right {
+    padding: 5rem 5rem 5rem 3rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .proposal-mock {
+    background: #fff; border-radius: 16px;
+    width: 100%; max-width: 340px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.4);
+    overflow: hidden; color: var(--text);
+  }
+  .mock-header {
+    background: var(--cream);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mock-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 600; color: var(--dark);
+  }
+  .mock-badge {
+    font-size: .65rem; background: rgba(184,151,60,.1);
+    color: var(--terracota); padding: .2rem .6rem;
+    border-radius: 50px; font-weight: 500;
+  }
+  .mock-body { padding: 1.5rem; }
+  .mock-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem; font-weight: 600; color: var(--dark);
+    margin-bottom: .25rem;
+  }
+  .mock-subtitle { font-size: .75rem; color: var(--text-light); margin-bottom: 1.25rem; }
+
+  .mock-section { margin-bottom: 1rem; }
+  .mock-section-label {
+    font-size: .65rem; font-weight: 500; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-light);
+    margin-bottom: .4rem;
+  }
+  .mock-line {
+    height: 8px; border-radius: 4px;
+    background: var(--cream); margin-bottom: .3rem;
+  }
+  .mock-line.w60 { width: 60%; }
+  .mock-line.w80 { width: 80%; }
+  .mock-line.w40 { width: 40%; }
+
+  .mock-total {
+    background: var(--cream); border-radius: 10px;
+    padding: .85rem 1rem; margin-top: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mock-total span { font-size: .75rem; color: var(--text-mid); }
+  .mock-total strong {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem; color: var(--terracota); font-weight: 600;
+  }
+  .mock-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: .7rem; color: var(--text-light);
+    text-align: center;
+  }
+
+  /* ── BEFORE AFTER ────────────────────────────────────── */
+  .beforeafter {
+    background: var(--warm-white);
+    text-align: center;
+  }
+  .beforeafter-header { margin-bottom: 3.5rem; }
+  .beforeafter-header .section-sub { margin: 0 auto; }
+
+  .ba-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 2rem; align-items: center;
+    max-width: 880px; margin: 0 auto;
+  }
+  .ba-card {
+    background: #fff; border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 2rem; text-align: left;
+  }
+  .ba-card.before { border-color: #E0D0C0; }
+  .ba-card.after { border-color: var(--sage-light); }
+
+  .ba-label {
+    font-size: .7rem; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .ba-label.before-label { color: var(--text-light); }
+  .ba-label.after-label { color: var(--sage-dark); }
+
+  .ba-item {
+    display: flex; align-items: flex-start; gap: .75rem;
+    margin-bottom: .85rem; font-size: .85rem;
+  }
+  .ba-item .icon { font-size: 1rem; flex-shrink: 0; margin-top: .05rem; }
+  .ba-item p { color: var(--text-mid); line-height: 1.5; }
+  .ba-item p strong { color: var(--dark); font-weight: 500; }
+
+  .ba-arrow {
+    width: 48px; height: 48px;
+    background: var(--terracota); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.2rem; flex-shrink: 0;
+  }
+
+  /* ── TESTEMUNHOS ─────────────────────────────────────── */
+  .testimonials { background: var(--cream); }
+  .testimonials-header { text-align: center; margin-bottom: 3.5rem; }
+  .testimonials-header .section-sub { margin: 0 auto; }
+
+  .t-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .t-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .t-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px var(--shadow); }
+  .t-card .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem; line-height: .5;
+    color: rgba(184,151,60,.15);
+    position: absolute; top: 1.5rem; right: 1.5rem;
+  }
+  .t-text {
+    font-size: .9rem; color: var(--text-mid); line-height: 1.75;
+    margin-bottom: 1.5rem; font-style: italic;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.05rem;
+  }
+  .t-author { display: flex; align-items: center; gap: .85rem; }
+  .t-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--sage-dark), var(--terracota));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; font-size: .9rem; flex-shrink: 0;
+  }
+  .t-name { font-size: .85rem; font-weight: 500; color: var(--dark); }
+  .t-role { font-size: .75rem; color: var(--text-light); }
+  .t-result {
+    display: inline-block; margin-top: .85rem;
+    font-size: .7rem; font-weight: 500; color: var(--sage-dark);
+    background: rgba(138,158,138,.1); border-radius: 50px;
+    padding: .2rem .75rem;
+  }
+
+  /* ── PREÇOS ──────────────────────────────────────────── */
+  .pricing {
+    background: var(--warm-white);
+    text-align: center;
+  }
+  .pricing-header { margin-bottom: 3.5rem; }
+  .pricing-header .section-sub { margin: 0 auto; }
+
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; max-width: 900px; margin: 0 auto;
+    align-items: start;
+  }
+  .pricing-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 24px; padding: 2rem;
+    text-align: left;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .pricing-card.featured {
+    background: linear-gradient(160deg, #0D1B35, #1A3060); color: #fff;
+    border-color: var(--sage-dark);
+    transform: translateY(-8px);
+    box-shadow: 0 24px 64px rgba(44,33,24,.2);
+  }
+  .pricing-card:not(.featured):hover { transform: translateY(-4px); box-shadow: 0 12px 40px var(--shadow); }
+
+  .pricing-plan {
+    font-size: .7rem; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--terracota); margin-bottom: .75rem;
+  }
+  .featured .pricing-plan { color: var(--gold); }
+  .pricing-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 600; margin-bottom: .25rem;
+    color: var(--dark);
+  }
+  .featured h3 { color: #fff; }
+  .pricing-desc { font-size: .8rem; color: var(--text-light); margin-bottom: 1.5rem; line-height: 1.6; }
+  .featured .pricing-desc { color: rgba(255,255,255,.5); }
+
+  .price-row { margin-bottom: 1.5rem; }
+  .price-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem; font-weight: 600; color: var(--dark);
+    line-height: 1;
+  }
+  .featured .price-val { color: #fff; }
+  .price-val sup {
+    font-size: 1rem; vertical-align: super; font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .price-period { font-size: .75rem; color: var(--text-light); margin-top: .2rem; }
+  .featured .price-period { color: rgba(255,255,255,.4); }
+
+  .features-list { list-style: none; margin-bottom: 1.75rem; display: flex; flex-direction: column; gap: .6rem; }
+  .features-list li {
+    font-size: .82rem; color: var(--text-mid);
+    display: flex; align-items: flex-start; gap: .6rem;
+  }
+  .featured .features-list li { color: rgba(255,255,255,.65); }
+  .features-list li::before {
+    content: '✓'; color: var(--sage-dark); font-weight: 600;
+    flex-shrink: 0; margin-top: .05rem;
+  }
+  .featured .features-list li::before { color: var(--gold); }
+
+  .btn-plan {
+    width: 100%; border-radius: 12px;
+    padding: .85rem; font-size: .875rem; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all .2s;
+  }
+  .btn-plan.outline {
+    background: transparent; color: var(--dark);
+    border: 1.5px solid var(--border);
+  }
+  .btn-plan.outline:hover { border-color: var(--terracota); color: var(--terracota); }
+  .btn-plan.solid {
+    background: var(--terracota); color: #fff; border: none;
+  }
+  .btn-plan.solid:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+
+  .badge-popular {
+    display: inline-block; margin-top: .5rem;
+    font-size: .65rem; font-weight: 500;
+    background: var(--gold); color: var(--dark);
+    border-radius: 50px; padding: .15rem .75rem;
+    letter-spacing: .06em; text-transform: uppercase;
+  }
+
+  /* ── FAQ ─────────────────────────────────────────────── */
+  .faq { background: var(--cream); }
+  .faq-inner { max-width: 680px; margin: 0 auto; }
+  .faq-header { text-align: center; margin-bottom: 3rem; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border); padding: 1.25rem 0;
+  }
+  .faq-q {
+    width: 100%; background: none; border: none;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; text-align: left;
+    font-size: .92rem; font-weight: 500; color: var(--dark);
+    font-family: 'DM Sans', sans-serif; padding: 0;
+  }
+  .faq-q .arrow {
+    font-size: 1.1rem; transition: transform .3s; flex-shrink: 0;
+    color: var(--terracota);
+  }
+  .faq-item.open .arrow { transform: rotate(45deg); }
+  .faq-a {
+    font-size: .85rem; color: var(--text-mid); line-height: 1.75;
+    max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .3s;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding-top: .75rem; }
+
+  /* ── FOOTER CTA ──────────────────────────────────────── */
+  .footer-cta {
+    background: linear-gradient(135deg, #0D1B35 0%, #1A3060 50%, #B8973C 100%);
+    color: #fff; text-align: center;
+    padding: 6rem 5rem;
+    position: relative; overflow: hidden;
+  }
+  .footer-cta::before {
+    content: '';
+    position: absolute; top: -50%; left: -20%;
+    width: 60%; height: 200%;
+    background: rgba(255,255,255,.04);
+    transform: rotate(-15deg);
+  }
+  .footer-cta h2 { color: #fff; font-size: clamp(2rem, 3vw, 2.8rem); }
+  .footer-cta p { color: rgba(255,255,255,.7); margin: 1rem auto 2.5rem; max-width: 480px; }
+  .footer-cta-actions { display: flex; justify-content: center; gap: 1rem; }
+  .btn-white {
+    background: #fff; color: var(--terracota);
+    border: none; border-radius: 50px;
+    padding: .9rem 2.2rem; font-size: .9rem; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: transform .15s, box-shadow .2s;
+  }
+  .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.15); }
+  .btn-outline-white {
+    background: transparent; color: #fff;
+    border: 1.5px solid rgba(255,255,255,.4); border-radius: 50px;
+    padding: .9rem 2.2rem; font-size: .9rem; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: border-color .2s, background .2s;
+  }
+  .btn-outline-white:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  footer {
+    background: #080F1E; color: rgba(255,255,255,.35);
+    padding: 3rem 5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .78rem;
+  }
+  footer a { color: rgba(255,255,255,.4); text-decoration: none; }
+  footer a:hover { color: rgba(255,255,255,.8); }
+  .footer-links { display: flex; gap: 2rem; }
+
+  /* ── WHATSAPP FLOAT ──────────────────────────────────── */
+  .wa-float {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #25D366; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(37,211,102,.4);
+    text-decoration: none; font-size: 1.5rem;
+    transition: transform .2s, box-shadow .2s;
+    animation: pulse 2.5s infinite;
+  }
+  .wa-float:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 32px rgba(37,211,102,.5);
+    animation: none;
+  }
+
+  /* ── ANIMATIONS ──────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 8px 24px rgba(37,211,102,.4); }
+    50%       { box-shadow: 0 8px 36px rgba(37,211,102,.6); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 900px) {
+    section { padding: 4rem 2rem; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 4rem 2rem 2rem; }
+    .hero-right { padding: 2rem 2rem 4rem; }
+    .pains, .proposal-preview { grid-template-columns: 1fr; }
+    .pains-left, .pains-right, .proposal-left, .proposal-right { padding: 3rem 2rem; }
+    .features-grid, .t-grid, .pricing-grid { grid-template-columns: 1fr; }
+    .ba-grid { grid-template-columns: 1fr; }
+    .ba-arrow { margin: 0 auto; }
+    nav { display: none; }
+    trust-bar { flex-direction: column; gap: .75rem; text-align: center; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .pricing-card.featured { transform: none; }
+    .footer-cta-actions { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ────────────────────────────────────────────── -->
+<header id="header">
+  <a href="#" class="logo">Planner <span>Organizer</span></a>
+  <nav>
+    <a href="#funcionalidades">Funcionalidades</a>
+    <a href="#planos">Planos</a>
+    <a href="#depoimentos">Depoimentos</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <a href="#login" class="header-cta">Entrar</a>
+</header>
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+
+  <div class="hero-left">
+    <div class="hero-eyebrow">Para Personal Organizers</div>
+    <h1>Você organiza a vida<br/>dos outros.<br/><em>Quem organiza<br/>o seu negócio?</em></h1>
+    <p class="hero-sub">
+      Propostas elegantes em minutos, clientes organizados, finanças sob controle.
+      Tudo que você precisava para se sentir tão profissional quanto você realmente é.
+    </p>
+
+    <div class="hero-capture">
+      <input type="email" placeholder="Seu melhor e-mail" id="heroEmail" />
+      <button class="btn-primary" onclick="handleTrial()">Começar grátis</button>
+    </div>
+    <p class="hero-note">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      7 dias grátis — sem cartão de crédito
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">+2.4k</span>
+        <span class="stat-label">organizers ativas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">5 min</span>
+        <span class="stat-label">para sua 1ª proposta</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">98%</span>
+        <span class="stat-label">recomendam</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right" id="login">
+    <div class="login-card">
+      <div class="login-card-header">
+        <p>Bem-vinda de volta ✨</p>
+        <span>Acesse sua conta</span>
+      </div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" placeholder="seu@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" placeholder="••••••••" />
+      </div>
+
+      <button class="btn-login">Entrar</button>
+
+      <div class="login-divider">ou</div>
+
+      <button class="btn-trial" onclick="handleTrial()">Criar conta grátis — 7 dias</button>
+
+      <p class="login-footer">
+        Esqueceu a senha? <a href="#">Recuperar acesso</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST BAR ──────────────────────────────────────────── -->
+<div class="trust-bar">
+  <div class="trust-item">🔒 <strong>Dados seguros</strong> &nbsp;LGPD compliant</div>
+  <div class="trust-item">⚡ <strong>Suporte humano</strong> &nbsp;via WhatsApp</div>
+  <div class="trust-item">🏆 <strong>Proposta em</strong> &nbsp;menos de 5 minutos</div>
+  <div class="trust-item">💳 <strong>Cancele quando quiser</strong> &nbsp;sem burocracia</div>
+</div>
+
+<!-- ── DORES ──────────────────────────────────────────────── -->
+<div class="pains" id="dores">
+  <div class="pains-left reveal">
+    <div class="section-eyebrow">Você não está sozinha</div>
+    <h2>A ironia de organizar<br/><em>a vida dos outros</em></h2>
+    <p class="section-sub">
+      Você é especialista em transformar espaços. Mas nos bastidores, planilhas espalhadas, propostas no WhatsApp e finanças descontroladas te fazem sentir que não é profissional o suficiente — mesmo você sendo incrível no que faz.
+    </p>
+    <br/>
+    <p style="font-size:.85rem; color:var(--text-light); margin-top:1rem;">
+      O Planner Organizer foi criado para resolver exatamente isso.
+    </p>
+  </div>
+
+  <div class="pains-right reveal">
+    <div class="pain-item">
+      <div class="pain-icon">💸</div>
+      <div class="pain-text">
+        <h4>"Não sei quanto cobrar sem perder o cliente"</h4>
+        <p>Precificação guiada com calculadora de diária, hora e complexidade do projeto.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-icon">📄</div>
+      <div class="pain-text">
+        <h4>"Minha proposta não parece profissional"</h4>
+        <p>Propostas elegantes com logo, etapas e valor — prontas em menos de 5 minutos.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-icon">📅</div>
+      <div class="pain-text">
+        <h4>"Minha agenda de clientes é uma bagunça"</h4>
+        <p>Todos os clientes, histórico e próximos contatos em um só lugar, sempre atualizado.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-icon">😰</div>
+      <div class="pain-text">
+        <h4>"Tenho medo de não receber"</h4>
+        <p>Saiba exatamente quem pagou, quem está em aberto e quanto você vai ganhar este mês.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-icon">🌱</div>
+      <div class="pain-text">
+        <h4>"Quando crescer, vou me perder"</h4>
+        <p>O sistema avisa quando é hora de retomar o contato com cada cliente — nunca perca uma oportunidade.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ───────────────────────────────────────────── -->
+<section class="features" id="funcionalidades">
+  <div class="features-header reveal">
+    <div class="section-eyebrow">O que você ganha</div>
+    <h2>Tudo para você <em>brilhar</em><br/>com seus clientes</h2>
+    <p class="section-sub">Pare de cobrar pela hora. Comece a cobrar pelo resultado. E entregue uma experiência que impressiona desde o primeiro contato.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon">📋</div>
+      <h3>Propostas Elegantes</h3>
+      <p>Crie propostas com sua identidade visual, descrição por etapa e valor total. Envie em minutos e impressione antes mesmo de começar.</p>
+      <span class="feature-tag">↗ +60% taxa de fechamento</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">👩‍💼</div>
+      <h3>Gestão de Clientes</h3>
+      <p>Histórico completo de cada cliente, projetos anteriores, preferências e alertas de recontato. Nunca esqueça de ninguém importante.</p>
+      <span class="feature-tag">Relacionamento duradouro</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">💰</div>
+      <h3>Controle Financeiro</h3>
+      <p>Receitas, despesas, recebimentos em aberto e previsão mensal. Tenha clareza sobre seu dinheiro e tome decisões com confiança.</p>
+      <span class="feature-tag">Sem mais ansiedade</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">📊</div>
+      <h3>Dashboard Visual</h3>
+      <p>Gráficos claros do seu desempenho. Quantos projetos, quanto faturou, qual serviço dá mais resultado. Uma visão de negócio real.</p>
+      <span class="feature-tag">Decisões inteligentes</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🏷️</div>
+      <h3>Precificação Guiada</h3>
+      <p>Calcule o valor certo para cada projeto com base nos seus custos, tempo e complexidade. Nunca mais cobre menos do que merece.</p>
+      <span class="feature-tag">↑ Aumente seu faturamento</span>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">📤</div>
+      <h3>Relatórios e Exportação</h3>
+      <p>Exporte clientes, financeiro e propostas em CSV. Tenha tudo organizado para seu contador ou para suas análises mensais.</p>
+      <span class="feature-tag">Profissionalismo total</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROPOSTA PREVIEW ────────────────────────────────────── -->
+<div class="proposal-preview">
+  <div class="proposal-left reveal">
+    <div class="section-eyebrow">Preview real</div>
+    <h2>Uma proposta que<br/><em>fecha sozinha</em></h2>
+    <p class="section-sub">Seus clientes de alto padrão esperam profissionalismo desde o primeiro contato. Com o Planner Organizer, você envia uma proposta impecável — com logo, etapas detalhadas e valor — em menos de 5 minutos.</p>
+    <ul class="proposal-points">
+      <li>Personalizada com seu nome e identidade visual</li>
+      <li>Dividida por etapas do projeto</li>
+      <li>Validade, forma de pagamento e condições</li>
+      <li>Enviada por link, PDF ou WhatsApp</li>
+      <li>Rastreável — saiba quando foi visualizada</li>
+    </ul>
+    <button class="proposal-cta">Criar minha primeira proposta</button>
+  </div>
+
+  <div class="proposal-right">
+    <div class="proposal-mock">
+      <div class="mock-header">
+        <span class="mock-logo">Ana Lima Organizer</span>
+        <span class="mock-badge">Proposta</span>
+      </div>
+      <div class="mock-body">
+        <p class="mock-title">Organização Residencial</p>
+        <p class="mock-subtitle">Cliente: Fernanda Costa · São Paulo, SP</p>
+        <div class="mock-section">
+          <p class="mock-section-label">Escopo do Projeto</p>
+          <div class="mock-line w80"></div>
+          <div class="mock-line w60"></div>
+          <div class="mock-line w70"></div>
+        </div>
+        <div class="mock-section">
+          <p class="mock-section-label">Etapas</p>
+          <div class="mock-line w40"></div>
+          <div class="mock-line w60"></div>
+          <div class="mock-line w50"></div>
+        </div>
+        <div class="mock-total">
+          <span>Investimento total</span>
+          <strong>R$ 2.400</strong>
+        </div>
+      </div>
+      <div class="mock-footer">
+        Válido por 7 dias · Pagamento: 50% entrada + 50% conclusão
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BEFORE AFTER ────────────────────────────────────────── -->
+<section class="beforeafter">
+  <div class="beforeafter-header reveal">
+    <div class="section-eyebrow">Transformação</div>
+    <h2>O antes e depois<br/><em>do seu negócio</em></h2>
+    <p class="section-sub" style="margin:0 auto">Assim como você transforma closets e cozinhas, o Planner Organizer transforma a gestão do seu negócio.</p>
+  </div>
+
+  <div class="ba-grid reveal">
+    <div class="ba-card before">
+      <div class="ba-label before-label">😔 Antes</div>
+      <div class="ba-item"><span class="icon">📊</span><p>Planilhas espalhadas no Google Drive, Desktop e WhatsApp</p></div>
+      <div class="ba-item"><span class="icon">⏱️</span><p>Proposta levava <strong>horas</strong> pra montar e ainda ficava feia</p></div>
+      <div class="ba-item"><span class="icon">😬</span><p>Sem saber exatamente quanto entrou e quanto saiu no mês</p></div>
+      <div class="ba-item"><span class="icon">🤦</span><p>Cliente importante que precisava de retorno... esquecido</p></div>
+      <div class="ba-item"><span class="icon">🎭</span><p>Sensação constante de que <strong>"não sou profissional de verdade"</strong></p></div>
+    </div>
+
+    <div class="ba-arrow">→</div>
+
+    <div class="ba-card after">
+      <div class="ba-label after-label">✨ Depois</div>
+      <div class="ba-item"><span class="icon">🗂️</span><p>Tudo em um painel: clientes, propostas, finanças e agenda</p></div>
+      <div class="ba-item"><span class="icon">⚡</span><p>Proposta elegante enviada em <strong>menos de 5 minutos</strong></p></div>
+      <div class="ba-item"><span class="icon">📈</span><p>Clareza total sobre receitas, gastos e previsão do próximo mês</p></div>
+      <div class="ba-item"><span class="icon">🔔</span><p>Alertas de recontato automáticos — nunca mais esqueça ninguém</p></div>
+      <div class="ba-item"><span class="icon">💪</span><p>Confiança de uma profissional que atende clientes de <strong>alto padrão</strong></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTEMUNHOS ─────────────────────────────────────────── -->
+<section class="testimonials" id="depoimentos">
+  <div class="testimonials-header reveal">
+    <div class="section-eyebrow">Depoimentos</div>
+    <h2>Organizers que já <em>transformaram</em><br/>seu negócio</h2>
+    <p class="section-sub">Mulheres reais, resultados reais — de São Paulo a Recife.</p>
+  </div>
+
+  <div class="t-grid">
+    <div class="t-card reveal">
+      <span class="quote-mark">"</span>
+      <p class="t-text">Antes eu mandava proposta no WhatsApp sem nem formatação. Hoje mando um link lindo com meu logo e a cliente fica impressionada. Fechei 3 novos projetos no primeiro mês.</p>
+      <div class="t-author">
+        <div class="t-avatar">CL</div>
+        <div>
+          <p class="t-name">Camila Leal</p>
+          <p class="t-role">Personal Organizer · São Paulo, SP</p>
+          <span class="t-result">↑ 3 novos fechamentos no 1º mês</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-card reveal">
+      <span class="quote-mark">"</span>
+      <p class="t-text">Eu tinha síndrome da impostora enorme. Sentia que não era profissional de verdade. Hoje tenho dashboard, histórico, proposta bonita... isso me deu uma confiança que não tem preço.</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background: linear-gradient(135deg, var(--sage), var(--sage-dark));">RN</div>
+        <div>
+          <p class="t-name">Renata Nogueira</p>
+          <p class="t-role">Personal Organizer · Belo Horizonte, MG</p>
+          <span class="t-result">Superou a síndrome da impostora</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-card reveal">
+      <span class="quote-mark">"</span>
+      <p class="t-text">O controle financeiro mudou tudo pra mim. Eu não sabia nem o que tinha entrado no mês. Agora sei exatamente quanto faturei, quem está em aberto e como está minha previsão de receita.</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background: linear-gradient(135deg, var(--terracota), var(--sage-dark));">JM</div>
+        <div>
+          <p class="t-name">Juliana Matos</p>
+          <p class="t-role">Personal Organizer · Recife, PE</p>
+          <span class="t-result">Clareza financeira total</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PREÇOS ──────────────────────────────────────────────── -->
+<section class="pricing" id="planos">
+  <div class="pricing-header reveal">
+    <div class="section-eyebrow">Planos</div>
+    <h2>Invista no seu <em>negócio</em><br/>a partir de R$ 37/mês</h2>
+    <p class="section-sub">Para qualquer fase da sua carreira — de quem está começando a quem já tem equipe.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <!-- INICIANTE -->
+    <div class="pricing-card reveal">
+      <p class="pricing-plan">Iniciante</p>
+      <h3>Essencial</h3>
+      <p class="pricing-desc">Para quem está começando e quer parecer profissional desde o primeiro dia.</p>
+      <div class="price-row">
+        <p class="price-val"><sup>R$</sup>37</p>
+        <p class="price-period">por mês · sem contrato</p>
+      </div>
+      <ul class="features-list">
+        <li>Até 15 clientes</li>
+        <li>Propostas profissionais ilimitadas</li>
+        <li>Controle de recebimentos</li>
+        <li>Exportação CSV</li>
+        <li>Suporte via e-mail</li>
+      </ul>
+      <button class="btn-plan outline">Começar grátis</button>
+    </div>
+
+    <!-- PRO -->
+    <div class="pricing-card featured reveal">
+      <p class="pricing-plan">Mais popular</p>
+      <h3>Pro</h3>
+      <span class="badge-popular">★ Recomendado</span>
+      <p class="pricing-desc" style="margin-top:.75rem">Para quem quer gestão completa e mais tempo para o que importa.</p>
+      <div class="price-row">
+        <p class="price-val"><sup>R$</sup>79</p>
+        <p class="price-period">por mês · cobrado mensalmente</p>
+      </div>
+      <ul class="features-list">
+        <li>Clientes ilimitados</li>
+        <li>Propostas com logo e template premium</li>
+        <li>Dashboard e gráficos avançados</li>
+        <li>Alertas de recontato de clientes</li>
+        <li>Precificação guiada</li>
+        <li>Relatórios completos</li>
+        <li>Suporte via WhatsApp</li>
+      </ul>
+      <button class="btn-plan solid">Começar grátis por 7 dias</button>
+    </div>
+
+    <!-- STUDIO -->
+    <div class="pricing-card reveal">
+      <p class="pricing-plan">Studio</p>
+      <h3>Equipe</h3>
+      <p class="pricing-desc">Para quem cresce e trabalha com assistentes ou subcontrata outras organizers.</p>
+      <div class="price-row">
+        <p class="price-val"><sup>R$</sup>139</p>
+        <p class="price-period">por mês · até 3 usuários</p>
+      </div>
+      <ul class="features-list">
+        <li>Tudo do plano Pro</li>
+        <li>Até 3 usuários na conta</li>
+        <li>Permissões por perfil</li>
+        <li>Templates exclusivos por nicho</li>
+        <li>Gestão multi-equipe</li>
+        <li>Suporte prioritário</li>
+      </ul>
+      <button class="btn-plan outline">Falar com a equipe</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────────── -->
+<section class="faq" id="faq">
+  <div class="faq-inner">
+    <div class="faq-header reveal">
+      <div class="section-eyebrow">Dúvidas</div>
+      <h2>Perguntas <em>frequentes</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Preciso ter experiência com tecnologia?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a">Não. O Planner Organizer foi criado pensando em personal organizers, não em programadoras. A interface é intuitiva e você começa a usar em minutos — sem tutoriais longos.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Posso cancelar quando quiser?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a">Sim. Sem fidelidade, sem multa, sem burocracia. Você pode cancelar a qualquer momento direto pelo painel da sua conta.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Meus dados ficam seguros?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a">Completamente. O sistema segue a LGPD e seus dados — e os dos seus clientes — são armazenados com segurança e nunca compartilhados com terceiros.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Como funciona o período de teste?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a">Você tem 7 dias para usar o sistema completo gratuitamente, sem precisar cadastrar cartão de crédito. Se gostar, escolhe o plano ideal e continua. Se não gostar, simplesmente não assina.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Posso personalizar as propostas com meu logo?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a">Sim! A partir do plano Pro você pode incluir seu logo, cores e informações personalizadas em todas as propostas. Seus clientes vão ver a sua marca, não a nossa.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Tem suporte em português?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a">Sim, 100% em português. O suporte é feito por humanos (não bots) via WhatsApp no plano Pro e Studio, e via e-mail no plano Essencial.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER CTA ─────────────────────────────────────────── -->
+<div class="footer-cta">
+  <h2>Pronta para se sentir<br/>profissional de verdade?</h2>
+  <p>Junte-se a mais de 2.400 personal organizers que já transformaram seus negócios. Comece grátis hoje — sem cartão, sem compromisso.</p>
+  <div class="footer-cta-actions">
+    <button class="btn-white" onclick="handleTrial()">Começar 7 dias grátis</button>
+    <a href="https://wa.me/5531999999999" class="btn-outline-white" target="_blank">Falar no WhatsApp</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer>
+  <span>© 2025 Planner Organizer. Feito com 💛 para personal organizers.</span>
+  <div class="footer-links">
+    <a href="#">Termos de Uso</a>
+    <a href="#">Política de Privacidade</a>
+    <a href="#">Suporte</a>
+    <a href="#">Contato</a>
+  </div>
+</footer>
+
+<!-- ── WHATSAPP FLOAT ──────────────────────────────────────── -->
+<a href="https://wa.me/5531999999999?text=Olá!%20Tenho%20interesse%20no%20Planner%20Organizer" 
+   class="wa-float" target="_blank" title="Fale conosco no WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+  // Header scroll effect
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // FAQ toggle
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Trial / lead capture
+  function handleTrial() {
+    const emailInput = document.getElementById('heroEmail');
+    const email = emailInput ? emailInput.value.trim() : '';
+    if (email && !email.includes('@')) {
+      emailInput.focus();
+      emailInput.style.borderColor = 'var(--terracota)';
+      return;
+    }
+    // Redirect to registration page (update URL as needed)
+    window.location.href = '/register' + (email ? '?email=' + encodeURIComponent(email) : '');
+  }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
