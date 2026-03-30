@@ -609,7 +609,7 @@ export default function LandingPage() {
           <button className="lp-btn-white" onClick={() => setLocation("/planos")}>
             Começar 7 dias grátis
           </button>
-          <a href="https://wa.me/5531999999999" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
+          <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
             Falar no WhatsApp
           </a>
         </div>
@@ -621,14 +621,14 @@ export default function LandingPage() {
         <div className="lp-footer-links">
           <a href="https://plannerorganiza.com.br/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
           <a href="https://plannerorganiza.com.br/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
-          <a href="https://wa.me/5531999999999" target="_blank" rel="noreferrer">Suporte</a>
-          <a href="https://wa.me/5531999999999" target="_blank" rel="noreferrer">Contato</a>
+          <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Suporte</a>
+          <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
         </div>
       </footer>
 
       {/* ── WHATSAPP FLOAT ── */}
       <a
-        href="https://wa.me/5531999999999?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Planner%20Organizer"
+        href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Planner%20Organizer"
         className="lp-wa-float"
         target="_blank"
         rel="noreferrer"
