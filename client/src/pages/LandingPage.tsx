@@ -62,17 +62,22 @@ export default function LandingPage() {
     setHeroSubmitting(true);
     setHeroMsg("");
     try {
-      await fetch("/api/leads", {
+      const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: heroEmail, name: heroEmail.split("@")[0] }),
       });
-      localStorage.setItem("leadEmail", heroEmail);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || `Erro ${res.status}`);
+      }
+      const capturedEmail = heroEmail;
+      localStorage.setItem("leadEmail", capturedEmail);
       setHeroEmail("");
       setHeroMsg("✅ Ótimo! Redirecionando...");
-      setTimeout(() => setLocation("/planos"), 1200);
-    } catch {
-      setHeroMsg("❌ Ocorreu um erro. Tente novamente.");
+      setTimeout(() => setLocation("/registro?email=" + encodeURIComponent(capturedEmail)), 1200);
+    } catch (err: any) {
+      setHeroMsg("❌ " + (err?.message || "Ocorreu um erro. Tente novamente."));
     } finally {
       setHeroSubmitting(false);
     }
