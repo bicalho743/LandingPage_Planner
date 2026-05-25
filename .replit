@@ -52,3 +52,7 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "./start-production.sh"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
