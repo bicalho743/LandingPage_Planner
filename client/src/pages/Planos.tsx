@@ -1,275 +1,108 @@
-import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { CheckCircle, ChevronLeft, Sparkles, Calendar, Infinity } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão).
+const APP_URL = "https://plannerorganiza.com.br";
 
 export default function Planos() {
   const [_, setLocation] = useLocation();
-  const [email, setEmail] = useState(() => {
-    // Verificar se existe um email armazenado do formulário da landing page
-    const savedEmail = localStorage.getItem("leadEmail");
-    return savedEmail || "";
-  });
-  const [loading, setLoading] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const iniciarCheckout = async (plan: string) => {
-    // Email agora é opcional, removi a validação obrigatória
-    
-    // Resetar qualquer erro anterior
-    setErrorMessage(null);
-    // Ativar loading para o plano específico
-    setLoading(plan);
-
-    try {
-      // Validar o e-mail com Zod apenas se foi fornecido
-      if (email) {
-        try {
-          z.string().email().parse(email);
-        } catch (error) {
-          setErrorMessage("Por favor, insira um e-mail válido.");
-          setLoading(null);
-          return;
-        }
-      }
-
-      // Registrar lead antes do checkout 
-      // Não esperamos por esta requisição para não atrasar o checkout
+  const irParaApp = () => {
+    // Captura de lead best-effort (se a home já coletou o e-mail) antes de
+    // mandar para a aplicação, onde a conta é criada com o trial.
+    const leadEmail = localStorage.getItem("leadEmail");
+    if (leadEmail) {
       fetch("/api/leads", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name: "Cliente interessado", email })
-      }).catch(e => {
-        console.error("Erro ao salvar lead:", e);
-        // Não bloqueamos o fluxo por causa deste erro
-      });
-
-      console.log("Redirecionando para registro com plano:", plan);
-      
-      // NOVO FLUXO: Redirecionar para a página de registro com o email e plano
-      const params = new URLSearchParams();
-      params.append('plano', plan);
-      params.append('email', email);
-      
-      // Redirecionar para a página de registro com os parâmetros
-      window.location.href = `/registro?${params.toString()}`;
-    } catch (error) {
-      console.error("Erro ao iniciar registro:", error);
-      setErrorMessage("Erro ao processar sua solicitação. Tente novamente.");
-      setLoading(null);
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Cliente interessado", email: leadEmail }),
+      }).catch(() => {});
     }
+    window.location.href = APP_URL;
   };
 
-  const plans = [
-    {
-      id: "mensal",
-      name: "Plano Mensal",
-      price: "R$ 9,70",
-      color: "blue",
-      icon: <Calendar className="h-5 w-5 text-blue-600" />,
-      description: "Acesso total, perfeito para testar todas as funcionalidades",
-      features: ["Acesso a todos os recursos", "Suporte por e-mail", "Atualizações mensais"],
-      popular: false
-    },
-    {
-      id: "anual",
-      name: "Plano Anual",
-      price: "R$ 97,00",
-      color: "green",
-      icon: <Sparkles className="h-5 w-5 text-green-600" />,
-      description: "Nosso plano mais popular, com economia de 17%",
-      features: ["Tudo do plano mensal", "Economia de 17%", "Suporte prioritário", "Atualizações prioritárias"],
-      popular: true
-    },
-    {
-      id: "vitalicio",
-      name: "Plano Vitalício",
-      price: "R$ 247,00",
-      color: "yellow",
-      icon: <Infinity className="h-5 w-5 text-yellow-600" />,
-      description: "Acesso permanente sem mensalidades",
-      features: ["Pagamento único", "Acesso vitalício", "Todas as atualizações futuras", "Suporte premium"],
-      popular: false
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4">
-      <div className="container mx-auto max-w-6xl">
-        <Button 
-          variant="ghost" 
-          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-blue-700"
+    <div className="lp-page" style={{ minHeight: "100vh", padding: "3rem 1.5rem 4rem" }}>
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <button
           onClick={() => setLocation("/")}
-          disabled={loading !== null}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            color: "var(--lp-text-mid)", fontSize: "0.9rem", marginBottom: "2rem",
+            fontFamily: "'DM Sans', sans-serif",
+          }}
         >
-          <ChevronLeft className="h-4 w-4" />
-          Voltar para a página inicial
-        </Button>
-        
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-blue-800 mb-4">
-            Escolha o Plano Perfeito para Você
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Todos os planos incluem trial de 7 dias e acesso completo a todas as funcionalidades.
-            Cancele a qualquer momento.
+          ← Voltar para a página inicial
+        </button>
+
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <div className="lp-section-eyebrow">Planos</div>
+          <h2>
+            Escolha como quer <em>investir</em>
+            <br />no seu negócio
+          </h2>
+          <p className="lp-section-sub" style={{ margin: "0.75rem auto 0" }}>
+            Acesso completo a tudo, nos dois planos. Teste 7 dias grátis —
+            sem cartão de crédito. Cancele quando quiser.
           </p>
         </div>
-        
-        <div className="mb-12">
-          <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden mb-8 p-6 border border-blue-100">
-            <h3 className="text-xl font-semibold mb-4 text-blue-800">Comece sua experiência</h3>
-            {email ? (
-              <div className="bg-blue-50 p-3 rounded-md mb-4 text-center">
-                <p className="text-gray-600">Prosseguindo com o email: <strong>{email}</strong></p>
-              </div>
-            ) : (
-              <div className="mb-4">
-                <p className="text-gray-600 mb-2">QUER SABER MAIS? Digite seu e-mail para continuar</p>
-                <Input
-                  type="email"
-                  placeholder="Seu e-mail"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={`${errorMessage ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                  disabled={loading !== null}
-                />
-              </div>
-            )}
-            
-            {/* Mensagem de erro */}
-            {errorMessage && (
-              <Alert className="mb-4 border-red-200 bg-red-50 text-red-800">
-                <AlertDescription>{errorMessage}</AlertDescription>
-              </Alert>
-            )}
+
+        <div className="lp-pricing-grid">
+          {/* Mensal */}
+          <div className="lp-pricing-card">
+            <p className="lp-pricing-plan">Flexível</p>
+            <h3>Mensal</h3>
+            <p className="lp-pricing-desc">Sem compromisso de longo prazo. Assine, use e cancele quando quiser.</p>
+            <div className="lp-price-row">
+              <p className="lp-price-val"><sup>R$</sup>29,90</p>
+              <p className="lp-price-period">por mês · 7 dias grátis</p>
+            </div>
+            <ul className="lp-features-list">
+              <li>Clientes e propostas ilimitados</li>
+              <li>Propostas profissionais em PDF</li>
+              <li>Financeiro completo</li>
+              <li>Pós-organização e recontato</li>
+              <li>Relatórios e dashboards</li>
+              <li>App Android + acesso web</li>
+            </ul>
+            <button className="lp-btn-plan outline" onClick={irParaApp}>
+              Começar grátis
+            </button>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {plans.map((plan) => (
-              <Card key={plan.id} className={`border-${plan.color}-100 hover:shadow-xl transition-all duration-300 ${plan.popular ? 'ring-2 ring-green-500 ring-opacity-50' : ''}`}>
-                {plan.popular && (
-                  <div className="bg-green-500 text-white text-xs font-bold uppercase tracking-wider py-1 text-center">
-                    Mais Popular
-                  </div>
-                )}
-                <CardHeader className={`bg-${plan.color}-50`}>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className={`rounded-full bg-${plan.color}-100 p-2`}>
-                      {plan.icon}
-                    </div>
-                    <div className="text-right">
-                      <span className="text-gray-500 text-sm">Preço total</span>
-                      <div className="text-3xl font-bold text-gray-900">{plan.price}</div>
-                    </div>
-                  </div>
-                  <CardTitle className={`text-${plan.color}-800`}>{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <CheckCircle className={`h-4 w-4 text-${plan.color}-500`} />
-                        <span className="text-gray-600">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  {plan.id === "mensal" && (
-                    <Button 
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
-                      onClick={() => iniciarCheckout(plan.id)}
-                      disabled={loading !== null}
-                    >
-                      {loading === plan.id ? (
-                        <div className="flex items-center justify-center">
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Processando...
-                        </div>
-                      ) : (
-                        `Escolher ${plan.name}`
-                      )}
-                    </Button>
-                  )}
-                  {plan.id === "anual" && (
-                    <Button 
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3"
-                      onClick={() => iniciarCheckout(plan.id)}
-                      disabled={loading !== null}
-                    >
-                      {loading === plan.id ? (
-                        <div className="flex items-center justify-center">
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Processando...
-                        </div>
-                      ) : (
-                        `Escolher ${plan.name}`
-                      )}
-                    </Button>
-                  )}
-                  {plan.id === "vitalicio" && (
-                    <Button 
-                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3"
-                      onClick={() => iniciarCheckout(plan.id)}
-                      disabled={loading !== null}
-                    >
-                      {loading === plan.id ? (
-                        <div className="flex items-center justify-center">
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Processando...
-                        </div>
-                      ) : (
-                        `Escolher ${plan.name}`
-                      )}
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
-            ))}
+
+          {/* Anual */}
+          <div className="lp-pricing-card featured">
+            <p className="lp-pricing-plan">Mais popular</p>
+            <h3>Anual</h3>
+            <span className="lp-badge-popular">★ Economize 2 meses</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>
+              Equivale a R$ 24,75/mês. Um ano inteiro de negócio organizado.
+            </p>
+            <div className="lp-price-row">
+              <p className="lp-price-val"><sup>R$</sup>297</p>
+              <p className="lp-price-period">por ano · 7 dias grátis</p>
+            </div>
+            <ul className="lp-features-list">
+              <li>Tudo do plano Mensal</li>
+              <li>Clientes e propostas ilimitados</li>
+              <li>Propostas profissionais em PDF</li>
+              <li>Financeiro completo</li>
+              <li>Pós-organização e recontato</li>
+              <li>Relatórios e dashboards</li>
+              <li>App Android + acesso web</li>
+            </ul>
+            <button className="lp-btn-plan solid" onClick={irParaApp}>
+              Começar grátis por 7 dias
+            </button>
           </div>
         </div>
 
-        {/* Feedback adicional durante o carregamento */}
-        {loading && (
-          <div className="text-center mt-8">
-            <div className="max-w-md mx-auto bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-blue-800">
-                Preparando checkout seguro... Você será redirecionado para o Stripe em instantes.
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {/* Seção de garantia */}
-        <div className="mt-16 text-center">
-          <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-6 shadow-md">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Garantia de Satisfação</h3>
-            <p className="text-gray-600 mb-2">
-              Experimente o PlannerOrganiza por 7 dias sem compromisso. 
-              Se não gostar, cancele facilmente e não será cobrado.
-            </p>
-            <p className="text-gray-500 text-sm">
-              Cancele sua assinatura a qualquer momento diretamente na sua conta.
-            </p>
-          </div>
-        </div>
+        <p style={{
+          textAlign: "center", marginTop: "2.5rem",
+          color: "var(--lp-text-light)", fontSize: "0.85rem",
+        }}>
+          🔒 Pagamento seguro via Stripe · A conta é criada no sistema com 7 dias
+          grátis, sem cartão — você só escolhe o plano se gostar.
+        </p>
       </div>
     </div>
   );

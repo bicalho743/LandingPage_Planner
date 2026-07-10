@@ -5,27 +5,29 @@
 @tailwind utilities;
 
 :root {
-  --primary: #1e40af;
-  --accent: #3b82f6;
+  /* Identidade oficial do produto: navy #0D1B2A + dourado #C9A84C
+     (mesma paleta do app mobile, da aplicação web e do ícone). */
+  --primary: #0D1B2A;
+  --accent: #C9A84C;
   --background: #ffffff;
   --text: #1f2937;
   --muted: #6b7280;
 
-  --cream: #F5F7FA;
-  --warm-white: #EEF1F7;
-  --terracota: #B8973C;
-  --terracota-light: #D4B05A;
-  --terracota-dark: #96790E;
-  --sage: #6B7FA8;
-  --sage-light: #A8B8D4;
-  --sage-dark: #2E4A7A;
-  --gold: #C9A96E;
-  --lp-dark: #0D1B35;
-  --lp-text: #1A2B45;
-  --lp-text-mid: #3D5275;
-  --lp-text-light: #6B82A8;
-  --lp-border: #D0D9EA;
-  --lp-shadow: rgba(13,27,53,0.10);
+  --cream: #F7F5F0;
+  --warm-white: #F0EDE4;
+  --terracota: #B8942F;         /* dourado principal (CTAs) */
+  --terracota-light: #D4B865;
+  --terracota-dark: #96790E;    /* hover */
+  --sage: #33507A;              /* navy médio (acentos secundários) */
+  --sage-light: #8FA3C0;
+  --sage-dark: #0D1B2A;         /* navy do produto */
+  --gold: #C9A84C;              /* dourado do produto */
+  --lp-dark: #0D1B2A;           /* navy do produto */
+  --lp-text: #16283E;
+  --lp-text-mid: #3A4E68;
+  --lp-text-light: #6B7C94;
+  --lp-border: #E0DACB;
+  --lp-shadow: rgba(13,27,42,0.10);
 }
 
 * {
@@ -73,7 +75,7 @@ button, .button {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   .btn-primary {
-    @apply bg-[#1e40af] text-white font-bold px-6 py-3 rounded-md hover:bg-[#1e3a8a] transition-colors text-lg;
+    @apply bg-[#C9A84C] text-[#0D1B2A] font-bold px-6 py-3 rounded-md hover:bg-[#B8942F] transition-colors text-lg;
   }
   .section-title { @apply text-3xl md:text-4xl font-bold mb-6; }
   .section-subtitle { @apply text-lg text-gray-600 max-w-3xl mx-auto mb-12; }
@@ -116,7 +118,7 @@ button, .button {
 /* HEADER */
 .lp-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(245,247,250,0.92);
+  background: rgba(247,245,240,0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--lp-border);
@@ -621,8 +623,8 @@ button, .button {
 /* PRICING */
 .lp-pricing { background: var(--warm-white); text-align: center; }
 .lp-pricing-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem; max-width: 900px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem; max-width: 720px; margin: 0 auto;
   align-items: start;
 }
 .lp-pricing-card {
@@ -683,7 +685,7 @@ button, .button {
 }
 .lp-btn-plan.outline:hover { border-color: var(--terracota); color: var(--terracota); }
 .lp-btn-plan.solid {
-  background: var(--terracota); color: #fff; border: none;
+  background: var(--gold); color: var(--lp-dark); border: none; font-weight: 700;
 }
 .lp-btn-plan.solid:hover { background: var(--terracota-dark); transform: translateY(-1px); }
 .lp-badge-popular {

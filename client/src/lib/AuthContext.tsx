@@ -21,6 +21,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Sem Firebase configurado (auth null), a landing segue sem sessão —
+    // login/registro acontecem na aplicação principal.
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     // Ouvir mudanças no estado de autenticação
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);

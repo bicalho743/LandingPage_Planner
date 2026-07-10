@@ -1,22 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation } from "wouter";
-import { loginWithEmailPassword, sendPasswordReset } from "@/lib/firebase";
-import { Eye, EyeOff } from "lucide-react";
+
+// Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
+// e é lá que ficam login, trial, assinatura e todos os dados.
+const APP_URL = "https://plannerorganiza.com.br";
 
 export default function LandingPage() {
-  const [_, setLocation] = useLocation();
-
   const [heroEmail, setHeroEmail] = useState("");
   const [heroSubmitting, setHeroSubmitting] = useState(false);
   const [heroMsg, setHeroMsg] = useState("");
-
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState("");
-  const [loginSuccess, setLoginSuccess] = useState("");
-  const [resetLoading, setResetLoading] = useState(false);
 
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -74,52 +65,12 @@ export default function LandingPage() {
       const capturedEmail = heroEmail;
       localStorage.setItem("leadEmail", capturedEmail);
       setHeroEmail("");
-      setHeroMsg("✅ Ótimo! Redirecionando...");
-      setTimeout(() => setLocation("/registro?email=" + encodeURIComponent(capturedEmail)), 1200);
+      setHeroMsg("✅ Ótimo! Levando você para criar sua conta...");
+      setTimeout(() => { window.location.href = APP_URL; }, 1200);
     } catch (err: any) {
       setHeroMsg("❌ " + (err?.message || "Ocorreu um erro. Tente novamente."));
     } finally {
       setHeroSubmitting(false);
-    }
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginLoading(true);
-    setLoginError("");
-    setLoginSuccess("");
-    try {
-      await loginWithEmailPassword(loginEmail, loginPassword);
-      setLoginSuccess("Login realizado com sucesso! Redirecionando...");
-      setTimeout(() => {
-        if (import.meta.env.PROD) {
-          window.location.href = "https://plannerorganiza.com.br/";
-        } else {
-          setLocation("/dashboard");
-        }
-      }, 1000);
-    } catch (error: any) {
-      setLoginError(error.message || "Credenciais inválidas. Verifique seu email e senha.");
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  const handlePasswordReset = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!loginEmail) {
-      setLoginError("Digite seu e-mail acima antes de recuperar a senha.");
-      return;
-    }
-    setResetLoading(true);
-    setLoginError("");
-    try {
-      await sendPasswordReset(loginEmail);
-      setLoginSuccess(`Link de recuperação enviado para ${loginEmail}.`);
-    } catch (error: any) {
-      setLoginError(error.message || "Erro ao enviar email de recuperação.");
-    } finally {
-      setResetLoading(false);
     }
   };
 
@@ -142,11 +93,11 @@ export default function LandingPage() {
     },
     {
       q: "Posso personalizar as propostas com meu logo?",
-      a: "Sim! A partir do plano Pro você pode incluir seu logo, cores e informações personalizadas em todas as propostas. Seus clientes vão ver a sua marca, não a nossa.",
+      a: "Sim! Você pode incluir seu logo, suas cores e suas informações em todas as propostas. Seus clientes vão ver a sua marca, não a nossa.",
     },
     {
       q: "Tem suporte em português?",
-      a: "Sim, 100% em português. O suporte é feito por humanos (não bots) via WhatsApp no plano Pro e Studio, e via e-mail no plano Essencial.",
+      a: "Sim, 100% em português. O suporte é feito por humanos (não bots) via WhatsApp, em qualquer plano.",
     },
   ];
 
@@ -231,55 +182,23 @@ export default function LandingPage() {
               <span>Acesse sua conta</span>
             </div>
 
-            <form onSubmit={handleLogin}>
-              <div className="lp-form-group">
-                <label>E-mail</label>
-                <input
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="lp-form-group">
-                <label>Senha</label>
-                <div className="lp-input-wrapper">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    required
-                  />
-                  <button type="button" className="lp-eye-btn" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              {loginError && <div className="lp-login-error">{loginError}</div>}
-              {loginSuccess && <div className="lp-login-success">{loginSuccess}</div>}
-
-              <button type="submit" className="lp-btn-login" disabled={loginLoading}>
-                {loginLoading && (
-                  <span style={{ display: "inline-block", width: 14, height: 14, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-                )}
-                {loginLoading ? "Entrando..." : "Entrar"}
-              </button>
-            </form>
+            <a
+              className="lp-btn-login"
+              style={{ display: "block", textAlign: "center", textDecoration: "none" }}
+              href={APP_URL}
+            >
+              Entrar no sistema
+            </a>
 
             <div className="lp-login-divider">ou</div>
 
-            <button className="lp-btn-trial" onClick={() => setLocation("/planos")}>
+            <button className="lp-btn-trial" onClick={() => scrollTo("planos")}>
               Criar conta grátis — 7 dias
             </button>
 
             <p className="lp-login-footer">
               Esqueceu a senha?{" "}
-              <button onClick={handlePasswordReset} disabled={resetLoading}>
-                {resetLoading ? "Enviando..." : "Recuperar acesso"}
-              </button>
+              <a href={APP_URL} style={{ color: "inherit", fontWeight: 600 }}>Recupere o acesso no sistema</a>
             </p>
           </div>
         </div>
@@ -372,7 +291,7 @@ export default function LandingPage() {
             <li>Enviada por link, PDF ou WhatsApp</li>
             <li>Rastreável — saiba quando foi visualizada</li>
           </ul>
-          <button className="lp-proposal-cta" onClick={() => setLocation("/registro")}>
+          <button className="lp-proposal-cta" onClick={() => { window.location.href = APP_URL; }}>
             Criar minha primeira proposta
           </button>
         </div>
@@ -491,32 +410,30 @@ export default function LandingPage() {
       <section className="lp-section lp-pricing" id="planos">
         <div style={{ marginBottom: "3.5rem" }} className="lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
           <div className="lp-section-eyebrow">Planos</div>
-          <h2>Invista no seu <em>negócio</em><br />a partir de R$ 9,70/mês</h2>
+          <h2>Invista no seu <em>negócio</em><br />por menos de R$ 1 por dia</h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
-            Para qualquer fase da sua carreira — de quem está começando a quem já tem equipe.
+            Acesso completo a tudo, nos dois planos. Teste 7 dias grátis — sem cartão de crédito.
           </p>
         </div>
         <div className="lp-pricing-grid">
           {/* Mensal */}
           <div className="lp-pricing-card lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-            <p className="lp-pricing-plan">Iniciante</p>
-            <h3>Essencial</h3>
-            <p className="lp-pricing-desc">Para quem está começando e quer parecer profissional desde o primeiro dia.</p>
+            <p className="lp-pricing-plan">Flexível</p>
+            <h3>Mensal</h3>
+            <p className="lp-pricing-desc">Sem compromisso de longo prazo. Assine, use e cancele quando quiser.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>9,70</p>
+              <p className="lp-price-val"><sup>R$</sup>29,90</p>
               <p className="lp-price-period">por mês · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
-              <li>Acesso a todos os recursos</li>
-              <li>Propostas profissionais</li>
-              <li>Controle de recebimentos</li>
-              <li>Exportação CSV</li>
-              <li>Suporte via e-mail</li>
+              <li>Clientes e propostas ilimitados</li>
+              <li>Propostas profissionais em PDF</li>
+              <li>Financeiro completo</li>
+              <li>Pós-organização e recontato</li>
+              <li>Relatórios e dashboards</li>
+              <li>App Android + acesso web</li>
             </ul>
-            <button className="lp-btn-plan outline" onClick={() => {
-              localStorage.setItem("leadEmail", heroEmail || "");
-              setLocation("/registro?plano=mensal");
-            }}>
+            <button className="lp-btn-plan outline" onClick={() => { window.location.href = APP_URL; }}>
               Começar grátis
             </button>
           </div>
@@ -524,51 +441,24 @@ export default function LandingPage() {
           {/* Anual */}
           <div className="lp-pricing-card featured lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
             <p className="lp-pricing-plan">Mais popular</p>
-            <h3>Pro</h3>
-            <span className="lp-badge-popular">★ Recomendado</span>
-            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Para quem quer gestão completa e mais tempo para o que importa.</p>
+            <h3>Anual</h3>
+            <span className="lp-badge-popular">★ Economize 2 meses</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Equivale a R$ 24,75/mês. Um ano inteiro de negócio organizado.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>97</p>
+              <p className="lp-price-val"><sup>R$</sup>297</p>
               <p className="lp-price-period">por ano · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
-              <li>Clientes ilimitados</li>
-              <li>Propostas com logo e template premium</li>
-              <li>Dashboard e gráficos avançados</li>
-              <li>Alertas de recontato de clientes</li>
-              <li>Precificação guiada</li>
-              <li>Relatórios completos</li>
-              <li>Suporte via WhatsApp</li>
+              <li>Tudo do plano Mensal</li>
+              <li>Clientes e propostas ilimitados</li>
+              <li>Propostas profissionais em PDF</li>
+              <li>Financeiro completo</li>
+              <li>Pós-organização e recontato</li>
+              <li>Relatórios e dashboards</li>
+              <li>App Android + acesso web</li>
             </ul>
-            <button className="lp-btn-plan solid" onClick={() => {
-              localStorage.setItem("leadEmail", heroEmail || "");
-              setLocation("/registro?plano=anual");
-            }}>
+            <button className="lp-btn-plan solid" onClick={() => { window.location.href = APP_URL; }}>
               Começar grátis por 7 dias
-            </button>
-          </div>
-
-          {/* Vitalício */}
-          <div className="lp-pricing-card lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-            <p className="lp-pricing-plan">Studio</p>
-            <h3>Vitalício</h3>
-            <p className="lp-pricing-desc">Acesso permanente sem mensalidades. Pague uma vez, use para sempre.</p>
-            <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>247</p>
-              <p className="lp-price-period">pagamento único · sem renovação</p>
-            </div>
-            <ul className="lp-features-list">
-              <li>Tudo do plano Pro</li>
-              <li>Pagamento único</li>
-              <li>Acesso vitalício</li>
-              <li>Todas as atualizações futuras</li>
-              <li>Suporte prioritário</li>
-            </ul>
-            <button className="lp-btn-plan outline" onClick={() => {
-              localStorage.setItem("leadEmail", heroEmail || "");
-              setLocation("/registro?plano=vitalicio");
-            }}>
-              Adquirir acesso vitalício
             </button>
           </div>
         </div>
@@ -606,7 +496,7 @@ export default function LandingPage() {
           Comece grátis hoje — sem cartão, sem compromisso.
         </p>
         <div className="lp-footer-cta-actions">
-          <button className="lp-btn-white" onClick={() => setLocation("/planos")}>
+          <button className="lp-btn-white" onClick={() => { window.location.href = APP_URL; }}>
             Começar 7 dias grátis
           </button>
           <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
@@ -619,8 +509,8 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <span>© 2025 Planner Organizer. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
-          <a href="https://plannerorganiza.com.br/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
-          <a href="https://plannerorganiza.com.br/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          <a href="https://plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
+          <a href="https://plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Suporte</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
         </div>

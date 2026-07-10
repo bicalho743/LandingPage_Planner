@@ -16,14 +16,29 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Inicialização protegida: sem as envs VITE_FIREBASE_*, o getAuth lança
+// "auth/invalid-api-key" no import e derruba o site INTEIRO em tela branca.
+// A landing em si não depende de Firebase (login/registro acontecem na
+// aplicação principal), então aqui só inicializa se a config existir.
+let auth: ReturnType<typeof getAuth> = null as any;
+if (firebaseConfig.apiKey) {
+  try {
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+  } catch (e) {
+    console.warn("Firebase não inicializado:", e);
+  }
+}
+
+function requireAuth() {
+  if (!auth) throw new Error("Autenticação indisponível. Acesse plannerorganiza.com.br para entrar.");
+  return auth;
+}
 
 // Autenticação de usuário com email e senha
 export async function loginWithEmailPassword(email: string, password: string): Promise<FirebaseUser> {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(requireAuth(), email, password);
     return userCredential.user;
   } catch (error: any) {
     console.error('Erro ao fazer login:', error);
@@ -46,7 +61,7 @@ export async function loginWithEmailPassword(email: string, password: string): P
 // Enviar email de redefinição de senha
 export async function sendPasswordReset(email: string): Promise<boolean> {
   try {
-    await sendPasswordResetEmail(auth, email);
+    await sendPasswordResetEmail(requireAuth(), email);
     return true;
   } catch (error: any) {
     console.error('Erro ao enviar email de redefinição de senha:', error);
@@ -64,12 +79,12 @@ export async function sendPasswordReset(email: string): Promise<boolean> {
 
 // Verificar estado da autenticação
 export function getCurrentUser(): FirebaseUser | null {
-  return auth.currentUser;
+  return auth ? auth.currentUser : null;
 }
 
 // Logout
 export async function logout(): Promise<void> {
-  return auth.signOut();
+  if (auth) await auth.signOut();
 }
 
 export { auth };
