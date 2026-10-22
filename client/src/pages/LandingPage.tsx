@@ -265,6 +265,22 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* ── TOUR EM VÍDEO ── */}
+      <section className="lp-section lp-tour" id="tour">
+        <div className="lp-features-header lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <div className="lp-section-eyebrow">Veja por dentro</div>
+          <h2>O app em <em>40 segundos</em></h2>
+          <p className="lp-section-sub" style={{ margin: "0 auto" }}>
+            Telas reais, com dados de exemplo: agenda, propostas, financeiro, MEI e relatórios.
+          </p>
+        </div>
+        <div className="lp-tour-video lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <video src="/tour-planner-organizer.mp4" poster="/tour-planner-organizer.jpg"
+                 autoPlay muted loop playsInline controls preload="metadata"
+                 aria-label="Tour rápido pelas telas do Planner Organizer" />
+        </div>
+      </section>
+
       {/* ── FEATURES ── */}
       <section className="lp-section lp-features" id="funcionalidades">
         <div className="lp-features-header lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
@@ -278,8 +294,8 @@ export default function LandingPage() {
           {[
             { icon: "📋", h: "Propostas Elegantes", p: "Crie propostas com sua identidade visual, os ambientes e itens do projeto e o valor total. Gere o PDF em minutos e impressione antes mesmo de começar.", tag: "Sua marca em cada PDF" },
             { icon: "👩‍💼", h: "Gestão de Clientes", p: "Histórico completo de cada cliente, projetos anteriores, preferências e alertas de recontato. Nunca esqueça de ninguém importante.", tag: "Relacionamento duradouro" },
-            { icon: "💰", h: "Controle Financeiro", p: "Receitas, despesas, recebimentos em aberto e previsão mensal. Tenha clareza sobre seu dinheiro e tome decisões com confiança.", tag: "Sem mais ansiedade" },
-            { icon: "📊", h: "Dashboard Visual", p: "Gráficos claros do seu desempenho. Quantos projetos, quanto faturou, qual serviço dá mais resultado. Uma visão de negócio real.", tag: "Decisões inteligentes" },
+            { icon: "💰", h: "Financeiro e MEI", p: "Receitas, despesas, contas em aberto e previsão do mês. Na aba MEI, o DAS mês a mês e o limite do ano. O app não é contador: ele organiza para você conversar com o seu.", tag: "Sem mais ansiedade" },
+            { icon: "📅", h: "Agenda que junta tudo", p: "Diárias, visitas e orçamentos, com o valor indo direto para o a receber. E na mesma agenda: serviços, retornos, aniversários e vencimentos.", tag: "Nada esquecido" },
             { icon: "🛍️", h: "Vendas e Estoque", p: "Venda caixas, cabides e organizadores à vista ou parcelado. O estoque baixa sozinho e você vê o custo e o lucro de cada venda.", tag: "↑ Lucro em cada venda" },
             { icon: "📤", h: "Relatórios e Exportação", p: "Resultado do mês, clientes, propostas e lucro de cada trabalho, comparados com o período anterior. Baixe em Excel, pronto para o contador.", tag: "Profissionalismo total" },
           ].map((f, i) => (

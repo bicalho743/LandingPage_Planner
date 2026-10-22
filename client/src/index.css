@@ -850,3 +850,9 @@ button, .button {
   color: #28a745;
   text-align: center;
 }
+
+/* Tour em vídeo */
+.lp-tour { padding-bottom: 2rem; }
+.lp-tour-video { max-width: 1040px; margin: 2.5rem auto 0; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(13, 27, 42, .18); border: 1px solid #E8E2D4; background: #F8F6F1; }
+.lp-tour-video video { display: block; width: 100%; height: auto; }
