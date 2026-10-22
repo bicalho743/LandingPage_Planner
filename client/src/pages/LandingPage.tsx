@@ -257,12 +257,12 @@ export default function LandingPage() {
         </div>
         <div className="lp-features-grid">
           {[
-            { icon: "📋", h: "Propostas Elegantes", p: "Crie propostas com sua identidade visual, descrição por etapa e valor total. Envie em minutos e impressione antes mesmo de começar.", tag: "↗ +60% taxa de fechamento" },
+            { icon: "📋", h: "Propostas Elegantes", p: "Crie propostas com sua identidade visual, os ambientes e itens do projeto e o valor total. Gere o PDF em minutos e impressione antes mesmo de começar.", tag: "Sua marca em cada PDF" },
             { icon: "👩‍💼", h: "Gestão de Clientes", p: "Histórico completo de cada cliente, projetos anteriores, preferências e alertas de recontato. Nunca esqueça de ninguém importante.", tag: "Relacionamento duradouro" },
             { icon: "💰", h: "Controle Financeiro", p: "Receitas, despesas, recebimentos em aberto e previsão mensal. Tenha clareza sobre seu dinheiro e tome decisões com confiança.", tag: "Sem mais ansiedade" },
             { icon: "📊", h: "Dashboard Visual", p: "Gráficos claros do seu desempenho. Quantos projetos, quanto faturou, qual serviço dá mais resultado. Uma visão de negócio real.", tag: "Decisões inteligentes" },
-            { icon: "🏷️", h: "Precificação Guiada", p: "Calcule o valor certo para cada projeto com base nos seus custos, tempo e complexidade. Nunca mais cobre menos do que merece.", tag: "↑ Aumente seu faturamento" },
-            { icon: "📤", h: "Relatórios e Exportação", p: "Exporte clientes, financeiro e propostas em CSV. Tenha tudo organizado para seu contador ou para suas análises mensais.", tag: "Profissionalismo total" },
+            { icon: "🛍️", h: "Vendas e Estoque", p: "Venda caixas, cabides e organizadores à vista ou parcelado. O estoque baixa sozinho e você vê o custo e o lucro de cada venda.", tag: "↑ Lucro em cada venda" },
+            { icon: "📤", h: "Relatórios e Exportação", p: "Resultado do mês, clientes, propostas e lucro de cada trabalho, comparados com o período anterior. Baixe em Excel, pronto para o contador.", tag: "Profissionalismo total" },
           ].map((f, i) => (
             <div className="lp-feature-card lp-reveal" key={i} ref={(el) => addRevealRef(el, revealIdx++)}>
               <div className="lp-feature-icon">{f.icon}</div>
@@ -281,15 +281,15 @@ export default function LandingPage() {
           <h2>Uma proposta que<br /><em>fecha sozinha</em></h2>
           <p className="lp-section-sub">
             Seus clientes de alto padrão esperam profissionalismo desde o primeiro contato.
-            Com o Planner Organizer, você envia uma proposta impecável — com logo, etapas detalhadas
+            Com o Planner Organizer, você envia uma proposta impecável — com logo, ambientes detalhados
             e valor — em menos de 5 minutos.
           </p>
           <ul className="lp-proposal-points">
             <li>Personalizada com seu nome e identidade visual</li>
-            <li>Dividida por etapas do projeto</li>
-            <li>Validade, forma de pagamento e condições</li>
-            <li>Enviada por link, PDF ou WhatsApp</li>
-            <li>Rastreável — saiba quando foi visualizada</li>
+            <li>Ambientes e itens do projeto descritos um a um</li>
+            <li>Sinal, forma de pagamento e condições</li>
+            <li>Em PDF, pronta para enviar por WhatsApp ou e-mail</li>
+            <li>Aprovou? Sinal e saldo entram sozinhos no financeiro</li>
           </ul>
           <button className="lp-proposal-cta" onClick={() => { window.location.href = APP_URL; }}>
             Criar minha primeira proposta
@@ -353,7 +353,7 @@ export default function LandingPage() {
 
           <div className="lp-ba-card after">
             <div className="lp-ba-label after-label">✨ Depois</div>
-            <div className="lp-ba-item"><span className="icon">🗂️</span><p>Tudo em um painel: clientes, propostas, finanças e agenda</p></div>
+            <div className="lp-ba-item"><span className="icon">🗂️</span><p>Tudo em um painel: clientes, propostas, vendas e finanças</p></div>
             <div className="lp-ba-item"><span className="icon">⚡</span><p>Proposta elegante enviada em <strong>menos de 5 minutos</strong></p></div>
             <div className="lp-ba-item"><span className="icon">📈</span><p>Clareza total sobre receitas, gastos e previsão do próximo mês</p></div>
             <div className="lp-ba-item"><span className="icon">🔔</span><p>Alertas de recontato automáticos — nunca mais esqueça ninguém</p></div>
@@ -507,7 +507,7 @@ export default function LandingPage() {
 
       {/* ── FOOTER ── */}
       <footer className="lp-footer">
-        <span>© 2025 Planner Organizer. Feito com 💛 para personal organizers.</span>
+        <span>© {new Date().getFullYear()} Planner Organizer. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
           <a href="https://plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
           <a href="https://plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
