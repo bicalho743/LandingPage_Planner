@@ -102,7 +102,7 @@ export default function Login() {
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col" style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
       {/* Header - barra navy escura */}
-      <header className="bg-[#1a1f4e] text-white py-3 shadow-md">
+      <header className="bg-[#0D1B2A] text-white py-3 shadow-md">
         <div className="container mx-auto flex items-center justify-center gap-2">
           <span className="text-xl">📋</span>
           <h1 className="text-lg font-semibold tracking-wide">Planner Organizer</h1>
@@ -214,7 +214,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-[#1a1f4e] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#252b66] transition-colors disabled:opacity-60"
+                  className="w-full bg-[#0D1B2A] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#162840] transition-colors disabled:opacity-60"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -229,18 +229,18 @@ export default function Login() {
                 <button
                   onClick={handlePasswordReset}
                   disabled={isResettingPassword}
-                  className="bg-[#dc3545] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#c82333] transition-colors disabled:opacity-60"
+                  className="bg-white border border-[#D0D5DD] text-[#0D1B2A] py-3 rounded-lg font-medium text-sm hover:bg-[#F7F5F0] transition-colors disabled:opacity-60"
                 >
                   {isResettingPassword ? (
                     <span className="flex items-center justify-center gap-2">
-                      <span className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full"></span>
+                      <span className="animate-spin w-3 h-3 border-2 border-[#0D1B2A] border-t-transparent rounded-full"></span>
                       Enviando...
                     </span>
                   ) : "Esqueceu sua senha?"}
                 </button>
                 <button
                   onClick={() => setLocation("/planos")}
-                  className="bg-[#dc3545] text-white py-3 rounded-lg font-medium text-sm hover:bg-[#c82333] transition-colors"
+                  className="bg-[#C9A84C] text-[#0D1B2A] py-3 rounded-lg font-semibold text-sm hover:bg-[#B8942F] transition-colors"
                 >
                   Criar uma conta
                 </button>
