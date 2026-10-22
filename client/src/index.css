@@ -589,6 +589,11 @@ button, .button {
 
 /* TESTIMONIALS */
 .lp-testimonials { background: var(--cream); }
+.lp-fundadora {
+  display: inline-block; margin: 1.25rem auto 0; padding: 0.7rem 1.2rem; border-radius: 12px;
+  background: #FBF5E6; border: 1px solid #E3CF97; color: #5C4712; font-size: 0.9rem; max-width: 640px;
+}
+.lp-fundadora strong { color: var(--lp-dark); }
 .lp-t-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 880px; margin: 0 auto; }
 .lp-t-card {
   background: #fff; border: 1px solid var(--lp-border);

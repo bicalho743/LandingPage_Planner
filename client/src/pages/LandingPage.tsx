@@ -3,6 +3,20 @@ import { useState, useEffect, useRef } from "react";
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
 // e é lá que ficam login, trial, assinatura e todos os dados.
 const APP_URL = "https://plannerorganiza.com.br";
+// "Começar grátis" abre direto a criação de conta no app; o e-mail digitado aqui vai junto
+const APP_SIGNUP = `${APP_URL}/?cadastro=1`;
+
+// GA e Pixel da Meta (client/index.html): todo clique de cadastro vira evento para os anúncios
+function rastrear(ga: string, meta: string, params: Record<string, unknown> = {}, custom = false) {
+  const w = window as any;
+  try { w.gtag && w.gtag("event", ga, params); } catch (e) { /* sem rastreamento */ }
+  try { w.fbq && w.fbq(custom ? "trackCustom" : "track", meta, params); } catch (e) { /* sem rastreamento */ }
+}
+
+function irParaCadastro(origem: string) {
+  rastrear("cta_cadastro", "CliqueCadastro", { origem }, true);
+  window.location.href = APP_SIGNUP;
+}
 
 export default function LandingPage() {
   const [heroEmail, setHeroEmail] = useState("");
@@ -66,7 +80,8 @@ export default function LandingPage() {
       localStorage.setItem("leadEmail", capturedEmail);
       setHeroEmail("");
       setHeroMsg("✅ Ótimo! Levando você para criar sua conta...");
-      setTimeout(() => { window.location.href = APP_URL; }, 1200);
+      rastrear("generate_lead", "Lead", { origem: "hero" });
+      setTimeout(() => { window.location.href = `${APP_SIGNUP}&email=${encodeURIComponent(capturedEmail)}`; }, 1200);
     } catch (err: any) {
       setHeroMsg("❌ " + (err?.message || "Ocorreu um erro. Tente novamente."));
     } finally {
@@ -192,7 +207,7 @@ export default function LandingPage() {
 
             <div className="lp-login-divider">ou</div>
 
-            <button className="lp-btn-trial" onClick={() => scrollTo("planos")}>
+            <button className="lp-btn-trial" onClick={() => irParaCadastro("cartao_login")}>
               Criar conta grátis — 7 dias
             </button>
 
@@ -291,7 +306,7 @@ export default function LandingPage() {
             <li>Em PDF, pronta para enviar por WhatsApp ou e-mail</li>
             <li>Aprovou? Sinal e saldo entram sozinhos no financeiro</li>
           </ul>
-          <button className="lp-proposal-cta" onClick={() => { window.location.href = APP_URL; }}>
+          <button className="lp-proposal-cta" onClick={() => irParaCadastro("preview_proposta")}>
             Criar minha primeira proposta
           </button>
         </div>
@@ -403,10 +418,15 @@ export default function LandingPage() {
       {/* ── PRICING ── */}
       <section className="lp-section lp-pricing" id="planos">
         <div style={{ marginBottom: "3.5rem" }} className="lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <div className="lp-section-eyebrow">Planos</div>
-          <h2>Invista no seu <em>negócio</em><br />por menos de R$ 1 por dia</h2>
+          <div className="lp-section-eyebrow">Planos · preço de fundadora</div>
+          <h2>Custa menos que <em>30 minutos</em><br />do seu trabalho por mês</h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
-            Acesso completo a tudo, nos dois planos. Teste 7 dias grátis — sem cartão de crédito.
+            Uma proposta a mais fechada no ano já paga o plano anual. Acesso completo nos dois planos e
+            7 dias grátis, sem cartão de crédito.
+          </p>
+          <p className="lp-fundadora">
+            <strong>Preço de fundadora</strong> para as 50 primeiras assinantes, garantido enquanto a assinatura
+            estiver ativa. Depois, R$ 39,90/mês e R$ 399/ano.
           </p>
         </div>
         <div className="lp-pricing-grid">
@@ -427,14 +447,14 @@ export default function LandingPage() {
               <li>Relatórios e dashboards</li>
               <li>App Android + acesso web</li>
             </ul>
-            <button className="lp-btn-plan outline" onClick={() => { window.location.href = APP_URL; }}>
+            <button className="lp-btn-plan outline" onClick={() => irParaCadastro("plano_mensal")}>
               Começar grátis
             </button>
           </div>
 
           {/* Anual */}
           <div className="lp-pricing-card featured lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-            <p className="lp-pricing-plan">Mais popular</p>
+            <p className="lp-pricing-plan">Melhor custo-benefício</p>
             <h3>Anual</h3>
             <span className="lp-badge-popular">★ Economize 2 meses</span>
             <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Equivale a R$ 24,75/mês. Um ano inteiro de negócio organizado.</p>
@@ -451,7 +471,7 @@ export default function LandingPage() {
               <li>Relatórios e dashboards</li>
               <li>App Android + acesso web</li>
             </ul>
-            <button className="lp-btn-plan solid" onClick={() => { window.location.href = APP_URL; }}>
+            <button className="lp-btn-plan solid" onClick={() => irParaCadastro("plano_anual")}>
               Começar grátis por 7 dias
             </button>
           </div>
@@ -490,7 +510,7 @@ export default function LandingPage() {
           Comece grátis hoje — sem cartão, sem compromisso.
         </p>
         <div className="lp-footer-cta-actions">
-          <button className="lp-btn-white" onClick={() => { window.location.href = APP_URL; }}>
+          <button className="lp-btn-white" onClick={() => irParaCadastro("rodape")}>
             Começar 7 dias grátis
           </button>
           <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
