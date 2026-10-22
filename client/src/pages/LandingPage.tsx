@@ -111,6 +111,10 @@ export default function LandingPage() {
       a: "Sim! Você pode incluir seu logo, suas cores e suas informações em todas as propostas. Seus clientes vão ver a sua marca, não a nossa.",
     },
     {
+      q: "O Planner Organizer substitui o contador?",
+      a: "Não. O app organiza seu financeiro e ajuda a acompanhar o DAS e o limite do MEI, mas não é contador e não substitui um. Os números de impostos são estimativas para você se organizar. Em caso de dúvida, procure um contador.",
+    },
+    {
       q: "Tem suporte em português?",
       a: "Sim, 100% em português. O suporte é feito por humanos (não bots) via WhatsApp, em qualquer plano.",
     },
