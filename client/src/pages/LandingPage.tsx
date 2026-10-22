@@ -372,16 +372,10 @@ export default function LandingPage() {
         <div className="lp-t-grid">
           {[
             {
-              text: "Antes eu mandava proposta no WhatsApp sem nem formatação. Hoje mando um link lindo com meu logo e a cliente fica impressionada. Fechei 3 novos projetos no primeiro mês.",
+              text: "Antes eu mandava proposta no WhatsApp sem nem formatação. Hoje mando um PDF lindo com meu logo e a cliente fica impressionada. Fechei 3 novos projetos no primeiro mês.",
               name: "Camila Leal", role: "Personal Organizer · São Paulo, SP",
               initials: "CL", color: "linear-gradient(135deg, #2E4A7A, #B8973C)",
               result: "↑ 3 novos fechamentos no 1º mês"
-            },
-            {
-              text: "Eu tinha síndrome da impostora enorme. Sentia que não era profissional de verdade. Hoje tenho dashboard, histórico, proposta bonita... isso me deu uma confiança que não tem preço.",
-              name: "Renata Nogueira", role: "Personal Organizer · Belo Horizonte, MG",
-              initials: "RN", color: "linear-gradient(135deg, #6B7FA8, #2E4A7A)",
-              result: "Superou a síndrome da impostora"
             },
             {
               text: "O controle financeiro mudou tudo pra mim. Eu não sabia nem o que tinha entrado no mês. Agora sei exatamente quanto faturei, quem está em aberto e como está minha previsão de receita.",

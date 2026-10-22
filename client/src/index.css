@@ -589,7 +589,7 @@ button, .button {
 
 /* TESTIMONIALS */
 .lp-testimonials { background: var(--cream); }
-.lp-t-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.lp-t-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 880px; margin: 0 auto; }
 .lp-t-card {
   background: #fff; border: 1px solid var(--lp-border);
   border-radius: 20px; padding: 2rem; position: relative;
