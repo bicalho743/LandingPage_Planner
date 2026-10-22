@@ -161,16 +161,16 @@ export default function LandingPage() {
 
           <div className="lp-hero-stats">
             <div className="lp-stat-item">
-              <span className="lp-stat-num">+2.4k</span>
-              <span className="lp-stat-label">organizers ativas</span>
+              <span className="lp-stat-num">7 dias</span>
+              <span className="lp-stat-label">de teste grátis</span>
             </div>
             <div className="lp-stat-item">
               <span className="lp-stat-num">5 min</span>
               <span className="lp-stat-label">para sua 1ª proposta</span>
             </div>
             <div className="lp-stat-item">
-              <span className="lp-stat-num">98%</span>
-              <span className="lp-stat-label">recomendam</span>
+              <span className="lp-stat-num">R$ 24,75</span>
+              <span className="lp-stat-label">por mês no plano anual</span>
             </div>
           </div>
         </div>
@@ -486,7 +486,7 @@ export default function LandingPage() {
       <div className="lp-footer-cta">
         <h2>Pronta para se sentir<br />profissional de verdade?</h2>
         <p>
-          Junte-se a mais de 2.400 personal organizers que já transformaram seus negócios.
+          Organize o seu negócio com o mesmo cuidado que você dedica aos espaços das suas clientes.
           Comece grátis hoje — sem cartão, sem compromisso.
         </p>
         <div className="lp-footer-cta-actions">
