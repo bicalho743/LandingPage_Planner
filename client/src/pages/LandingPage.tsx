@@ -4,22 +4,78 @@ import { useState, useEffect, useRef } from "react";
 // e é lá que ficam login, trial, assinatura e todos os dados.
 const APP_URL = "https://plannerorganiza.com.br";
 // "Começar grátis" abre direto a criação de conta no app; o e-mail digitado aqui vai junto
-const APP_SIGNUP = `${APP_URL}/?cadastro=1`;
+// (montado por linkCadastro, com o tema do anúncio e as UTMs da visita)
+
+// Tema do anúncio (?tema=retorno...): a landing repete a promessa do anúncio no título.
+// Os textos seguem os ganchos dos reels; sem tema (ou tema desconhecido), fica o título geral.
+type Tema = { eyebrow: string; titulo: string; destaque: string; sub: string };
+const TEMAS: Record<string, Tema> = {
+  retorno: {
+    eyebrow: "Pós-organização no automático",
+    titulo: "Nunca mais esqueça",
+    destaque: "de retornar uma cliente.",
+    sub: "O app agenda os retornos depois de cada serviço e lembra no dia certo, com a mensagem pronta no WhatsApp.",
+  },
+  preco: {
+    eyebrow: "Precificação para personal organizer",
+    titulo: "Saiba exatamente",
+    destaque: "quanto cobrar.",
+    sub: "Coloque quanto quer ganhar, seus custos e suas horas: o app mostra a sua hora mínima e o preço de cada projeto.",
+  },
+  financeiro: {
+    eyebrow: "Financeiro sem planilha",
+    titulo: "Saiba quanto entrou,",
+    destaque: "quanto gastou e quanto sobrou.",
+    sub: "Receitas, despesas e contas a receber num lugar só. Aprovou a proposta? O sinal já entra no financeiro.",
+  },
+  mei: {
+    eyebrow: "MEI e Simples Nacional",
+    titulo: "DAS em dia e limite",
+    destaque: "sob controle.",
+    sub: "Acompanhe o DAS de cada mês, o limite do ano e o prazo da declaração. O app não é contador: ele organiza para você conversar com o seu.",
+  },
+  agenda: {
+    eyebrow: "Agenda da personal organizer",
+    titulo: "Sua agenda e o aniversário",
+    destaque: "de cada cliente, sem esquecer.",
+    sub: "Compromissos, serviços, retornos e vencimentos juntos, e os parabéns prontos no WhatsApp no dia do aniversário.",
+  },
+};
+
+// Origem da visita (tema + UTMs): guardada na primeira página e repassada ao app no cadastro
+const CAMPOS_ORIGEM = ["tema", "utm_source", "utm_medium", "utm_campaign", "utm_content"];
+function origemDaVisita(): Record<string, string> {
+  const atual: Record<string, string> = {};
+  try {
+    const q = new URLSearchParams(window.location.search);
+    CAMPOS_ORIGEM.forEach((k) => { const v = q.get(k); if (v) atual[k] = v.slice(0, 60); });
+    if (Object.keys(atual).length) { sessionStorage.setItem("po_origem", JSON.stringify(atual)); return atual; }
+    return JSON.parse(sessionStorage.getItem("po_origem") || "{}");
+  } catch (e) { return atual; }
+}
+
+function linkCadastro(email?: string) {
+  const q = new URLSearchParams({ cadastro: "1", ...origemDaVisita() });
+  if (email) q.set("email", email);
+  return `${APP_URL}/?${q.toString()}`;
+}
 
 // GA e Pixel da Meta (client/index.html): todo clique de cadastro vira evento para os anúncios
 function rastrear(ga: string, meta: string, params: Record<string, unknown> = {}, custom = false) {
   const w = window as any;
-  try { w.gtag && w.gtag("event", ga, params); } catch (e) { /* sem rastreamento */ }
-  try { w.fbq && w.fbq(custom ? "trackCustom" : "track", meta, params); } catch (e) { /* sem rastreamento */ }
+  const p = { ...origemDaVisita(), ...params };
+  try { w.gtag && w.gtag("event", ga, p); } catch (e) { /* sem rastreamento */ }
+  try { w.fbq && w.fbq(custom ? "trackCustom" : "track", meta, p); } catch (e) { /* sem rastreamento */ }
 }
 
 function irParaCadastro(origem: string) {
   rastrear("cta_cadastro", "CliqueCadastro", { origem }, true);
-  window.location.href = APP_SIGNUP;
+  window.location.href = linkCadastro();
 }
 
 export default function LandingPage() {
   const [heroEmail, setHeroEmail] = useState("");
+  const tema = TEMAS[(origemDaVisita().tema || "").toLowerCase()];
   const [heroSubmitting, setHeroSubmitting] = useState(false);
   const [heroMsg, setHeroMsg] = useState("");
 
@@ -81,7 +137,7 @@ export default function LandingPage() {
       setHeroEmail("");
       setHeroMsg("✅ Ótimo! Levando você para criar sua conta...");
       rastrear("generate_lead", "Lead", { origem: "hero" });
-      setTimeout(() => { window.location.href = `${APP_SIGNUP}&email=${encodeURIComponent(capturedEmail)}`; }, 1200);
+      setTimeout(() => { window.location.href = linkCadastro(capturedEmail); }, 1200);
     } catch (err: any) {
       setHeroMsg("❌ " + (err?.message || "Ocorreu um erro. Tente novamente."));
     } finally {
@@ -144,14 +200,20 @@ export default function LandingPage() {
         <div className="lp-hero-bg" />
 
         <div className="lp-hero-left">
-          <div className="lp-eyebrow">Para Personal Organizers</div>
-          <h1>
-            Você organiza a vida<br />dos outros.<br />
-            <em>Quem organiza<br />o seu negócio?</em>
-          </h1>
+          <div className="lp-eyebrow">{tema ? tema.eyebrow : "Para Personal Organizers"}</div>
+          {tema ? (
+            <h1>{tema.titulo}<br /><em>{tema.destaque}</em></h1>
+          ) : (
+            <h1>
+              Você organiza a vida<br />dos outros.<br />
+              <em>Quem organiza<br />o seu negócio?</em>
+            </h1>
+          )}
           <p className="lp-hero-sub">
-            Propostas elegantes em minutos, clientes organizados, finanças sob controle.
-            Tudo que você precisava para se sentir tão profissional quanto você realmente é.
+            {tema ? tema.sub : (
+              <>Propostas elegantes em minutos, clientes organizados, finanças sob controle.
+              Tudo que você precisava para se sentir tão profissional quanto você realmente é.</>
+            )}
           </p>
 
           <div className="lp-hero-capture">
