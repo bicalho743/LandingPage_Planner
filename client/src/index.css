@@ -145,14 +145,14 @@ button, .button {
 .lp-nav a:hover { color: var(--terracota); }
 
 .lp-header-cta {
-  background: var(--terracota); color: #fff;
+  background: var(--gold); color: var(--lp-dark);
   border: none; border-radius: 50px;
-  padding: 0.55rem 1.4rem; font-size: 0.875rem; font-weight: 500;
+  padding: 0.55rem 1.4rem; font-size: 0.875rem; font-weight: 600;
   cursor: pointer; text-decoration: none;
   transition: background 0.2s, transform 0.15s;
   font-family: 'DM Sans', sans-serif;
 }
-.lp-header-cta:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+.lp-header-cta:hover { background: var(--terracota); transform: translateY(-1px); }
 
 /* HERO */
 .lp-hero {
@@ -220,16 +220,18 @@ button, .button {
 }
 .lp-hero-capture input::placeholder { color: var(--lp-text-light); }
 
+/* chamada dourada: mesmo botão do app (dourado #C9A84C com texto azul-marinho) —
+   texto branco no dourado não tinha contraste para leitura */
 .lp-btn-primary {
-  background: var(--terracota); color: #fff;
+  background: var(--gold); color: var(--lp-dark);
   border: none; border-radius: 50px;
-  padding: 0.75rem 1.6rem; font-size: 0.875rem; font-weight: 500;
+  padding: 0.75rem 1.6rem; font-size: 0.875rem; font-weight: 600;
   cursor: pointer; white-space: nowrap;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   font-family: 'DM Sans', sans-serif;
 }
 .lp-btn-primary:hover {
-  background: var(--terracota-dark);
+  background: var(--terracota);
   transform: translateY(-1px);
   box-shadow: 0 8px 24px rgba(184,151,60,.2);
 }
@@ -313,13 +315,13 @@ button, .button {
 
 .lp-btn-trial {
   width: 100%;
-  background: transparent; color: var(--terracota);
+  background: transparent; color: #8A6D12;
   border: 1.5px solid var(--terracota); border-radius: 10px;
-  padding: 0.8rem; font-size: 0.875rem; font-weight: 500;
+  padding: 0.8rem; font-size: 0.875rem; font-weight: 600;
   cursor: pointer; transition: background 0.2s, color 0.2s;
   font-family: 'DM Sans', sans-serif;
 }
-.lp-btn-trial:hover { background: var(--terracota); color: #fff; }
+.lp-btn-trial:hover { background: var(--gold); color: var(--lp-dark); }
 
 .lp-login-footer {
   text-align: center; margin-top: 1.25rem;
@@ -482,14 +484,14 @@ button, .button {
 }
 .lp-proposal-cta {
   margin-top: 2.5rem;
-  background: var(--terracota); color: #fff;
+  background: var(--gold); color: var(--lp-dark);
   border: none; border-radius: 50px;
-  padding: 0.85rem 2rem; font-size: 0.9rem; font-weight: 500;
+  padding: 0.85rem 2rem; font-size: 0.9rem; font-weight: 600;
   cursor: pointer; width: fit-content;
   transition: background 0.2s, transform 0.15s;
   font-family: 'DM Sans', sans-serif;
 }
-.lp-proposal-cta:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+.lp-proposal-cta:hover { background: var(--terracota); transform: translateY(-1px); }
 
 .lp-proposal-right {
   padding: 5rem 5rem 5rem 3rem;
@@ -687,7 +689,7 @@ button, .button {
 .lp-btn-plan.solid {
   background: var(--gold); color: var(--lp-dark); border: none; font-weight: 700;
 }
-.lp-btn-plan.solid:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+.lp-btn-plan.solid:hover { background: var(--terracota); transform: translateY(-1px); }
 .lp-badge-popular {
   display: inline-block; margin-top: 0.5rem;
   font-size: 0.65rem; font-weight: 500;
