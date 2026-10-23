@@ -1,8 +1,8 @@
-# PlannerPro Organizer
+# Planner Organiza
 
 ## Overview
 
-PlannerPro Organizer (also called "Planner Organizer" / "PlannerOrganiza") is a SaaS platform for professional organizers to manage their business. It features a landing page, subscription-based pricing (monthly, annual, lifetime plans with 7-day trial), Stripe payment processing, Firebase authentication, and a user dashboard. The application is a full-stack TypeScript project with a React frontend and Express backend, using PostgreSQL (via Neon) for data persistence.
+Planner Organiza (also called "Planner Organiza" / "PlannerOrganiza") is a SaaS platform for professional organizers to manage their business. It features a landing page, subscription-based pricing (monthly, annual, lifetime plans with 7-day trial), Stripe payment processing, Firebase authentication, and a user dashboard. The application is a full-stack TypeScript project with a React frontend and Express backend, using PostgreSQL (via Neon) for data persistence.
 
 The primary domain is `plannerorganiza.com.br` and the project targets Brazilian Portuguese-speaking users.
 

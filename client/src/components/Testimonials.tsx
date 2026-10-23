@@ -3,7 +3,7 @@ import { Star, Quote } from "lucide-react";
 
 const testimonials = [
   {
-    text: "Planner Organizer completely transformed my business. I've saved at least 5 hours a week on admin tasks and can now focus on what I love - helping clients get organized!",
+    text: "Planner Organiza completely transformed my business. I've saved at least 5 hours a week on admin tasks and can now focus on what I love - helping clients get organized!",
     name: "Emily Peterson",
     role: "Professional Organizer, Tidy Spaces",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"
@@ -15,13 +15,13 @@ const testimonials = [
     image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"
   },
   {
-    text: "Since implementing Planner Organizer, I've seen a 40% increase in revenue. The invoicing system and time tracking have helped me price my services more accurately.",
+    text: "Since implementing Planner Organiza, I've seen a 40% increase in revenue. The invoicing system and time tracking have helped me price my services more accurately.",
     name: "Sofia Chen",
     role: "Founder, Organize with Purpose",
     image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"
   },
   {
-    text: "As someone who helps others get organized, I needed a system that practiced what I preached. Planner Organizer is intuitive, beautiful, and makes me look professional.",
+    text: "As someone who helps others get organized, I needed a system that practiced what I preached. Planner Organiza is intuitive, beautiful, and makes me look professional.",
     name: "David Thompson",
     role: "CEO, Clear Space Organizing",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"
@@ -53,7 +53,7 @@ export default function Testimonials() {
             Hear From Our Community
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Discover how Planner Organizer has helped professional organizers streamline their businesses and achieve remarkable results.
+            Discover how Planner Organiza has helped professional organizers streamline their businesses and achieve remarkable results.
           </p>
         </div>
         

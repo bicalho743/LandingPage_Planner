@@ -5,7 +5,7 @@ O problema da página em branco foi identificado: a conexão com o banco de dado
 ## Opção 1: Usar o SQL Console do Neon
 
 1. Faça login no [Neon.tech](https://console.neon.tech/)
-2. Acesse seu projeto "Planner Organizer Produção"
+2. Acesse seu projeto "Planner Organiza Produção"
 3. Na barra lateral, clique em "SQL Editor"
 4. Copie e cole o conteúdo do arquivo `db-init.sql` gerado
 5. Execute o script para criar todas as tabelas

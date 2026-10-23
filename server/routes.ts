@@ -62,7 +62,7 @@ async function sendWelcomeEmail(email: string, resetLink: string) {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.log("⚠️ Credenciais SMTP não configuradas. Modo de simulação de email:");
       console.log("📧 Para:", email);
-      console.log("📧 Assunto: Bem-vindo ao PlannerPro Organizer");
+      console.log("📧 Assunto: Bem-vindo ao Planner Organiza");
       console.log("📧 Link gerado (primeiros 50 caracteres):", resetLink.substring(0, 50) + "...");
       return true; // Em desenvolvimento, consideramos sucesso
     }
@@ -88,11 +88,11 @@ async function sendWelcomeEmail(email: string, resetLink: string) {
       const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
           <div style="background-color: #4a6cf7; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
-            <h1 style="margin: 0;">Bem-vindo ao PlannerPro Organizer</h1>
+            <h1 style="margin: 0;">Bem-vindo ao Planner Organiza</h1>
           </div>
           <div style="padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 5px 5px;">
             <p>Olá,</p>
-            <p>Obrigado por se inscrever para o PlannerPro Organizer! Estamos animados para ajudá-lo a organizar sua vida e aumentar sua produtividade.</p>
+            <p>Obrigado por se inscrever para o Planner Organiza! Estamos animados para ajudá-lo a organizar sua vida e aumentar sua produtividade.</p>
             <p>Para começar a usar sua conta, defina sua senha clicando no botão abaixo:</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetLink}" style="background-color: #4a6cf7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Definir minha senha</a>
@@ -102,19 +102,19 @@ async function sendWelcomeEmail(email: string, resetLink: string) {
             <p>Se você não realizou essa inscrição, por favor ignore este email.</p>
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
               <p>Este é um email automático, por favor não responda.</p>
-              <p>&copy; ${new Date().getFullYear()} PlannerPro Organizer. Todos os direitos reservados.</p>
+              <p>&copy; ${new Date().getFullYear()} Planner Organiza. Todos os direitos reservados.</p>
             </div>
           </div>
         </div>
       `;
       
-      const emailText = `Olá,\n\nObrigado por se inscrever para o PlannerPro Organizer! Use o link abaixo para definir sua senha:\n\n${resetLink}\n\nSe você não realizou essa inscrição, por favor ignore este email.\n\n© ${new Date().getFullYear()} PlannerPro Organizer. Todos os direitos reservados.`;
+      const emailText = `Olá,\n\nObrigado por se inscrever para o Planner Organiza! Use o link abaixo para definir sua senha:\n\n${resetLink}\n\nSe você não realizou essa inscrição, por favor ignore este email.\n\n© ${new Date().getFullYear()} Planner Organiza. Todos os direitos reservados.`;
       
       // Enviar o email
       const info = await transporter.sendMail({
         from: 'suporte@plannerpro.com',
         to: email,
-        subject: "Bem-vindo ao PlannerPro Organizer - Configure sua senha",
+        subject: "Bem-vindo ao Planner Organiza - Configure sua senha",
         text: emailText,
         html: emailHtml,
       });

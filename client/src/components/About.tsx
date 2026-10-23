@@ -23,7 +23,7 @@ export default function About() {
           </div>
           <div className="md:w-1/2 md:pl-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Why Planner Organizer
+              Why Planner Organiza
             </h2>
             <p className="text-lg text-gray-600 mb-6">
               Created by professional organizers for professional organizers, our platform streamlines your business operations so you can focus on what you do best: helping clients get organized.

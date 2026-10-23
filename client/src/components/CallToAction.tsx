@@ -11,7 +11,7 @@ export default function CallToAction() {
             Ready to Streamline Your Organizing Business?
           </h2>
           <p className="text-lg text-white/90 mb-8">
-            Join thousands of professional organizers who've transformed their businesses with Planner Organizer.
+            Join thousands of professional organizers who've transformed their businesses with Planner Organiza.
           </p>
           
           <div className="flex flex-wrap justify-center gap-4 mb-10">

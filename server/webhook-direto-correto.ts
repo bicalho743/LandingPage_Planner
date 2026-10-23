@@ -78,7 +78,7 @@ async function processFirebaseUser(dbUser: any, userEmail: string, encodedPasswo
         // Enviar email de boas-vindas
         try {
           const htmlContent = `
-            <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+            <h1>Bem-vindo ao Planner Organiza!</h1>
             <p>Olá,</p>
             <p>Seu pagamento foi confirmado com sucesso e sua conta está pronta para uso.</p>
             <p>Você pode acessar sua conta usando seu email e senha.</p>

@@ -13,7 +13,7 @@ export default function Hero() {
               <span>The Ultimate Tool for Personal Organizers</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Organize, Plan, Succeed with Planner Organizer
+              Organize, Plan, Succeed with Planner Organiza
             </h1>
             <p className="text-lg text-gray-600 mb-8 md:pr-10">
               The all-in-one system designed for professional organizers to streamline operations, manage clients, and boost productivity with elegant organization tools.

@@ -36,7 +36,7 @@ export default function LeadCaptureForm() {
     onSuccess: () => {
       toast({
         title: "Thank you for your interest!",
-        description: "We'll send you more information about Planner Organizer shortly.",
+        description: "We'll send you more information about Planner Organiza shortly.",
         variant: "default",
       });
       form.reset();
@@ -134,7 +134,7 @@ export default function LeadCaptureForm() {
           </Card>
           
           <p className="text-sm text-gray-500 mt-4">
-            By signing up, you agree to receive marketing emails from Planner Organizer. We respect your privacy and will never share your information.
+            By signing up, you agree to receive marketing emails from Planner Organiza. We respect your privacy and will never share your information.
           </p>
         </div>
       </div>

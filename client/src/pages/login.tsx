@@ -105,7 +105,7 @@ export default function Login() {
       <header className="bg-[#0D1B2A] text-white py-3 shadow-md">
         <div className="container mx-auto flex items-center justify-center gap-2">
           <span className="text-xl">📋</span>
-          <h1 className="text-lg font-semibold tracking-wide">Planner Organizer</h1>
+          <h1 className="text-lg font-semibold tracking-wide">Planner Organiza</h1>
         </div>
       </header>
 
@@ -117,7 +117,7 @@ export default function Login() {
           <div className="space-y-8">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-3xl font-bold text-gray-900">Planner Organizer</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Planner Organiza</h2>
                 <span className="text-gray-400 text-lg">🔗</span>
               </div>
               <p className="text-gray-500 text-sm">Sistema Profissional para Personal Organizers</p>
@@ -141,7 +141,7 @@ export default function Login() {
 
             {/* Seção Por que escolher */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Por que escolher o Planner Organizer?</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Por que escolher o Planner Organiza?</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="border border-gray-200 rounded-xl p-5 bg-white">
                   <span className="text-2xl mb-2 block">📊</span>

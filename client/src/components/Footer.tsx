@@ -54,7 +54,7 @@ export default function Footer() {
                 <ClipboardCheck className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">
-                Planner<span className="text-blue-300">Organizer</span>
+                Planner<span className="text-blue-300">Organiza</span>
               </span>
             </div>
             <p className="text-gray-400 mb-8">
@@ -169,7 +169,7 @@ export default function Footer() {
         
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} Planner Organizer. All rights reserved.
+            © {new Date().getFullYear()} Planner Organiza. All rights reserved.
           </p>
           <div className="flex space-x-2">
             <Button 

@@ -1,7 +1,7 @@
 import SibApiV3Sdk from 'sib-api-v3-sdk';
 
 const API_KEY = process.env.BREVO_API_KEY!;
-const LIST_ID = 7; // ID da lista "Leads Planner Organizer"
+const LIST_ID = 7; // ID da lista "Leads Planner Organiza"
 
 // Verificar se a chave API foi fornecida
 if (!API_KEY) {

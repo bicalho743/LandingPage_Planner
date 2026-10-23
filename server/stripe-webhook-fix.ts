@@ -251,7 +251,7 @@ async function sendWelcomeEmail(email: string) {
     const resetLink = await generatePasswordResetLink(email);
     
     const htmlContent = `
-      <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+      <h1>Bem-vindo ao Planner Organiza!</h1>
       <p>Olá,</p>
       <p>Seu pagamento foi confirmado com sucesso e sua conta está pronta para uso.</p>
       <p>Para definir sua senha permanente, clique no link abaixo:</p>
@@ -261,7 +261,7 @@ async function sendWelcomeEmail(email: string) {
     `;
     
     const textContent = `
-      Bem-vindo ao PlannerPro Organizer!
+      Bem-vindo ao Planner Organiza!
       
       Olá,
       

@@ -154,7 +154,7 @@ export default function LandingPage() {
   const faqItems = [
     {
       q: "Preciso ter experiência com tecnologia?",
-      a: "Não. O Planner Organizer foi criado pensando em personal organizers, não em programadoras. A interface é intuitiva e você começa a usar em minutos — sem tutoriais longos.",
+      a: "Não. O Planner Organiza foi criado pensando em personal organizers, não em programadoras. A interface é intuitiva e você começa a usar em minutos — sem tutoriais longos.",
     },
     {
       q: "Posso cancelar quando quiser?",
@@ -173,7 +173,7 @@ export default function LandingPage() {
       a: "Sim! Você pode incluir seu logo, suas cores e suas informações em todas as propostas. Seus clientes vão ver a sua marca, não a nossa.",
     },
     {
-      q: "O Planner Organizer substitui o contador?",
+      q: "O Planner Organiza substitui o contador?",
       a: "Não. O app organiza seu financeiro e ajuda a acompanhar o DAS e o limite do MEI, mas não é contador e não substitui um. Os números de impostos são estimativas para você se organizar. Em caso de dúvida, procure um contador.",
     },
     {
@@ -190,7 +190,7 @@ export default function LandingPage() {
       {/* ── HEADER ── */}
       <header className={`lp-header${headerScrolled ? " scrolled" : ""}`}>
         <a href="#" className="lp-logo" onClick={(e) => { e.preventDefault(); scrollTo("inicio"); }}>
-          Planner <span>Organizer</span>
+          Planner <span>Organiza</span>
         </a>
         <nav className="lp-nav">
           <a href="#funcionalidades" onClick={(e) => { e.preventDefault(); scrollTo("funcionalidades"); }}>Funcionalidades</a>
@@ -314,7 +314,7 @@ export default function LandingPage() {
             o suficiente — mesmo você sendo incrível no que faz.
           </p>
           <p style={{ fontSize: "0.85rem", color: "var(--lp-text-light)", marginTop: "1.5rem" }}>
-            O Planner Organizer foi criado para resolver exatamente isso.
+            O Planner Organiza foi criado para resolver exatamente isso.
           </p>
         </div>
 
@@ -349,7 +349,7 @@ export default function LandingPage() {
         <div className="lp-tour-video lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
           <video src="/tour-planner-organizer.mp4" poster="/tour-planner-organizer.jpg"
                  autoPlay muted loop playsInline controls preload="metadata"
-                 aria-label="Tour rápido pelas telas do Planner Organizer" />
+                 aria-label="Tour rápido pelas telas do Planner Organiza" />
         </div>
       </section>
 
@@ -388,7 +388,7 @@ export default function LandingPage() {
           <h2>Uma proposta que<br /><em>fecha sozinha</em></h2>
           <p className="lp-section-sub">
             Seus clientes de alto padrão esperam profissionalismo desde o primeiro contato.
-            Com o Planner Organizer, você envia uma proposta impecável — com logo, ambientes detalhados
+            Com o Planner Organiza, você envia uma proposta impecável — com logo, ambientes detalhados
             e valor — em menos de 5 minutos.
           </p>
           <ul className="lp-proposal-points">
@@ -442,7 +442,7 @@ export default function LandingPage() {
           <div className="lp-section-eyebrow">Transformação</div>
           <h2>O antes e depois<br /><em>do seu negócio</em></h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
-            Assim como você transforma closets e cozinhas, o Planner Organizer transforma a gestão do seu negócio.
+            Assim como você transforma closets e cozinhas, o Planner Organiza transforma a gestão do seu negócio.
           </p>
         </div>
 
@@ -618,7 +618,7 @@ export default function LandingPage() {
 
       {/* ── FOOTER ── */}
       <footer className="lp-footer">
-        <span>© {new Date().getFullYear()} Planner Organizer. Feito com 💛 para personal organizers.</span>
+        <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
           <a href="https://plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
           <a href="https://plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
@@ -630,7 +630,7 @@ export default function LandingPage() {
 
       {/* ── WHATSAPP FLOAT ── */}
       <a
-        href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Planner%20Organizer"
+        href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Planner%20Organiza"
         className="lp-wa-float"
         target="_blank"
         rel="noreferrer"

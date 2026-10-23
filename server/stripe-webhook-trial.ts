@@ -195,16 +195,16 @@ export async function sendTrialWelcomeEmail(email: string) {
     console.log(`⏳ Enviando email de boas-vindas para trial: ${email}`);
     
     const htmlContent = `
-      <h1>Bem-vindo ao PlannerPro Organizer!</h1>
+      <h1>Bem-vindo ao Planner Organiza!</h1>
       <p>Seu período de trial de 7 dias começou!</p>
       <p>Você já pode acessar todas as funcionalidades premium do PlannerPro durante os próximos 7 dias.</p>
       <p>Após este período, sua forma de pagamento será cobrada automaticamente para continuar seu acesso.</p>
       <p>Se você não deseja continuar após o período de trial, você pode cancelar a qualquer momento através do painel.</p>
-      <p>Agradecemos por escolher o PlannerPro Organizer!</p>
+      <p>Agradecemos por escolher o Planner Organiza!</p>
     `;
     
     const textContent = `
-      Bem-vindo ao PlannerPro Organizer!
+      Bem-vindo ao Planner Organiza!
       
       Seu período de trial de 7 dias começou!
       
@@ -213,7 +213,7 @@ export async function sendTrialWelcomeEmail(email: string) {
       
       Se você não deseja continuar após o período de trial, você pode cancelar a qualquer momento através do painel.
       
-      Agradecemos por escolher o PlannerPro Organizer!
+      Agradecemos por escolher o Planner Organiza!
     `;
     
     // Em produção, aqui entraria o código para enviar o email real

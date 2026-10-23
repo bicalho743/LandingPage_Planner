@@ -1,5 +1,5 @@
       const textContent = `
-        Bem-vindo ao Planner Organizer!
+        Bem-vindo ao Planner Organiza!
         
         Olá,
         
@@ -7,5 +7,5 @@
         
         Acesse sua conta e comece a explorar todas as funcionalidades: https://plannerorganiza.com.br/
         
-        Planner Organizer - Simplificando sua rotina e impulsionando seu sucesso.
+        Planner Organiza - Simplificando sua rotina e impulsionando seu sucesso.
       `;

@@ -4,7 +4,7 @@ Para garantir que a aplicação funcione corretamente no Render, siga estas inst
 
 ## 1. Configuração do Banco de Dados
 
-No painel do Render, adicione as seguintes variáveis de ambiente para conectar ao seu banco de dados Neon "Planner Organizer Produção" (ID: frosty-grass-19472062):
+No painel do Render, adicione as seguintes variáveis de ambiente para conectar ao seu banco de dados Neon "Planner Organiza Produção" (ID: frosty-grass-19472062):
 
 ```
 DATABASE_URL=postgres://[seu_username]:***@[endpoint-neon]/neondb

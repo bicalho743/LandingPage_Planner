@@ -1,4 +1,4 @@
-# PlannerPro Organizer
+# Planner Organiza
 
 Uma plataforma completa de organização pessoal com sistema de assinatura usando Stripe e autenticação via Firebase.
 
