@@ -535,8 +535,9 @@ export default function LandingPage() {
             7 dias grátis, sem cartão de crédito.
           </p>
           <p className="lp-fundadora">
-            <strong>Cupom de lançamento ORGANIZA:</strong> R$ 10 de desconto na primeira cobrança para as 50
-            primeiras assinantes (o mensal sai por R$ 29,90 no 1º mês). Digite o cupom na tela de pagamento.
+            <strong>Cupom de lançamento ORGANIZA:</strong> 25% de desconto por 6 meses para as 50 primeiras
+            assinantes. No mensal, cerca de R$ 29,90 por mês nos 6 primeiros meses; no anual, R$ 222,75 no
+            primeiro ano. Digite o cupom na tela de pagamento.
           </p>
         </div>
         <div className="lp-pricing-grid">
