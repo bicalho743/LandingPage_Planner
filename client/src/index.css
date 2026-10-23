@@ -811,8 +811,10 @@ button, .button {
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .lp-section { padding: 4rem 2rem; }
-  .lp-hero { grid-template-columns: 1fr; min-height: auto; }
-  .lp-hero-left { padding: 4rem 2rem 2rem; }
+  .lp-hero { grid-template-columns: minmax(0, 1fr); min-height: auto; }
+  .lp-hero-left { padding: 4rem 1.25rem 2rem; min-width: 0; }
+  .lp-hero-capture { flex-wrap: wrap; }
+  .lp-hero-capture input { min-width: 0; flex: 1 1 180px; }
   .lp-hero-right { padding: 2rem 2rem 4rem; }
   .lp-pains, .lp-proposal-preview { grid-template-columns: 1fr; }
   .lp-pains-left, .lp-pains-right,
@@ -856,3 +858,13 @@ button, .button {
 .lp-tour-video { max-width: 1040px; margin: 2.5rem auto 0; border-radius: 18px; overflow: hidden;
   box-shadow: 0 24px 60px rgba(13, 27, 42, .18); border: 1px solid #E8E2D4; background: #F8F6F1; }
 .lp-tour-video video { display: block; width: 100%; height: auto; }
+
+/* Link do app Android (Google Play) */
+.lp-android { display: inline-flex; align-items: center; gap: 10px; margin: -0.25rem 0 1.5rem; padding: 6px 14px 6px 6px;
+  border: 1px solid #E3D9C2; border-radius: 999px; background: rgba(255,255,255,.7); color: #33507A; font-size: .85rem;
+  text-decoration: none; transition: border-color .15s ease, background .15s ease; }
+.lp-android:hover { border-color: #C9A84C; background: #fff; }
+.lp-android img { border-radius: 7px; display: block; }
+.lp-android b { color: #0D1B2A; }
+.lp-btn-android { display: inline-flex; align-items: center; gap: 8px; }
+.lp-btn-android img { border-radius: 5px; }

@@ -3,6 +3,12 @@ import { useState, useEffect, useRef } from "react";
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
 // e é lá que ficam login, trial, assinatura e todos os dados.
 const APP_URL = "https://plannerorganiza.com.br";
+// App Android na Google Play (o referrer mostra no Play Console de onde veio a instalação)
+const PLAY_URL = "https://play.google.com/store/apps/details?id=com.plannerorganiza.app&referrer=utm_source%3Dlanding";
+
+function irParaPlay(origem: string) {
+  rastrear("abrir_google_play", "AbrirGooglePlay", { origem }, true);
+}
 // "Começar grátis" abre direto a criação de conta no app; o e-mail digitado aqui vai junto
 // (montado por linkCadastro, com o tema do anúncio e as UTMs da visita)
 
@@ -239,6 +245,10 @@ export default function LandingPage() {
             </svg>
             7 dias grátis — sem cartão de crédito
           </p>
+          <a className="lp-android" href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("hero")}>
+            <img src="/app-android-icon.png" alt="" width="28" height="28" />
+            <span>Também no celular: <b>baixe o app para Android</b></span>
+          </a>
 
           <div className="lp-hero-stats">
             <div className="lp-stat-item">
@@ -595,6 +605,11 @@ export default function LandingPage() {
           <button className="lp-btn-white" onClick={() => irParaCadastro("rodape")}>
             Começar 7 dias grátis
           </button>
+          <a href={PLAY_URL} className="lp-btn-outline-white lp-btn-android" target="_blank" rel="noreferrer"
+             onClick={() => irParaPlay("rodape")}>
+            <img src="/app-android-icon.png" alt="" width="22" height="22" />
+            App para Android
+          </a>
           <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
             Falar no WhatsApp
           </a>
@@ -607,6 +622,7 @@ export default function LandingPage() {
         <div className="lp-footer-links">
           <a href="https://plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
           <a href="https://plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Suporte</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
         </div>
