@@ -81,6 +81,18 @@ function irParaCadastro(origem: string) {
 
 export default function LandingPage() {
   const [heroEmail, setHeroEmail] = useState("");
+  // vídeo do tour: os navegadores só deixam tocar sozinho sem som; o botão recomeça com a narração
+  const tourRef = useRef<HTMLVideoElement | null>(null);
+  const [tourSom, setTourSom] = useState(false);
+  const ativarSomTour = () => {
+    const v = tourRef.current;
+    if (!v) return;
+    v.muted = false;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+    setTourSom(true);
+    rastrear("tour_som", "TourComSom", {}, true);
+  };
   const tema = TEMAS[(origemDaVisita().tema || "").toLowerCase()];
   const [heroSubmitting, setHeroSubmitting] = useState(false);
   const [heroMsg, setHeroMsg] = useState("");
@@ -341,15 +353,21 @@ export default function LandingPage() {
       <section className="lp-section lp-tour" id="tour">
         <div className="lp-features-header lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
           <div className="lp-section-eyebrow">Veja por dentro</div>
-          <h2>O app em <em>40 segundos</em></h2>
+          <h2>O app em <em>1 minuto e meio</em></h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
             Telas reais, com dados de exemplo: agenda, propostas, financeiro, MEI e relatórios.
           </p>
         </div>
         <div className="lp-tour-video lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <video src="/tour-planner-organizer.mp4" poster="/tour-planner-organizer.jpg"
+          <video ref={tourRef} src="/tour-planner-organizer.mp4" poster="/tour-planner-organizer.jpg"
                  autoPlay muted loop playsInline controls preload="metadata"
-                 aria-label="Tour rápido pelas telas do Planner Organiza" />
+                 onVolumeChange={(e) => { if (!e.currentTarget.muted) setTourSom(true); }}
+                 aria-label="Tour rápido pelas telas do Planner Organiza, com narração" />
+          {!tourSom && (
+            <button className="lp-tour-som" onClick={ativarSomTour}>
+              <span aria-hidden="true">🔊</span> Ativar som
+            </button>
+          )}
         </div>
       </section>
 
