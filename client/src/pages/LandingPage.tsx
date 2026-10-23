@@ -84,6 +84,8 @@ export default function LandingPage() {
   // vídeo do tour: os navegadores só deixam tocar sozinho sem som; o botão recomeça com a narração
   const tourRef = useRef<HTMLVideoElement | null>(null);
   const [tourSom, setTourSom] = useState(false);
+  // no celular (a maior parte do tráfego vem do Instagram) o tour é o vídeo em pé
+  const [tourEmPe] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches);
   const ativarSomTour = () => {
     const v = tourRef.current;
     if (!v) return;
@@ -358,8 +360,9 @@ export default function LandingPage() {
             Telas reais, com dados de exemplo: agenda, propostas, financeiro, MEI e relatórios.
           </p>
         </div>
-        <div className="lp-tour-video lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <video ref={tourRef} src="/tour-planner-organizer.mp4" poster="/tour-planner-organizer.jpg"
+        <div className={`lp-tour-video lp-reveal${tourEmPe ? " em-pe" : ""}`} ref={(el) => addRevealRef(el, revealIdx++)}>
+          <video ref={tourRef} src={tourEmPe ? "/tour-planner-organiza-vertical.mp4" : "/tour-planner-organizer.mp4"}
+                 poster={tourEmPe ? "/tour-planner-organiza-vertical.jpg" : "/tour-planner-organizer.jpg"}
                  autoPlay muted loop playsInline controls preload="metadata"
                  onVolumeChange={(e) => { if (!e.currentTarget.muted) setTourSom(true); }}
                  aria-label="Tour rápido pelas telas do Planner Organiza, com narração" />
