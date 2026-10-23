@@ -528,15 +528,15 @@ export default function LandingPage() {
       {/* ── PRICING ── */}
       <section className="lp-section lp-pricing" id="planos">
         <div style={{ marginBottom: "3.5rem" }} className="lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <div className="lp-section-eyebrow">Planos · preço de fundadora</div>
+          <div className="lp-section-eyebrow">Planos · cupom de lançamento</div>
           <h2>Custa menos que <em>30 minutos</em><br />do seu trabalho por mês</h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
             Uma proposta a mais fechada no ano já paga o plano anual. Acesso completo nos dois planos e
             7 dias grátis, sem cartão de crédito.
           </p>
           <p className="lp-fundadora">
-            <strong>Preço de fundadora</strong> para as 50 primeiras assinantes, garantido enquanto a assinatura
-            estiver ativa. Depois, R$ 39,90/mês e R$ 399/ano.
+            <strong>Cupom de lançamento ORGANIZA:</strong> R$ 10 de desconto na primeira cobrança para as 50
+            primeiras assinantes (o mensal sai por R$ 29,90 no 1º mês). Digite o cupom na tela de pagamento.
           </p>
         </div>
         <div className="lp-pricing-grid">
@@ -546,7 +546,7 @@ export default function LandingPage() {
             <h3>Mensal</h3>
             <p className="lp-pricing-desc">Sem compromisso de longo prazo. Assine, use e cancele quando quiser.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>29,90</p>
+              <p className="lp-price-val"><sup>R$</sup>39,90</p>
               <p className="lp-price-period">por mês · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
@@ -566,7 +566,7 @@ export default function LandingPage() {
           <div className="lp-pricing-card featured lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
             <p className="lp-pricing-plan">Melhor custo-benefício</p>
             <h3>Anual</h3>
-            <span className="lp-badge-popular">★ Economize 2 meses</span>
+            <span className="lp-badge-popular">★ 38% mais barato que o mensal</span>
             <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Equivale a R$ 24,75/mês. Um ano inteiro de negócio organizado.</p>
             <div className="lp-price-row">
               <p className="lp-price-val"><sup>R$</sup>297</p>
