@@ -204,6 +204,7 @@ export default function LandingPage() {
       {/* ── HEADER ── */}
       <header className={`lp-header${headerScrolled ? " scrolled" : ""}`}>
         <a href="#" className="lp-logo" onClick={(e) => { e.preventDefault(); scrollTo("inicio"); }}>
+          <img src="/icon-192.png" alt="" className="lp-logo-icone" width="34" height="34" />
           Planner <span>Organiza</span>
         </a>
         <nav className="lp-nav">

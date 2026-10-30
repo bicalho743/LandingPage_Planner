@@ -136,6 +136,7 @@ button, .button {
   display: flex; align-items: center; gap: 0.5rem;
 }
 .lp-logo span { color: var(--terracota); }
+.lp-logo-icone { width: 34px; height: 34px; border-radius: 8px; flex: none; }
 
 .lp-nav { display: flex; align-items: center; gap: 2rem; }
 .lp-nav a {
