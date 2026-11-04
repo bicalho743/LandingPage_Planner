@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
 // e é lá que ficam login, trial, assinatura e todos os dados.
-const APP_URL = "https://plannerorganiza.com.br"; // vira app.plannerorganiza.com.br quando a landing for para o domínio principal
+const APP_URL = "https://app.plannerorganiza.com.br";
 // App Android na Google Play (o referrer mostra no Play Console de onde veio a instalação)
 const PLAY_URL = "https://play.google.com/store/apps/details?id=com.plannerorganiza.app&referrer=utm_source%3Dlanding";
 
@@ -718,8 +718,8 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
-          <a href="https://plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
-          <a href="https://plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          <a href="https://app.plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
+          <a href="https://app.plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
           <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Suporte</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
