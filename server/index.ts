@@ -27,6 +27,14 @@ const forceHttps = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+// promo.plannerorganiza.com.br virou o domínio principal: links antigos (anúncios, bio, UTMs)
+// continuam funcionando e caem na mesma página do plannerorganiza.com.br.
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const host = (req.headers.host || "").toLowerCase();
+  if (host.startsWith("promo.")) return res.redirect(301, `https://plannerorganiza.com.br${req.originalUrl}`);
+  next();
+});
+
 // Aplica o middleware de redirecionamento HTTPS
 app.use(forceHttps);
 
