@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
 // e é lá que ficam login, trial, assinatura e todos os dados.
-const APP_URL = "https://plannerorganiza.com.br";
+const APP_URL = "https://app.plannerorganiza.com.br";
 // App Android na Google Play (o referrer mostra no Play Console de onde veio a instalação)
 const PLAY_URL = "https://play.google.com/store/apps/details?id=com.plannerorganiza.app&referrer=utm_source%3Dlanding";
 
@@ -213,7 +213,7 @@ export default function LandingPage() {
           <a href="#depoimentos" onClick={(e) => { e.preventDefault(); scrollTo("depoimentos"); }}>Depoimentos</a>
           <a href="#faq" onClick={(e) => { e.preventDefault(); scrollTo("faq"); }}>FAQ</a>
         </nav>
-        <a href="#login" className="lp-header-cta" onClick={(e) => { e.preventDefault(); scrollTo("login"); }}>Entrar</a>
+        <a href={APP_URL} className="lp-header-cta" onClick={() => rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true)}>Entrar</a>
       </header>
 
       {/* ── HERO ── */}
@@ -281,32 +281,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="lp-hero-right" id="login">
-          <div className="lp-login-card">
-            <div className="lp-login-card-header">
-              <p>Bem-vinda de volta ✨</p>
-              <span>Acesse sua conta</span>
-            </div>
-
-            <a
-              className="lp-btn-login"
-              style={{ display: "block", textAlign: "center", textDecoration: "none" }}
-              href={APP_URL}
-            >
-              Entrar no sistema
-            </a>
-
-            <div className="lp-login-divider">ou</div>
-
-            <button className="lp-btn-trial" onClick={() => irParaCadastro("cartao_login")}>
-              Criar conta grátis — 7 dias
-            </button>
-
-            <p className="lp-login-footer">
-              Esqueceu a senha?{" "}
-              <a href={APP_URL} style={{ color: "inherit", fontWeight: 600 }}>Recupere o acesso no sistema</a>
-            </p>
-          </div>
+        {/* Uma ação só no topo (Começar grátis): quem já tem conta usa o "Entrar" do cabeçalho */}
+        <div className="lp-hero-right">
+          <img className="lp-hero-app" src="/hero-app.png" width="362" height="622"
+               alt="Tela inicial do Planner Organiza: lucro do mês, valores a receber e a pagar, e o que fazer hoje" />
         </div>
       </section>
 
@@ -643,8 +621,8 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
-          <a href="https://plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
-          <a href="https://plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          <a href="https://app.plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
+          <a href="https://app.plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
           <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Suporte</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>

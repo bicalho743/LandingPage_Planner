@@ -877,3 +877,6 @@ button, .button {
 .lp-android b { color: #0D1B2A; }
 .lp-btn-android { display: inline-flex; align-items: center; gap: 8px; }
 .lp-btn-android img { border-radius: 5px; }
+
+/* Topo: imagem do app no lugar do cartão de login */
+.lp-hero-app { display: block; width: min(100%, 362px); height: auto; margin: 0 auto; }
