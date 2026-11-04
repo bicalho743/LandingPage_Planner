@@ -9,6 +9,42 @@ const PLAY_URL = "https://play.google.com/store/apps/details?id=com.plannerorgan
 function irParaPlay(origem: string) {
   rastrear("abrir_google_play", "AbrirGooglePlay", { origem }, true);
 }
+
+// Botão no formato do selo oficial "Disponível no Google Play" (por enquanto só Android)
+function BotaoGooglePlay({ origem, claro = false }: { origem: string; claro?: boolean }) {
+  return (
+    <a className={`lp-play${claro ? " claro" : ""}`} href={PLAY_URL} target="_blank" rel="noreferrer"
+       onClick={() => irParaPlay(origem)} aria-label="Baixar o app Planner Organiza no Google Play">
+      <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true">
+        <path d="M1.2.6 14.4 14 1.2 27.4c-.4-.3-.7-.9-.7-1.6V2.2c0-.7.3-1.3.7-1.6z" fill="#00D7FE" />
+        <path d="M18.8 9.6 14.4 14 1.2.6c.2-.1.4-.2.6-.2.4 0 .8.1 1.2.3l15.8 8.9z" fill="#00F076" />
+        <path d="M18.8 18.4 3 27.3c-.4.2-.8.3-1.2.3-.2 0-.4-.1-.6-.2L14.4 14l4.4 4.4z" fill="#FF3A44" />
+        <path d="m24.2 12.5-5.4-2.9L14.4 14l4.4 4.4 5.4-3c1.1-.6 1.1-2.3 0-2.9z" fill="#FFD400" />
+      </svg>
+      <span><small>Disponível no</small>Google Play</span>
+    </a>
+  );
+}
+
+// Como funciona: telas reais do app, uma por passo
+const PASSOS = [
+  { img: "/cel-precificacao.webp", titulo: "Descubra quanto vale a sua hora,", destaque: "e cobre sem medo.",
+    texto: "Diga quanto quer ganhar, seus custos e quantos dias trabalha. O app calcula a sua hora mínima e o preço de cada projeto, ambiente por ambiente.",
+    itens: ["Hora mínima e hora com margem", "Preço por ambiente e por tamanho", "Deslocamento e materiais incluídos"],
+    alt: "Tela de precificação do app: valor da hora e preço de um projeto" },
+  { img: "/cel-propostas.webp", titulo: "A proposta pronta em minutos,", destaque: "com a sua marca.",
+    texto: "Monte a proposta no celular e envie o PDF com o seu logo e as suas cores. Aprovou? O sinal já entra no financeiro.",
+    itens: ["PDF com logo e cores da sua marca", "Envio direto pelo WhatsApp", "Status de cada proposta num toque"],
+    alt: "Lista de propostas no app, com status em aberto, aprovada, em execução e finalizada" },
+  { img: "/cel-agenda.webp", titulo: "Seu dia organizado,", destaque: "sem esquecer ninguém.",
+    texto: "Serviços, visitas, retornos e vencimentos na mesma agenda. No aniversário da cliente, os parabéns já vêm prontos no WhatsApp.",
+    itens: ["Agenda por semana ou por mês", "Retornos de pós-organização no dia certo", "Aniversários com mensagem pronta"],
+    alt: "Agenda do app com serviços, visitas, aniversários e retornos da semana" },
+  { img: "/cel-financeiro.webp", titulo: "Saiba quanto sobrou,", destaque: "e o MEI em dia.",
+    texto: "Receitas, despesas e contas a receber num lugar só, com o DAS de cada mês e o limite do ano sempre à vista.",
+    itens: ["Lucro do mês e valores a receber", "DAS e limite do MEI acompanhados", "Relatórios do período"],
+    alt: "Financeiro do app com receitas, despesas e lucro do mês" },
+];
 // "Começar grátis" abre direto a criação de conta no app; o e-mail digitado aqui vai junto
 // (montado por linkCadastro, com o tema do anúncio e as UTMs da visita)
 
@@ -102,7 +138,7 @@ export default function LandingPage() {
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const revealRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const revealRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => setHeaderScrolled(window.scrollY > 20);
@@ -126,7 +162,7 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
-  const addRevealRef = (el: HTMLDivElement | null, index: number) => {
+  const addRevealRef = (el: HTMLElement | null, index: number) => {
     revealRefs.current[index] = el;
   };
 
@@ -171,6 +207,10 @@ export default function LandingPage() {
       a: "Não. O Planner Organiza foi criado pensando em personal organizers, não em programadoras. A interface é intuitiva e você começa a usar em minutos — sem tutoriais longos.",
     },
     {
+      q: "Tem app para celular?",
+      a: "Sim, para Android: é só baixar na Google Play e entrar com a mesma conta. Tudo o que você faz no celular aparece no computador, e o contrário também. No iPhone, por enquanto, use pelo navegador.",
+    },
+    {
       q: "Posso cancelar quando quiser?",
       a: "Sim. Sem fidelidade, sem multa, sem burocracia. Você pode cancelar a qualquer momento direto pelo painel da sua conta.",
     },
@@ -211,7 +251,9 @@ export default function LandingPage() {
           <a href="#funcionalidades" onClick={(e) => { e.preventDefault(); scrollTo("funcionalidades"); }}>Funcionalidades</a>
           <a href="#planos" onClick={(e) => { e.preventDefault(); scrollTo("planos"); }}>Planos</a>
           <a href="#depoimentos" onClick={(e) => { e.preventDefault(); scrollTo("depoimentos"); }}>Depoimentos</a>
-          <a href="#faq" onClick={(e) => { e.preventDefault(); scrollTo("faq"); }}>FAQ</a>
+          <a href="#como-funciona" onClick={(e) => { e.preventDefault(); scrollTo("como-funciona"); }}>Como funciona</a>
+          <a href="#duvidas" onClick={(e) => { e.preventDefault(); scrollTo("duvidas"); }}>Dúvidas</a>
+          <a href="#baixar" onClick={(e) => { e.preventDefault(); scrollTo("baixar"); }}>Baixar o app</a>
         </nav>
         <a href={APP_URL} className="lp-header-cta" onClick={() => rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true)}>Entrar</a>
       </header>
@@ -260,10 +302,10 @@ export default function LandingPage() {
             </svg>
             7 dias grátis — sem cartão de crédito
           </p>
-          <a className="lp-android" href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("hero")}>
-            <img src="/app-android-icon.png" alt="" width="28" height="28" />
-            <span>Também no celular: <b>baixe o app para Android</b></span>
-          </a>
+          <div className="lp-hero-app-baixar">
+            <span>Também no celular:</span>
+            <BotaoGooglePlay origem="hero" />
+          </div>
 
           <div className="lp-hero-stats">
             <div className="lp-stat-item">
@@ -351,6 +393,32 @@ export default function LandingPage() {
             </button>
           )}
         </div>
+      </section>
+
+      {/* ── COMO FUNCIONA: passos com telas reais ── */}
+      <section className="lp-section lp-passos" id="como-funciona">
+        <div className="lp-passos-header lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <div className="lp-section-eyebrow">Como funciona</div>
+          <h2>Do preço ao pagamento,<br /><em>em quatro passos.</em></h2>
+          <p className="lp-section-sub">
+            Telas reais do app, com dados de exemplo. Tudo o que você faz no celular aparece também no computador.
+          </p>
+        </div>
+        <ol className="lp-passos-lista">
+          {PASSOS.map((p, i) => (
+            <li className={`lp-passo lp-reveal${i % 2 ? " inverso" : ""}`} key={p.img} ref={(el) => addRevealRef(el, revealIdx++)}>
+              <div className="lp-passo-texto">
+                <span className="lp-passo-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{p.titulo} <em>{p.destaque}</em></h3>
+                <p>{p.texto}</p>
+                <ul>{p.itens.map((t) => <li key={t}>{t}</li>)}</ul>
+              </div>
+              <div className="lp-passo-cel">
+                <img src={p.img} alt={p.alt} width="360" height="612" loading="lazy" />
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* ── FEATURES ── */}
@@ -571,12 +639,41 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FAQ ── */}
-      <section className="lp-section lp-faq" id="faq">
+      {/* ── BAIXE O APP ── */}
+      <section className="lp-baixar" id="baixar">
+        <div className="lp-baixar-inner">
+          <div className="lp-baixar-texto lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+            <div className="lp-section-eyebrow">App para Android</div>
+            <h2>O seu negócio,<br /><em>no bolso.</em></h2>
+            <p>
+              Atenda a cliente, mande a proposta e confira o financeiro de onde estiver.
+              A mesma conta funciona no celular e no computador.
+            </p>
+            <BotaoGooglePlay origem="secao_baixar" claro />
+            <p className="lp-baixar-nota">Por enquanto só para Android. No iPhone, use pelo navegador.</p>
+          </div>
+          <img className="lp-baixar-img" src="/app-celulares.webp" width="670" height="564" loading="lazy"
+               alt="Três telas do app Planner Organiza: agenda, início com o lucro do mês e precificação" />
+        </div>
+      </section>
+
+      {/* ── DÚVIDAS ── */}
+      <section className="lp-section lp-faq" id="duvidas">
         <div className="lp-faq-inner">
           <div className="lp-faq-header lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-            <div className="lp-section-eyebrow">Dúvidas</div>
-            <h2>Perguntas <em>frequentes</em></h2>
+            <h2>Ficou alguma <em>dúvida?</em></h2>
+            <p className="lp-section-sub">
+              Separamos as respostas para as perguntas mais comuns. Se a sua não estiver aqui, é só mandar uma mensagem.
+            </p>
+          </div>
+          <div className="lp-duvida-card">
+            <h3>Ainda tem alguma dúvida?</h3>
+            <p>Fale com a gente no WhatsApp. Quem responde é gente de verdade, geralmente em poucas horas.</p>
+            <a href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20o%20Planner%20Organiza"
+               className="lp-btn-primary" target="_blank" rel="noreferrer"
+               onClick={() => rastrear("whatsapp", "Contact", { origem: "duvidas" })}>
+              Enviar uma mensagem
+            </a>
           </div>
           {faqItems.map((item, i) => (
             <div className="lp-faq-item" key={i}>
@@ -606,11 +703,7 @@ export default function LandingPage() {
           <button className="lp-btn-white" onClick={() => irParaCadastro("rodape")}>
             Começar 7 dias grátis
           </button>
-          <a href={PLAY_URL} className="lp-btn-outline-white lp-btn-android" target="_blank" rel="noreferrer"
-             onClick={() => irParaPlay("rodape")}>
-            <img src="/app-android-icon.png" alt="" width="22" height="22" />
-            App para Android
-          </a>
+          <BotaoGooglePlay origem="rodape" claro />
           <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
             Falar no WhatsApp
           </a>

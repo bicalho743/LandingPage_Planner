@@ -880,3 +880,74 @@ button, .button {
 
 /* Topo: imagem do app no lugar do cartão de login */
 .lp-hero-app { display: block; width: min(100%, 362px); height: auto; margin: 0 auto; }
+
+/* ── Selo Google Play (formato do selo oficial) ── */
+.lp-play { display: inline-flex; align-items: center; gap: 12px; padding: 9px 20px 9px 16px; border-radius: 12px;
+  background: #000; color: #fff; text-decoration: none; border: 1px solid #000;
+  box-shadow: 0 8px 22px rgba(13,27,42,.18); transition: transform .15s ease, box-shadow .15s ease; }
+.lp-play:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(13,27,42,.26); }
+.lp-play span { display: flex; flex-direction: column; line-height: 1.05; font-family: 'DM Sans', sans-serif;
+  font-size: 1.25rem; font-weight: 600; letter-spacing: -.01em; text-align: left; }
+.lp-play small { font-size: .68rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; opacity: .85; margin-bottom: 2px; }
+.lp-play.claro { border-color: rgba(255,255,255,.35); }
+.lp-hero-app-baixar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: -0.25rem 0 1.75rem;
+  color: var(--lp-text-mid); font-size: .9rem; }
+
+/* ── Como funciona: passos com telas reais ── */
+.lp-passos { background: #fff; }
+.lp-passos-header { max-width: 1040px; margin: 0 auto 1rem; }
+.lp-passos-lista { list-style: none; margin: 0 auto; padding: 0 0 0 2.25rem; max-width: 1040px; position: relative;
+  border-left: 1px solid #E3D9C2; }
+.lp-passo { display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center; padding: 3.5rem 0; position: relative; }
+.lp-passo::before { content: ""; position: absolute; left: calc(-2.25rem - 8px); top: 4.6rem; width: 15px; height: 15px;
+  border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 5px #F6EFD9; }
+.lp-passo.inverso .lp-passo-texto { order: 2; }
+.lp-passo-num { display: block; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 300;
+  font-size: 4.5rem; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--gold); margin-bottom: .5rem; }
+.lp-passo h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 2.1rem; font-weight: 600; line-height: 1.15;
+  color: var(--lp-text); margin: 0 0 1rem; }
+.lp-passo h3 em { color: var(--terracota); font-style: italic; font-weight: 500; }
+.lp-passo p { color: var(--lp-text-mid); line-height: 1.75; margin: 0 0 1.25rem; max-width: 460px; }
+.lp-passo ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .65rem; }
+.lp-passo ul li { display: flex; align-items: center; gap: .65rem; color: var(--lp-text); font-weight: 500; font-size: .95rem; }
+.lp-passo ul li::before { content: "✓"; flex: 0 0 22px; height: 22px; border-radius: 50%; background: #2F9E6B; color: #fff;
+  font-size: .75rem; font-weight: 700; display: grid; place-items: center; }
+.lp-passo-cel { background: linear-gradient(160deg, #F7F1E1, #EFE7D2); border: 1px solid #EAE0C8; border-radius: 28px;
+  display: flex; justify-content: center; align-items: flex-end; padding: 2.25rem 1rem 0; overflow: hidden; height: 470px; }
+.lp-passo-cel img { width: min(100%, 300px); height: auto; display: block; margin-bottom: -12px; align-self: flex-start; }
+
+/* ── Baixe o app ── */
+.lp-baixar { background: var(--lp-dark); color: #fff; padding: 5rem 5rem 0; overflow: hidden; }
+.lp-baixar-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: .9fr 1.1fr; gap: 3rem; align-items: center; }
+.lp-baixar-texto { padding-bottom: 5rem; }
+.lp-baixar .lp-section-eyebrow { color: var(--gold); }
+.lp-baixar h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 3rem; font-weight: 600; line-height: 1.08; margin: 0 0 1.25rem; color: #fff; }
+.lp-baixar h2 em { color: var(--gold); font-style: italic; font-weight: 500; }
+.lp-baixar p { color: rgba(255,255,255,.72); line-height: 1.8; max-width: 440px; margin: 0 0 1.75rem; }
+.lp-baixar .lp-baixar-nota { font-size: .8rem; color: rgba(255,255,255,.5); margin: 1rem 0 0; }
+.lp-baixar-img { width: 100%; height: auto; display: block; align-self: end; margin-bottom: -2rem; }
+
+/* ── Dúvidas ── */
+.lp-faq-header .lp-section-sub { margin: 0 auto; }
+.lp-duvida-card { background: #fff; border: 1px solid var(--lp-border); border-radius: 22px; padding: 2rem; margin: 0 0 2rem;
+  box-shadow: 0 10px 30px rgba(13,27,42,.06); }
+.lp-duvida-card h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; font-weight: 600; color: var(--lp-text); margin: 0 0 .4rem; }
+.lp-duvida-card p { color: var(--lp-text-mid); margin: 0 0 1.25rem; line-height: 1.7; }
+.lp-duvida-card .lp-btn-primary { display: inline-block; text-decoration: none; }
+
+@media (max-width: 900px) {
+  .lp-passos-lista { padding-left: 1.5rem; }
+  .lp-passo { grid-template-columns: 1fr; gap: 1.75rem; padding: 2.5rem 0; }
+  .lp-passo::before { left: calc(-1.5rem - 8px); top: 3.4rem; }
+  .lp-passo.inverso .lp-passo-texto { order: 0; }
+  .lp-passo-num { font-size: 3.5rem; }
+  .lp-passo h3 { font-size: 1.75rem; }
+  .lp-passo-cel { height: 400px; }
+  .lp-baixar { padding: 4rem 1.5rem 0; }
+  .lp-baixar-inner { grid-template-columns: 1fr; gap: 1rem; }
+  .lp-baixar-texto { padding-bottom: 1rem; text-align: center; }
+  .lp-baixar p { margin-left: auto; margin-right: auto; }
+  .lp-baixar h2 { font-size: 2.4rem; }
+  .lp-baixar-img { margin-bottom: -1rem; }
+  .lp-duvida-card { padding: 1.5rem; }
+}
