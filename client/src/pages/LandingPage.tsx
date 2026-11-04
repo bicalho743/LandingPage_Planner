@@ -36,6 +36,10 @@ const PASSOS = [
     texto: "Monte a proposta no celular e envie o PDF com o seu logo e as suas cores. Aprovou? O sinal já entra no financeiro.",
     itens: ["PDF com logo e cores da sua marca", "Envio direto pelo WhatsApp", "Status de cada proposta num toque"],
     alt: "Lista de propostas no app, com status em aberto, aprovada, em execução e finalizada" },
+  { img: "/cel-retornos.webp", titulo: "Nunca mais esqueça", destaque: "de acompanhar uma cliente.",
+    texto: "Terminou o serviço? O app agenda os retornos sozinho: agradecimento, acompanhamento e ajuste fino. No dia certo ele lembra, com a mensagem pronta no WhatsApp.",
+    itens: ["Retornos criados depois de cada serviço", "Lembrete no dia certo, já na tela inicial", "Mensagem pronta no WhatsApp, ou adiar 3 dias"],
+    alt: "Tela de pós-organização do app: retornos da cliente com botões de WhatsApp, concluir e adiar" },
   { img: "/cel-agenda.webp", titulo: "Seu dia organizado,", destaque: "sem esquecer ninguém.",
     texto: "Serviços, visitas, retornos e vencimentos na mesma agenda. No aniversário da cliente, os parabéns já vêm prontos no WhatsApp.",
     itens: ["Agenda por semana ou por mês", "Retornos de pós-organização no dia certo", "Aniversários com mensagem pronta"],
@@ -399,7 +403,7 @@ export default function LandingPage() {
       <section className="lp-section lp-passos" id="como-funciona">
         <div className="lp-passos-header lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
           <div className="lp-section-eyebrow">Como funciona</div>
-          <h2>Do preço ao pagamento,<br /><em>em quatro passos.</em></h2>
+          <h2>Do preço ao retorno da cliente,<br /><em>em cinco passos.</em></h2>
           <p className="lp-section-sub">
             Telas reais do app, com dados de exemplo. Tudo o que você faz no celular aparece também no computador.
           </p>
