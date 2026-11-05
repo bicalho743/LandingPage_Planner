@@ -958,3 +958,14 @@ button, .button {
   .lp-baixar-img { margin-bottom: -1rem; }
   .lp-duvida-card { padding: 1.5rem; }
 }
+
+/* Selos lado a lado: Google Play e Safari (iPhone) */
+.lp-lojas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.lp-baixar-texto .lp-lojas { margin-bottom: .25rem; }
+.lp-baixar .lp-baixar-nota b { color: rgba(255,255,255,.85); font-weight: 600; }
+.lp-footer-cta-actions .lp-lojas { justify-content: center; }
+@media (max-width: 900px) {
+  .lp-baixar-texto .lp-lojas { justify-content: center; }
+  .lp-play { padding: 8px 16px 8px 13px; }
+  .lp-play span { font-size: 1.1rem; }
+}
