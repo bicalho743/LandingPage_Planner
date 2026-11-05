@@ -969,3 +969,14 @@ button, .button {
   .lp-play { padding: 8px 16px 8px 13px; }
   .lp-play span { font-size: 1.1rem; }
 }
+
+/* Compromissos (lugar dos depoimentos) */
+.lp-compromisso { text-align: left; }
+.lp-compromisso-icone { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
+  background: #F6EFD9; font-size: 1.35rem; margin-bottom: 1rem; }
+.lp-compromisso h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 600;
+  color: var(--lp-text); margin: 0 0 .5rem; }
+.lp-compromisso p { color: var(--lp-text-mid); line-height: 1.7; margin: 0; font-size: .95rem; }
+.lp-convite-relato { max-width: 880px; margin: 2rem auto 0; text-align: center; }
+.lp-convite-relato p { color: var(--lp-text-mid); margin: 0 0 1rem; }
+.lp-convite-relato .lp-btn-primary { display: inline-block; text-decoration: none; }
