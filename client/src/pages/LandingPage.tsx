@@ -26,25 +26,51 @@ function BotaoGooglePlay({ origem, claro = false }: { origem: string; claro?: bo
   );
 }
 
+// Celular com a gravação de tela do app: toca sozinho (mudo, em loop) só enquanto aparece na
+// tela; com "reduzir movimento" ligado fica parado no primeiro quadro.
+function VideoCelular({ nome, alt }: { nome: string; alt: string }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { v.play().catch(() => { /* navegador bloqueou: fica o pôster */ }); }
+      else v.pause();
+    }, { threshold: 0.4 });
+    obs.observe(v);
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <div className="lp-cel-moldura">
+      <video ref={ref} poster={`/videos/${nome}.jpg`}
+             muted loop playsInline preload="none" width="600" height="1298" aria-label={alt}>
+        <source src={`/videos/${nome}.webm`} type="video/webm" />
+        <source src={`/videos/${nome}.mp4`} type="video/mp4" />
+      </video>
+    </div>
+  );
+}
+
 // Como funciona: telas reais do app, uma por passo
 const PASSOS = [
-  { img: "/cel-precificacao.webp", titulo: "Descubra quanto vale a sua hora,", destaque: "e cobre sem medo.",
+  { video: "precificacao", titulo: "Descubra quanto vale a sua hora,", destaque: "e cobre sem medo.",
     texto: "Diga quanto quer ganhar, seus custos e quantos dias trabalha. O app calcula a sua hora mínima e o preço de cada projeto, ambiente por ambiente.",
     itens: ["Hora mínima e hora com margem", "Preço por ambiente e por tamanho", "Deslocamento e materiais incluídos"],
     alt: "Tela de precificação do app: valor da hora e preço de um projeto" },
-  { img: "/cel-propostas.webp", titulo: "A proposta pronta em minutos,", destaque: "com a sua marca.",
+  { video: "propostas", titulo: "A proposta pronta em minutos,", destaque: "com a sua marca.",
     texto: "Monte a proposta no celular e envie o PDF com o seu logo e as suas cores. Aprovou? O sinal já entra no financeiro.",
     itens: ["PDF com logo e cores da sua marca", "Envio direto pelo WhatsApp", "Status de cada proposta num toque"],
     alt: "Lista de propostas no app, com status em aberto, aprovada, em execução e finalizada" },
-  { img: "/cel-retornos.webp", titulo: "Nunca mais esqueça", destaque: "de acompanhar uma cliente.",
+  { video: "retornos", titulo: "Nunca mais esqueça", destaque: "de acompanhar uma cliente.",
     texto: "Terminou o serviço? O app agenda os retornos sozinho: agradecimento, acompanhamento e ajuste fino. No dia certo ele lembra, com a mensagem pronta no WhatsApp.",
     itens: ["Retornos criados depois de cada serviço", "Lembrete no dia certo, já na tela inicial", "Mensagem pronta no WhatsApp, ou adiar 3 dias"],
     alt: "Tela de pós-organização do app: retornos da cliente com botões de WhatsApp, concluir e adiar" },
-  { img: "/cel-agenda.webp", titulo: "Seu dia organizado,", destaque: "sem esquecer ninguém.",
+  { video: "agenda", titulo: "Seu dia organizado,", destaque: "sem esquecer ninguém.",
     texto: "Serviços, visitas, retornos e vencimentos na mesma agenda. No aniversário da cliente, os parabéns já vêm prontos no WhatsApp.",
     itens: ["Agenda por semana ou por mês", "Retornos de pós-organização no dia certo", "Aniversários com mensagem pronta"],
     alt: "Agenda do app com serviços, visitas, aniversários e retornos da semana" },
-  { img: "/cel-financeiro.webp", titulo: "Saiba quanto sobrou,", destaque: "e o MEI em dia.",
+  { video: "financeiro", titulo: "Saiba quanto sobrou,", destaque: "e o MEI em dia.",
     texto: "Receitas, despesas e contas a receber num lugar só, com o DAS de cada mês e o limite do ano sempre à vista.",
     itens: ["Lucro do mês e valores a receber", "DAS e limite do MEI acompanhados", "Relatórios do período"],
     alt: "Financeiro do app com receitas, despesas e lucro do mês" },
@@ -410,7 +436,7 @@ export default function LandingPage() {
         </div>
         <ol className="lp-passos-lista">
           {PASSOS.map((p, i) => (
-            <li className={`lp-passo lp-reveal${i % 2 ? " inverso" : ""}`} key={p.img} ref={(el) => addRevealRef(el, revealIdx++)}>
+            <li className={`lp-passo lp-reveal${i % 2 ? " inverso" : ""}`} key={p.video} ref={(el) => addRevealRef(el, revealIdx++)}>
               <div className="lp-passo-texto">
                 <span className="lp-passo-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                 <h3>{p.titulo} <em>{p.destaque}</em></h3>
@@ -418,7 +444,7 @@ export default function LandingPage() {
                 <ul>{p.itens.map((t) => <li key={t}>{t}</li>)}</ul>
               </div>
               <div className="lp-passo-cel">
-                <img src={p.img} alt={p.alt} width="360" height="612" loading="lazy" />
+                <VideoCelular nome={p.video} alt={p.alt} />
               </div>
             </li>
           ))}
