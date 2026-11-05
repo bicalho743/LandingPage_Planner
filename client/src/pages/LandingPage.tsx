@@ -52,6 +52,38 @@ function VideoCelular({ nome, alt }: { nome: string; alt: string }) {
   );
 }
 
+// iPhone: enquanto o app não está na App Store, o sistema roda no Safari e vira ícone na
+// tela de início ("Adicionar à Tela de Início"). Mesmo formato do selo da Google Play.
+function BotaoSafari({ origem, claro = false }: { origem: string; claro?: boolean }) {
+  return (
+    <a className={`lp-play${claro ? " claro" : ""}`} href={APP_URL} target="_blank" rel="noreferrer"
+       onClick={() => rastrear("abrir_iphone_safari", "AbrirIphoneSafari", { origem }, true)}
+       aria-label="No iPhone, use o Planner Organiza no Safari">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+        <defs>
+          <linearGradient id="lpBussola" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#1AC8FC" /><stop offset="1" stopColor="#1A73E8" />
+          </linearGradient>
+        </defs>
+        <circle cx="14" cy="14" r="13" fill="url(#lpBussola)" />
+        <circle cx="14" cy="14" r="10.5" fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="1" strokeDasharray="1 2.3" />
+        <path d="M20.5 7.5 15.4 15.4 12.6 12.6z" fill="#FF3B30" />
+        <path d="M7.5 20.5 12.6 12.6 15.4 15.4z" fill="#fff" />
+      </svg>
+      <span><small>No iPhone, use no</small>Safari</span>
+    </a>
+  );
+}
+
+function BotoesApp({ origem, claro = false }: { origem: string; claro?: boolean }) {
+  return (
+    <div className="lp-lojas">
+      <BotaoGooglePlay origem={origem} claro={claro} />
+      <BotaoSafari origem={origem} claro={claro} />
+    </div>
+  );
+}
+
 // Como funciona: telas reais do app, uma por passo
 const PASSOS = [
   { video: "precificacao", titulo: "Descubra quanto vale a sua hora,", destaque: "e cobre sem medo.",
@@ -238,7 +270,7 @@ export default function LandingPage() {
     },
     {
       q: "Tem app para celular?",
-      a: "Sim, para Android: é só baixar na Google Play e entrar com a mesma conta. Tudo o que você faz no celular aparece no computador, e o contrário também. No iPhone, por enquanto, use pelo navegador.",
+      a: "Sim, para Android: é só baixar na Google Play e entrar com a mesma conta. Tudo o que você faz no celular aparece no computador, e o contrário também. No iPhone, por enquanto, use pelo Safari: abra app.plannerorganiza.com.br, toque em Compartilhar e em \"Adicionar à Tela de Início\" para ter o ícone na tela.",
     },
     {
       q: "Posso cancelar quando quiser?",
@@ -334,7 +366,7 @@ export default function LandingPage() {
           </p>
           <div className="lp-hero-app-baixar">
             <span>Também no celular:</span>
-            <BotaoGooglePlay origem="hero" />
+            <BotoesApp origem="hero" />
           </div>
 
           <div className="lp-hero-stats">
@@ -673,14 +705,17 @@ export default function LandingPage() {
       <section className="lp-baixar" id="baixar">
         <div className="lp-baixar-inner">
           <div className="lp-baixar-texto lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-            <div className="lp-section-eyebrow">App para Android</div>
+            <div className="lp-section-eyebrow">Android e iPhone</div>
             <h2>O seu negócio,<br /><em>no bolso.</em></h2>
             <p>
               Atenda a cliente, mande a proposta e confira o financeiro de onde estiver.
               A mesma conta funciona no celular e no computador.
             </p>
-            <BotaoGooglePlay origem="secao_baixar" claro />
-            <p className="lp-baixar-nota">Por enquanto só para Android. No iPhone, use pelo navegador.</p>
+            <BotoesApp origem="secao_baixar" claro />
+            <p className="lp-baixar-nota">
+              No iPhone: abra no Safari, toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.
+              O Planner Organiza fica com ícone, como um app.
+            </p>
           </div>
           <img className="lp-baixar-img" src="/app-celulares.webp" width="670" height="564" loading="lazy"
                alt="Três telas do app Planner Organiza: agenda, início com o lucro do mês e precificação" />
@@ -733,7 +768,7 @@ export default function LandingPage() {
           <button className="lp-btn-white" onClick={() => irParaCadastro("rodape")}>
             Começar 7 dias grátis
           </button>
-          <BotaoGooglePlay origem="rodape" claro />
+          <BotoesApp origem="rodape" claro />
           <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
             Falar no WhatsApp
           </a>
