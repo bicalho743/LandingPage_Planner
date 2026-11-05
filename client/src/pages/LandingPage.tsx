@@ -312,7 +312,7 @@ export default function LandingPage() {
         <nav className="lp-nav">
           <a href="#funcionalidades" onClick={(e) => { e.preventDefault(); scrollTo("funcionalidades"); }}>Funcionalidades</a>
           <a href="#planos" onClick={(e) => { e.preventDefault(); scrollTo("planos"); }}>Planos</a>
-          <a href="#depoimentos" onClick={(e) => { e.preventDefault(); scrollTo("depoimentos"); }}>Depoimentos</a>
+          <a href="#compromissos" onClick={(e) => { e.preventDefault(); scrollTo("compromissos"); }}>Compromissos</a>
           <a href="#como-funciona" onClick={(e) => { e.preventDefault(); scrollTo("como-funciona"); }}>Como funciona</a>
           <a href="#duvidas" onClick={(e) => { e.preventDefault(); scrollTo("duvidas"); }}>Dúvidas</a>
           <a href="#baixar" onClick={(e) => { e.preventDefault(); scrollTo("baixar"); }}>Baixar o app</a>
@@ -599,41 +599,34 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <section className="lp-section lp-testimonials" id="depoimentos">
+      {/* ── COMPROMISSOS (no lugar dos depoimentos, até chegarem os relatos de clientes reais) ── */}
+      <section className="lp-section lp-testimonials" id="compromissos">
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }} className="lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <div className="lp-section-eyebrow">Depoimentos</div>
-          <h2>Organizers que já <em>transformaram</em><br />seu negócio</h2>
-          <p className="lp-section-sub" style={{ margin: "0 auto" }}>Mulheres reais, resultados reais — de São Paulo a Recife.</p>
+          <div className="lp-section-eyebrow">Nossos compromissos</div>
+          <h2>Experimente <em>sem risco</em></h2>
+          <p className="lp-section-sub" style={{ margin: "0 auto" }}>O que você pode esperar do Planner Organiza desde o primeiro dia.</p>
         </div>
         <div className="lp-t-grid">
           {[
-            {
-              text: "Antes eu mandava proposta no WhatsApp sem nem formatação. Hoje mando um PDF lindo com meu logo e a cliente fica impressionada. Fechei 3 novos projetos no primeiro mês.",
-              name: "Camila Leal", role: "Personal Organizer · São Paulo, SP",
-              initials: "CL", color: "linear-gradient(135deg, #2E4A7A, #B8973C)",
-              result: "↑ 3 novos fechamentos no 1º mês"
-            },
-            {
-              text: "O controle financeiro mudou tudo pra mim. Eu não sabia nem o que tinha entrado no mês. Agora sei exatamente quanto faturei, quem está em aberto e como está minha previsão de receita.",
-              name: "Juliana Matos", role: "Personal Organizer · Recife, PE",
-              initials: "JM", color: "linear-gradient(135deg, #B8973C, #2E4A7A)",
-              result: "Clareza financeira total"
-            },
-          ].map((t, i) => (
-            <div className="lp-t-card lp-reveal" key={i} ref={(el) => addRevealRef(el, revealIdx++)}>
-              <span className="quote-mark">"</span>
-              <p className="lp-t-text">{t.text}</p>
-              <div className="lp-t-author">
-                <div className="lp-t-avatar" style={{ background: t.color }}>{t.initials}</div>
-                <div>
-                  <p className="lp-t-name">{t.name}</p>
-                  <p className="lp-t-role">{t.role}</p>
-                  <span className="lp-t-result">{t.result}</span>
-                </div>
-              </div>
+            { icone: "🗓️", titulo: "7 dias grátis, sem cartão", texto: "Use tudo antes de decidir. Se não for para você, é só não assinar: nada é cobrado." },
+            { icone: "💬", titulo: "Suporte de gente de verdade", texto: "Ficou com dúvida? Fale no WhatsApp com quem conhece o app, não com um robô." },
+            { icone: "🔒", titulo: "Seus dados protegidos", texto: "Seguimos a LGPD. Os dados das suas clientes ficam guardados com segurança e não são compartilhados." },
+            { icone: "↩️", titulo: "Cancele quando quiser", texto: "Sem fidelidade e sem multa. Você cancela pela sua conta, sem precisar pedir para ninguém." },
+          ].map((c) => (
+            <div className="lp-t-card lp-compromisso lp-reveal" key={c.titulo} ref={(el) => addRevealRef(el, revealIdx++)}>
+              <span className="lp-compromisso-icone" aria-hidden="true">{c.icone}</span>
+              <h3>{c.titulo}</h3>
+              <p>{c.texto}</p>
             </div>
           ))}
+        </div>
+        <div className="lp-convite-relato lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <p>Já usa o Planner Organiza? Conte como está sendo: a sua história pode aparecer aqui.</p>
+          <a href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Quero%20contar%20como%20est%C3%A1%20sendo%20usar%20o%20Planner%20Organiza"
+             className="lp-btn-primary" target="_blank" rel="noreferrer"
+             onClick={() => rastrear("contar_experiencia", "ContarExperiencia", { origem: "compromissos" }, true)}>
+            Contar minha experiência
+          </a>
         </div>
       </section>
 
