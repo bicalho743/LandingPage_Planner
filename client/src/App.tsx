@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import LandingPage from "@/pages/LandingPage";
 import Planos from "@/pages/Planos";
+import Suporte from "@/pages/Suporte";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -39,6 +40,7 @@ function Router() {
         <Route path="/" component={LandingPage}/>
         <Route path="/home" component={Home}/>
         <Route path="/planos" component={Planos}/>
+        <Route path="/suporte" component={Suporte}/>
         <Route path="/registro" component={Registro}/>
         <Route path="/checkout" component={Checkout}/>
         <Route path="/sucesso" component={Sucesso}/>

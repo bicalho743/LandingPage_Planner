@@ -980,3 +980,21 @@ button, .button {
 .lp-convite-relato { max-width: 880px; margin: 2rem auto 0; text-align: center; }
 .lp-convite-relato p { color: var(--lp-text-mid); margin: 0 0 1rem; }
 .lp-convite-relato .lp-btn-primary { display: inline-block; text-decoration: none; }
+
+/* Página de suporte (/suporte) */
+.lp-suporte .lp-header { position: sticky; }
+.sup-main { max-width: 720px; margin: 0 auto; padding: 3.5rem 1.25rem 4rem; }
+.sup-main h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 2.8rem; font-weight: 600; line-height: 1.1; color: var(--lp-text); margin: 0 0 1rem; }
+.sup-main h1 em { color: var(--terracota); font-style: italic; font-weight: 500; }
+.sup-main h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.8rem; font-weight: 600; color: var(--lp-text); margin: 2.75rem 0 .5rem; }
+.sup-intro { color: var(--lp-text-mid); line-height: 1.75; margin: 0 0 1.75rem; }
+.sup-contatos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sup-contato { display: flex; align-items: center; gap: 14px; padding: 1.1rem 1.25rem; border: 1px solid var(--lp-border);
+  border-radius: 16px; background: #fff; text-decoration: none; color: var(--lp-text); transition: border-color .15s, transform .15s; }
+.sup-contato:hover { border-color: var(--gold); transform: translateY(-1px); }
+.sup-contato b { display: block; font-size: 1rem; }
+.sup-contato small { color: var(--lp-text-mid); font-size: .85rem; word-break: break-all; }
+.sup-icone { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #F6EFD9; font-size: 1.3rem; flex: none; }
+.sup-links { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 2.5rem; font-size: .9rem; }
+.sup-links a { color: var(--sage); }
+@media (max-width: 600px) { .sup-contatos { grid-template-columns: 1fr; } .sup-main h1 { font-size: 2.2rem; } }
