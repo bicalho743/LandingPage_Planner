@@ -775,7 +775,7 @@ export default function LandingPage() {
           <a href="https://app.plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
           <a href="https://app.plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
           <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
-          <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Suporte</a>
+          <a href="/suporte">Suporte</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
         </div>
       </footer>
