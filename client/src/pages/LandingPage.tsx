@@ -626,16 +626,11 @@ export default function LandingPage() {
       {/* ── PRICING ── */}
       <section className="lp-section lp-pricing" id="planos">
         <div style={{ marginBottom: "3.5rem" }} className="lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <div className="lp-section-eyebrow">Planos · cupom de lançamento</div>
+          <div className="lp-section-eyebrow">Planos</div>
           <h2>Custa menos que <em>30 minutos</em><br />do seu trabalho por mês</h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
             Uma proposta a mais fechada no ano já paga o plano anual. Acesso completo nos dois planos e
             7 dias grátis, sem cartão de crédito.
-          </p>
-          <p className="lp-fundadora">
-            <strong>Cupom de lançamento ORGANIZA:</strong> 25% de desconto nos 6 primeiros meses.
-            No mensal, cerca de R$ 29,90 por mês nos 6 primeiros meses; no anual, R$ 222,75 no
-            primeiro ano. Digite o cupom na tela de pagamento.
           </p>
         </div>
         <div className="lp-pricing-grid">
