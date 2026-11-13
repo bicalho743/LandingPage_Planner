@@ -17,14 +17,14 @@ assinatura (Stripe). A arquitetura completa e as pendências gerais estão no RE
 
 | Seção | Detalhe |
 |---|---|
-| Topo | título que muda conforme o anúncio (`?tema=retorno|preco|financeiro|mei|agenda`), cadastro com e-mail, botões **Google Play** e **"No iPhone, use no Safari"** |
+| Topo | título que muda conforme o anúncio (`?tema=retorno|preco|financeiro|mei|agenda`), cadastro com e-mail, botões **Google Play** e **App Store** |
 | Dores e tour em vídeo | vídeo em pé no celular e deitado no computador |
 | Como funciona | 5 passos com **vídeos de tela do app** em moldura de celular (`client/public/videos/`), que tocam só quando aparecem |
 | Funcionalidades e prévia da proposta | |
 | Antes e depois | |
 | Nossos compromissos | 7 dias grátis, suporte humano, LGPD, cancelamento sem multa; convite para contar a experiência (no lugar dos depoimentos, até haver relatos reais) |
 | Planos | mensal R$ 39,90 e anual R$ 297, com o cupom ORGANIZA |
-| Baixe o app | Android e iPhone (Safari), com a instrução de "Adicionar à Tela de Início" |
+| Baixe o app | Android (Google Play) e iPhone (App Store) |
 | Dúvidas | perguntas frequentes e WhatsApp |
 | Rodapé | chamada final, termos, privacidade, suporte |
 
@@ -32,7 +32,7 @@ Páginas extras: **/suporte** (contato e respostas rápidas; é a URL de suporte
 
 ## Medição
 
-- Google Analytics e Pixel do Meta (`client/index.html`). Cliques em cadastro, Google Play, Safari, WhatsApp e
+- Google Analytics e Pixel do Meta (`client/index.html`). Cliques em cadastro, Google Play, App Store, WhatsApp e
   "Contar minha experiência" viram eventos (`rastrear()` em `LandingPage.tsx`).
 - A origem da visita (tema do anúncio e UTMs) segue junto para o cadastro no sistema.
 
@@ -50,7 +50,6 @@ feita no sistema web).
 
 ## Pendências da página
 
-- [ ] Quando o app sair na App Store: trocar o botão "No iPhone, use no Safari" pelo selo da App Store.
 - [ ] Depoimentos reais (com autorização) no lugar de "Nossos compromissos".
 - [ ] Remover `promo` do Render e da Locaweb depois que os anúncios apontarem para o domínio principal.
 - [ ] Limpar rotas e páginas antigas do servidor (checkout próprio, testes de webhook) que não são mais usadas.

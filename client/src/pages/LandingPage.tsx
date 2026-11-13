@@ -10,7 +10,7 @@ function irParaPlay(origem: string) {
   rastrear("abrir_google_play", "AbrirGooglePlay", { origem }, true);
 }
 
-// Botão no formato do selo oficial "Disponível no Google Play" (por enquanto só Android)
+// Botão no formato do selo oficial "Disponível no Google Play"
 function BotaoGooglePlay({ origem, claro = false }: { origem: string; claro?: boolean }) {
   return (
     <a className={`lp-play${claro ? " claro" : ""}`} href={PLAY_URL} target="_blank" rel="noreferrer"
@@ -52,25 +52,18 @@ function VideoCelular({ nome, alt }: { nome: string; alt: string }) {
   );
 }
 
-// iPhone: enquanto o app não está na App Store, o sistema roda no Safari e vira ícone na
-// tela de início ("Adicionar à Tela de Início"). Mesmo formato do selo da Google Play.
-function BotaoSafari({ origem, claro = false }: { origem: string; claro?: boolean }) {
+// App na App Store (iPhone). Mesmo formato do selo da Google Play.
+const APP_STORE_URL = "https://apps.apple.com/br/app/planner-organiza/id6832855561";
+
+function BotaoAppStore({ origem, claro = false }: { origem: string; claro?: boolean }) {
   return (
-    <a className={`lp-play${claro ? " claro" : ""}`} href={APP_URL} target="_blank" rel="noreferrer"
-       onClick={() => rastrear("abrir_iphone_safari", "AbrirIphoneSafari", { origem }, true)}
-       aria-label="No iPhone, use o Planner Organiza no Safari">
-      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
-        <defs>
-          <linearGradient id="lpBussola" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#1AC8FC" /><stop offset="1" stopColor="#1A73E8" />
-          </linearGradient>
-        </defs>
-        <circle cx="14" cy="14" r="13" fill="url(#lpBussola)" />
-        <circle cx="14" cy="14" r="10.5" fill="none" stroke="#fff" strokeOpacity=".55" strokeWidth="1" strokeDasharray="1 2.3" />
-        <path d="M20.5 7.5 15.4 15.4 12.6 12.6z" fill="#FF3B30" />
-        <path d="M7.5 20.5 12.6 12.6 15.4 15.4z" fill="#fff" />
+    <a className={`lp-play${claro ? " claro" : ""}`} href={APP_STORE_URL} target="_blank" rel="noreferrer"
+       onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem }, true)}
+       aria-label="Baixar o app Planner Organiza na App Store">
+      <svg width="24" height="28" viewBox="0 0 384 470" aria-hidden="true">
+        <path fill="#fff" d="M318.7 249.9c-.6-55.3 45.2-81.9 47.2-83.2-25.7-37.6-65.8-42.8-80.1-43.4-34.1-3.5-66.5 20.1-83.8 20.1-17.3 0-44-19.6-72.3-19.1-37.2.5-71.5 21.6-90.7 54.9-38.7 67.1-9.9 166.5 27.8 221 18.4 26.6 40.4 56.6 69.2 55.5 27.8-1.1 38.3-18 71.9-18s43.1 18 72.5 17.4c29.9-.5 48.9-27.1 67.2-53.9 21.2-30.9 29.9-60.8 30.4-62.4-.7-.3-58.3-22.4-58.9-88.9zM263.3 87.4c15.3-18.6 25.7-44.4 22.8-70.1-22.1.9-48.9 14.7-64.7 33.3-14.2 16.4-26.7 42.7-23.3 67.8 24.7 1.9 49.9-12.5 65.2-31z" />
       </svg>
-      <span><small>No iPhone, use no</small>Safari</span>
+      <span><small>Baixar na</small>App Store</span>
     </a>
   );
 }
@@ -79,7 +72,7 @@ function BotoesApp({ origem, claro = false }: { origem: string; claro?: boolean 
   return (
     <div className="lp-lojas">
       <BotaoGooglePlay origem={origem} claro={claro} />
-      <BotaoSafari origem={origem} claro={claro} />
+      <BotaoAppStore origem={origem} claro={claro} />
     </div>
   );
 }
@@ -270,7 +263,7 @@ export default function LandingPage() {
     },
     {
       q: "Tem app para celular?",
-      a: "Sim, para Android: é só baixar na Google Play e entrar com a mesma conta. Tudo o que você faz no celular aparece no computador, e o contrário também. No iPhone, por enquanto, use pelo Safari: abra app.plannerorganiza.com.br, toque em Compartilhar e em \"Adicionar à Tela de Início\" para ter o ícone na tela.",
+      a: "Sim, para Android e iPhone: é só baixar na Google Play ou na App Store e entrar com a mesma conta. Tudo o que você faz no celular aparece no computador, e o contrário também.",
     },
     {
       q: "Posso cancelar quando quiser?",
@@ -661,7 +654,7 @@ export default function LandingPage() {
               <li>Financeiro completo</li>
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
-              <li>App Android + acesso web</li>
+              <li>App Android e iPhone + acesso web</li>
             </ul>
             <button className="lp-btn-plan outline" onClick={() => irParaCadastro("plano_mensal")}>
               Começar grátis
@@ -685,7 +678,7 @@ export default function LandingPage() {
               <li>Financeiro completo</li>
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
-              <li>App Android + acesso web</li>
+              <li>App Android e iPhone + acesso web</li>
             </ul>
             <button className="lp-btn-plan solid" onClick={() => irParaCadastro("plano_anual")}>
               Começar grátis por 7 dias
@@ -706,8 +699,7 @@ export default function LandingPage() {
             </p>
             <BotoesApp origem="secao_baixar" claro />
             <p className="lp-baixar-nota">
-              No iPhone: abra no Safari, toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.
-              O Planner Organiza fica com ícone, como um app.
+              Baixe grátis na Google Play ou na App Store e entre com a mesma conta do computador.
             </p>
           </div>
           <img className="lp-baixar-img" src="/app-celulares.webp" width="670" height="564" loading="lazy"
@@ -775,6 +767,7 @@ export default function LandingPage() {
           <a href="https://app.plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
           <a href="https://app.plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
           <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
+          <a href={APP_STORE_URL} target="_blank" rel="noreferrer" onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem: "rodape_links" }, true)}>App iPhone</a>
           <a href="/suporte">Suporte</a>
           <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
         </div>
