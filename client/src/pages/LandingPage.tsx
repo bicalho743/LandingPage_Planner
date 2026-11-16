@@ -258,6 +258,10 @@ export default function LandingPage() {
 
   const faqItems = [
     {
+      q: "O que é a Cléo?",
+      a: "É a assistente de voz do app, em versão de testes (Prévia). Você fala, por exemplo, \"marca a Ana na sexta às 14h\", e ela abre o compromisso já preenchido. Também faz propostas, lançamentos e cadastro de clientes. Ela não grava nada sozinha: você confere na tela e diz \"salvar\". Para entender o pedido, o texto do que você falou e os nomes das suas clientes são enviados a um serviço de inteligência artificial.",
+    },
+    {
       q: "Preciso ter experiência com tecnologia?",
       a: "Não. O Planner Organiza foi criado pensando em personal organizers, não em programadoras. A interface é intuitiva e você começa a usar em minutos — sem tutoriais longos.",
     },
@@ -303,6 +307,7 @@ export default function LandingPage() {
           Planner <span>Organiza</span>
         </a>
         <nav className="lp-nav">
+          <a href="#cleo" onClick={(e) => { e.preventDefault(); scrollTo("cleo"); }}>Cléo</a>
           <a href="#funcionalidades" onClick={(e) => { e.preventDefault(); scrollTo("funcionalidades"); }}>Funcionalidades</a>
           <a href="#planos" onClick={(e) => { e.preventDefault(); scrollTo("planos"); }}>Planos</a>
           <a href="#compromissos" onClick={(e) => { e.preventDefault(); scrollTo("compromissos"); }}>Compromissos</a>
@@ -318,6 +323,9 @@ export default function LandingPage() {
         <div className="lp-hero-bg" />
 
         <div className="lp-hero-left">
+          <a href="#cleo" className="lp-novidade" onClick={(e) => { e.preventDefault(); rastrear("ver_cleo", "VerCleo", { origem: "hero" }, true); scrollTo("cleo"); }}>
+            <b>Novo</b> Fale e a Cléo preenche por você <span className="lp-previa">Prévia</span>
+          </a>
           <div className="lp-eyebrow">{tema ? tema.eyebrow : "Para Personal Organizers"}</div>
           {tema ? (
             <h1>{tema.titulo}<br /><em>{tema.destaque}</em></h1>
@@ -372,7 +380,7 @@ export default function LandingPage() {
               <span className="lp-stat-label">para sua 1ª proposta</span>
             </div>
             <div className="lp-stat-item">
-              <span className="lp-stat-num">R$ 24,75</span>
+              <span className="lp-stat-num">R$ 16,66</span>
               <span className="lp-stat-label">por mês no plano anual</span>
             </div>
           </div>
@@ -392,6 +400,65 @@ export default function LandingPage() {
         <div className="lp-trust-item">🏆 <strong>Proposta em</strong> &nbsp;menos de 5 minutos</div>
         <div className="lp-trust-item">💳 <strong>Cancele quando quiser</strong> &nbsp;sem burocracia</div>
       </div>
+
+      {/* ── CLÉO: assistente de voz (novidade, em fase de testes) ── */}
+      <section className="lp-cleo" id="cleo">
+        <div className="lp-cleo-texto lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <div className="lp-section-eyebrow">Novidade no app <span className="lp-previa">Prévia</span></div>
+          <h2>Fale com a <em>Cléo</em>.<br />Ela preenche para você.</h2>
+          <p className="lp-section-sub">
+            A Cléo é a assistente de voz do Planner Organiza. Você pede do jeito que fala, ela abre a tela certa
+            e deixa o formulário pronto. Você só confere e diz <strong>"salvar"</strong>.
+          </p>
+          <ul className="lp-cleo-frases">
+            <li>“Marca a Ana na sexta às 14h”</li>
+            <li>“Nova proposta para a Carla, cozinha, 3 mil, sinal de mil”</li>
+            <li>“Lança uma despesa de 80 reais de material”</li>
+            <li>“Cadastra a Marina, aniversário dia 14 de junho”</li>
+          </ul>
+          <ul className="lp-proposal-points">
+            <li>Abre compromisso, proposta, lançamento ou cliente já preenchido</li>
+            <li>Corrige por voz: “muda o valor para 500”, “passa para as 15h”</li>
+            <li>Nada é gravado sem a sua confirmação</li>
+            <li>Em português, no celular, com o microfone do próprio aparelho</li>
+          </ul>
+          <button className="lp-proposal-cta" onClick={() => irParaCadastro("cleo")}>
+            Quero testar a Cléo
+          </button>
+          <p className="lp-cleo-nota">
+            Em fase de testes: ela ainda está aprendendo e evolui a cada atualização do app. Confira sempre o que foi
+            preenchido antes de salvar. Para entender o pedido, o texto falado e os nomes das clientes são enviados a um
+            serviço de inteligência artificial.
+          </p>
+        </div>
+
+        <div className="lp-cleo-cel lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)} aria-hidden="true">
+          <div className="lp-cleo-tela">
+            <div className="lp-cleo-topo"><span>Cléo</span><span className="lp-previa">Prévia</span></div>
+            <div className="lp-cleo-bolha eu">Marca a Ana na sexta às 14h</div>
+            <div className="lp-cleo-bolha ela">Abri o compromisso com a Ana. Confere e me diz “salvar”.</div>
+            <div className="lp-cleo-form">
+              <p className="lp-cleo-form-titulo">Novo compromisso</p>
+              <div><span>Título</span><b>Visita</b></div>
+              <div><span>Dia</span><b>20/11/2026</b></div>
+              <div><span>Hora</span><b>14:00</b></div>
+              <div><span>Cliente</span><b>Ana Souza</b></div>
+              <div className="lp-cleo-salvar">Salvar</div>
+            </div>
+            <div className="lp-cleo-mic"><span>🎙️</span></div>
+          </div>
+        </div>
+
+        <div className="lp-novidades lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <p className="lp-novidades-titulo">Também novo no app</p>
+          <ul>
+            <li><b>Resumo do dia no celular</b>Todo dia de manhã, o que fazer hoje, sem abrir o app.</li>
+            <li><b>Assine pelo celular</b>Pague direto na Google Play ou na App Store, no mesmo plano do site.</li>
+            <li><b>Entrar com Google ou Apple</b>Cadastro em poucos toques, sem criar senha.</li>
+            <li><b>Aniversários e retornos</b>Na agenda, com o WhatsApp da cliente a um toque.</li>
+          </ul>
+        </div>
+      </section>
 
       {/* ── DORES ── */}
       <div className="lp-pains" id="dores">
@@ -660,10 +727,10 @@ export default function LandingPage() {
           <div className="lp-pricing-card featured lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
             <p className="lp-pricing-plan">Melhor custo-benefício</p>
             <h3>Anual</h3>
-            <span className="lp-badge-popular">★ 38% mais barato que o mensal</span>
-            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Equivale a R$ 24,75/mês. Um ano inteiro de negócio organizado.</p>
+            <span className="lp-badge-popular">★ 58% mais barato que o mensal</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Equivale a R$ 16,66/mês. Um ano inteiro de negócio organizado.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>297</p>
+              <p className="lp-price-val"><sup>R$</sup>199,90</p>
               <p className="lp-price-period">por ano · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">

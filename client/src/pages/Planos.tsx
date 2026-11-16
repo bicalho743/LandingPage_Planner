@@ -75,10 +75,10 @@ export default function Planos() {
             <h3>Anual</h3>
             <span className="lp-badge-popular">★ Economize 2 meses</span>
             <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>
-              Equivale a R$ 24,75/mês. Um ano inteiro de negócio organizado.
+              Equivale a R$ 16,66/mês. Um ano inteiro de negócio organizado.
             </p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>297</p>
+              <p className="lp-price-val"><sup>R$</sup>199,90</p>
               <p className="lp-price-period">por ano · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
