@@ -259,7 +259,7 @@ export default function LandingPage() {
   const faqItems = [
     {
       q: "O que é a Cléo?",
-      a: "É a assistente de voz do app, em versão de testes (Prévia). Você fala, por exemplo, \"marca a Ana na sexta às 14h\", e ela abre o compromisso já preenchido. Também faz propostas, lançamentos e cadastro de clientes. Ela não grava nada sozinha: você confere na tela e diz \"salvar\". Para entender o pedido, o texto do que você falou e os nomes das suas clientes são enviados a um serviço de inteligência artificial.",
+      a: "É a assistente de voz do app, em versão de testes (Prévia), incluída no Plano Pro (mensal ou anual). Você fala, por exemplo, \"marca a Ana na sexta às 14h\", e ela abre o compromisso já preenchido. Também faz propostas, lançamentos e cadastro de clientes. Ela não grava nada sozinha: você confere na tela e diz \"salvar\". Para entender o pedido, o texto do que você falou e os nomes das suas clientes são enviados a um serviço de inteligência artificial.",
     },
     {
       q: "Preciso ter experiência com tecnologia?",
@@ -421,6 +421,7 @@ export default function LandingPage() {
             <li>Corrige por voz: “muda o valor para 500”, “passa para as 15h”</li>
             <li>Nada é gravado sem a sua confirmação</li>
             <li>Em português, no celular, com o microfone do próprio aparelho</li>
+            <li>Inclusa no <strong>Plano Pro</strong>, mensal ou anual</li>
           </ul>
           <button className="lp-proposal-cta" onClick={() => irParaCadastro("cleo")}>
             Quero testar a Cléo
@@ -717,6 +718,7 @@ export default function LandingPage() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>App Android e iPhone + acesso web</li>
+              <li>Cléo, assistente de voz <span className="lp-previa">Prévia</span></li>
             </ul>
             <button className="lp-btn-plan outline" onClick={() => irParaCadastro("plano_mensal")}>
               Começar grátis
@@ -741,6 +743,7 @@ export default function LandingPage() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>App Android e iPhone + acesso web</li>
+              <li>Cléo, assistente de voz <span className="lp-previa">Prévia</span></li>
             </ul>
             <button className="lp-btn-plan solid" onClick={() => irParaCadastro("plano_anual")}>
               Começar grátis por 7 dias

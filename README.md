@@ -23,7 +23,7 @@ assinatura (Stripe). A arquitetura completa e as pendências gerais estão no RE
 | Funcionalidades e prévia da proposta | |
 | Antes e depois | |
 | Nossos compromissos | 7 dias grátis, suporte humano, LGPD, cancelamento sem multa; convite para contar a experiência (no lugar dos depoimentos, até haver relatos reais) |
-| Cléo (novidade) | seção logo após a barra de confiança: assistente de voz do app, em **Prévia** (selo e aviso de testes), com frases de exemplo, tela simulada e faixa "Também novo no app"; selo "Novo" no topo e item no menu |
+| Cléo (novidade) | seção logo após a barra de confiança: assistente de voz do app, em **Prévia** (selo e aviso de testes), incluída no Plano Pro (mensal e anual), com frases de exemplo, tela simulada e faixa "Também novo no app"; selo "Novo" no topo e item no menu |
 | Planos | mensal R$ 39,90 e anual R$ 199,90 (sem cupom; o mesmo preço no site e nas lojas) |
 | Baixe o app | Android (Google Play) e iPhone (App Store) |
 | Dúvidas | perguntas frequentes e WhatsApp |

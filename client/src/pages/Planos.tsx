@@ -62,6 +62,7 @@ export default function Planos() {
               <li>Financeiro completo</li>
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
+              <li>Cléo, assistente de voz (Prévia)</li>
               <li>App Android + acesso web</li>
             </ul>
             <button className="lp-btn-plan outline" onClick={irParaApp}>
@@ -88,6 +89,7 @@ export default function Planos() {
               <li>Financeiro completo</li>
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
+              <li>Cléo, assistente de voz (Prévia)</li>
               <li>App Android + acesso web</li>
             </ul>
             <button className="lp-btn-plan solid" onClick={irParaApp}>
