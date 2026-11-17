@@ -45,6 +45,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   const caminho = req.path.replace(/\/+$/, "") || "/";
   const destino = PAGINAS_LEGAIS[caminho];
   if (destino) return res.redirect(302, destino);
+  // /suporte/ e /excluir-conta/ (com barra, como nas lojas) caem na mesma página sem barra
+  if (req.path.length > 1 && req.path.endsWith("/") && !req.path.includes(".")) {
+    const q = req.originalUrl.slice(req.path.length);
+    return res.redirect(301, caminho + q);
+  }
   next();
 });
 
