@@ -1085,4 +1085,7 @@ button, .button {
 .sup-icone { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #F6EFD9; font-size: 1.3rem; flex: none; }
 .sup-links { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 2.5rem; font-size: .9rem; }
 .sup-links a { color: var(--sage); }
+ol.sup-passos { list-style: decimal; } ul.sup-passos { list-style: disc; }
+.sup-passos { margin: .75rem 0 1.5rem 1.25rem; padding-left: .5rem; display: flex; flex-direction: column; gap: .6rem; color: var(--lp-text-mid); line-height: 1.6; }
+.sup-passos b { color: var(--lp-text); }
 @media (max-width: 600px) { .sup-contatos { grid-template-columns: 1fr; } .sup-main h1 { font-size: 2.2rem; } }

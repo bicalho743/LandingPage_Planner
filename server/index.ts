@@ -35,6 +35,19 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Páginas legais no domínio do app (padrão Candeia Tec): o texto oficial fica no sistema web,
+// então /privacidade e /termos levam para lá (o link curto vale nas lojas e no rodapé).
+const PAGINAS_LEGAIS: Record<string, string> = {
+  "/privacidade": "https://app.plannerorganiza.com.br/?show_politica=true",
+  "/termos": "https://app.plannerorganiza.com.br/?show_termos=true",
+};
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const caminho = req.path.replace(/\/+$/, "") || "/";
+  const destino = PAGINAS_LEGAIS[caminho];
+  if (destino) return res.redirect(302, destino);
+  next();
+});
+
 // Aplica o middleware de redirecionamento HTTPS
 app.use(forceHttps);
 

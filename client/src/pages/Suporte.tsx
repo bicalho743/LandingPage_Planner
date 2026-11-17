@@ -28,11 +28,11 @@ const PERGUNTAS = [
   },
   {
     q: "Como excluo a minha conta?",
-    a: "No app, abra Menu > Perfil e marca e toque em \"Excluir minha conta\", no fim da tela. Seus dados são apagados e, se houver assinatura, ela é cancelada. Se preferir, peça a exclusão pelo WhatsApp ou por e-mail.",
+    a: "No app, abra Menu > Perfil e marca e toque em \"Excluir minha conta\", no fim da tela. Seus dados são apagados e a assinatura feita pelo site é cancelada. Assinatura do Google Play ou da App Store precisa ser cancelada na própria loja. Se preferir, peça a exclusão pelo WhatsApp ou por e-mail (veja plannerorganiza.com.br/excluir-conta).",
   },
   {
     q: "Meus dados estão seguros?",
-    a: "Sim. Seguimos a LGPD. Os seus dados e os das suas clientes ficam guardados com segurança e não são compartilhados com terceiros.",
+    a: "Sim. Seguimos a LGPD e não vendemos dados. Eles ficam guardados com segurança e só passam pelos fornecedores necessários para o app funcionar (hospedagem, login, pagamentos e, se você permitir, a IA da assistente Cléo). Os detalhes estão na Política de Privacidade.",
   },
 ];
 
@@ -83,8 +83,9 @@ export default function Suporte() {
         </div>
 
         <p className="sup-links">
-          <a href={`${APP_URL}/?show_politica=true`} target="_blank" rel="noreferrer">Política de Privacidade</a>
-          <a href={`${APP_URL}/?show_termos=true`} target="_blank" rel="noreferrer">Termos de Uso</a>
+          <a href="/privacidade">Política de Privacidade</a>
+          <a href="/termos">Termos de Uso</a>
+          <a href="/excluir-conta">Excluir conta</a>
           <a href="/">Conheça o Planner Organiza</a>
         </p>
       </main>

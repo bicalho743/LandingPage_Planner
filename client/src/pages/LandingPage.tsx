@@ -275,7 +275,7 @@ export default function LandingPage() {
     },
     {
       q: "Meus dados ficam seguros?",
-      a: "Completamente. O sistema segue a LGPD e seus dados — e os dos seus clientes — são armazenados com segurança e nunca compartilhados com terceiros.",
+      a: "Completamente. O sistema segue a LGPD e seus dados — e os dos seus clientes — são armazenados com segurança. Não vendemos dados: eles só passam pelos fornecedores necessários para o app funcionar, como explica a Política de Privacidade.",
     },
     {
       q: "Como funciona o período de teste?",
@@ -671,7 +671,7 @@ export default function LandingPage() {
           {[
             { icone: "🗓️", titulo: "7 dias grátis, sem cartão", texto: "Use tudo antes de decidir. Se não for para você, é só não assinar: nada é cobrado." },
             { icone: "💬", titulo: "Suporte de gente de verdade", texto: "Ficou com dúvida? Fale no WhatsApp com quem conhece o app, não com um robô." },
-            { icone: "🔒", titulo: "Seus dados protegidos", texto: "Seguimos a LGPD. Os dados das suas clientes ficam guardados com segurança e não são compartilhados." },
+            { icone: "🔒", titulo: "Seus dados protegidos", texto: "Seguimos a LGPD. Os dados das suas clientes ficam guardados com segurança e nunca são vendidos." },
             { icone: "↩️", titulo: "Cancele quando quiser", texto: "Sem fidelidade e sem multa. Você cancela pela sua conta, sem precisar pedir para ninguém." },
           ].map((c) => (
             <div className="lp-t-card lp-compromisso lp-reveal" key={c.titulo} ref={(el) => addRevealRef(el, revealIdx++)}>
@@ -829,8 +829,9 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
         <div className="lp-footer-links">
-          <a href="https://app.plannerorganiza.com.br/?show_termos=true" target="_blank" rel="noreferrer">Termos de Uso</a>
-          <a href="https://app.plannerorganiza.com.br/?show_politica=true" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          <a href="/termos">Termos de Uso</a>
+          <a href="/privacidade">Política de Privacidade</a>
+          <a href="/excluir-conta">Excluir conta</a>
           <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
           <a href={APP_STORE_URL} target="_blank" rel="noreferrer" onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem: "rodape_links" }, true)}>App iPhone</a>
           <a href="/suporte">Suporte</a>
