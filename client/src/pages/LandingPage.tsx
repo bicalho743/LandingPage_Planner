@@ -683,7 +683,7 @@ export default function LandingPage() {
         </div>
         <div className="lp-convite-relato lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
           <p>Já usa o Planner Organiza? Conte como está sendo: a sua história pode aparecer aqui.</p>
-          <a href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Quero%20contar%20como%20est%C3%A1%20sendo%20usar%20o%20Planner%20Organiza"
+          <a href="https://wa.me/5531987428641?text=Ol%C3%A1!%20Quero%20contar%20como%20est%C3%A1%20sendo%20usar%20o%20Planner%20Organiza"
              className="lp-btn-primary" target="_blank" rel="noreferrer"
              onClick={() => rastrear("contar_experiencia", "ContarExperiencia", { origem: "compromissos" }, true)}>
             Contar minha experiência
@@ -784,7 +784,7 @@ export default function LandingPage() {
           <div className="lp-duvida-card">
             <h3>Ainda tem alguma dúvida?</h3>
             <p>Fale com a gente no WhatsApp. Quem responde é gente de verdade, geralmente em poucas horas.</p>
-            <a href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20o%20Planner%20Organiza"
+            <a href="https://wa.me/5531987428641?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20o%20Planner%20Organiza"
                className="lp-btn-primary" target="_blank" rel="noreferrer"
                onClick={() => rastrear("whatsapp", "Contact", { origem: "duvidas" })}>
               Enviar uma mensagem
@@ -819,7 +819,7 @@ export default function LandingPage() {
             Começar 7 dias grátis
           </button>
           <BotoesApp origem="rodape" claro />
-          <a href="https://wa.me/5531992041112" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
+          <a href="https://wa.me/5531987428641" className="lp-btn-outline-white" target="_blank" rel="noreferrer">
             Falar no WhatsApp
           </a>
         </div>
@@ -835,13 +835,13 @@ export default function LandingPage() {
           <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
           <a href={APP_STORE_URL} target="_blank" rel="noreferrer" onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem: "rodape_links" }, true)}>App iPhone</a>
           <a href="/suporte">Suporte</a>
-          <a href="https://wa.me/5531992041112" target="_blank" rel="noreferrer">Contato</a>
+          <a href="https://wa.me/5531987428641" target="_blank" rel="noreferrer">Contato</a>
         </div>
       </footer>
 
       {/* ── WHATSAPP FLOAT ── */}
       <a
-        href="https://wa.me/5531992041112?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Planner%20Organiza"
+        href="https://wa.me/5531987428641?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Planner%20Organiza"
         className="lp-wa-float"
         target="_blank"
         rel="noreferrer"

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 // Página pública de exclusão de conta (link exigido pelo Google Play para apps com conta).
 // A exclusão em si começa dentro do app (regra da Apple); aqui explicamos o caminho e o pedido por contato.
-const WHATSAPP = "https://wa.me/5531992041112?text=Ol%C3%A1!%20Quero%20excluir%20a%20minha%20conta%20do%20Planner%20Organiza";
+const WHATSAPP = "https://wa.me/5531987428641?text=Ol%C3%A1!%20Quero%20excluir%20a%20minha%20conta%20do%20Planner%20Organiza";
 const EMAIL = "contato@plannerorganiza.com.br";
 const APP_URL = "https://app.plannerorganiza.com.br";
 
@@ -42,7 +42,7 @@ export default function ExcluirConta() {
         <div className="sup-contatos">
           <a className="sup-contato" href={WHATSAPP} target="_blank" rel="noreferrer">
             <span className="sup-icone" aria-hidden="true">💬</span>
-            <span><b>WhatsApp</b><small>(31) 99204-1112</small></span>
+            <span><b>WhatsApp</b><small>(31) 98742-8641</small></span>
           </a>
           <a className="sup-contato" href={`mailto:${EMAIL}?subject=Excluir%20minha%20conta`}>
             <span className="sup-icone" aria-hidden="true">✉️</span>

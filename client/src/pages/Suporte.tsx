@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // Página de suporte (URL de suporte da App Store e da Google Play): contato e respostas rápidas.
-const WHATSAPP = "https://wa.me/5531992041112?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20Planner%20Organiza";
+const WHATSAPP = "https://wa.me/5531987428641?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20Planner%20Organiza";
 const EMAIL = "contato@plannerorganiza.com.br";
 const APP_URL = "https://app.plannerorganiza.com.br";
 
@@ -61,7 +61,7 @@ export default function Suporte() {
         <div className="sup-contatos">
           <a className="sup-contato" href={WHATSAPP} target="_blank" rel="noreferrer">
             <span className="sup-icone" aria-hidden="true">💬</span>
-            <span><b>WhatsApp</b><small>(31) 99204-1112</small></span>
+            <span><b>WhatsApp</b><small>(31) 98742-8641</small></span>
           </a>
           <a className="sup-contato" href={`mailto:${EMAIL}?subject=Suporte%20Planner%20Organiza`}>
             <span className="sup-icone" aria-hidden="true">✉️</span>
