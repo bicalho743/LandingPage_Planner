@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 // Página de suporte (URL de suporte da App Store e da Google Play): contato e respostas rápidas.
 const WHATSAPP = "https://wa.me/5531987428641?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20Planner%20Organiza";
-const EMAIL = "contato@plannerorganiza.com.br";
+const EMAIL = "contato@candeiatec.com.br";
 const APP_URL = "https://app.plannerorganiza.com.br";
 
 const PERGUNTAS = [

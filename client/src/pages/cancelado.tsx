@@ -37,8 +37,8 @@ export default function Cancelado() {
                   entre em contato com nosso suporte:
                 </p>
                 <p className="text-sm">
-                  <a href="mailto:suporte@planner-pro.com" className="text-blue-600 hover:underline">
-                    suporte@planner-pro.com
+                  <a href="mailto:contato@candeiatec.com.br" className="text-blue-600 hover:underline">
+                    contato@candeiatec.com.br
                   </a>
                 </p>
               </div>

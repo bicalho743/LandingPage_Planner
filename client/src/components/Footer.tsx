@@ -64,8 +64,8 @@ export default function Footer() {
             <div className="space-y-3 mb-8">
               <div className="flex items-center">
                 <Mail className="text-blue-400 h-4 w-4 mr-3" />
-                <a href="mailto:support@plannerorganizer.com" className="text-gray-300 hover:text-white transition-all">
-                  support@plannerorganizer.com
+                <a href="mailto:contato@candeiatec.com.br" className="text-gray-300 hover:text-white transition-all">
+                  contato@candeiatec.com.br
                 </a>
               </div>
               <div className="flex items-center">
