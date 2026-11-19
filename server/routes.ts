@@ -112,7 +112,7 @@ async function sendWelcomeEmail(email: string, resetLink: string) {
       
       // Enviar o email
       const info = await transporter.sendMail({
-        from: 'suporte@plannerpro.com',
+        from: '"Planner Organiza" <contato@candeiatec.com.br>',
         to: email,
         subject: "Bem-vindo ao Planner Organiza - Configure sua senha",
         text: emailText,

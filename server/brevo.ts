@@ -69,7 +69,7 @@ export async function sendTransactionalEmail(
       to: [{email: to}],
       sender: {
         name: "PlannerOrganiza",
-        email: "contato@plannerorganiza.com.br" // Email verificado no Brevo
+        email: "contato@candeiatec.com.br" // Precisa estar verificado no Brevo (Remetentes)
       },
       subject: subject,
       htmlContent: htmlContent,

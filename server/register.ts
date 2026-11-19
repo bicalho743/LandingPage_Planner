@@ -63,7 +63,7 @@ router.post('/api/register', async (req: Request, res: Response) => {
     let skipExistingChecks = false;
       
     // Exceção especial para o email do remetente do Brevo
-    if (email.toLowerCase() === 'contato@plannerorganiza.com.br') {
+    if (['contato@candeiatec.com.br', 'contato@plannerorganiza.com.br'].includes(email.toLowerCase())) {
       console.log(`🔄 Email especial de remetente do Brevo detectado. Permitindo novo cadastro.`);
       // Para este email específico, ignoramos as verificações de existência
       skipExistingChecks = true;
