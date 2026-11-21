@@ -3,8 +3,17 @@ import { useState, useEffect, useRef } from "react";
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
 // e é lá que ficam login, trial, assinatura e todos os dados.
 const APP_URL = "https://app.plannerorganiza.com.br";
-// App Android na Google Play (o referrer mostra no Play Console de onde veio a instalação)
-const PLAY_URL = "https://play.google.com/store/apps/details?id=com.plannerorganiza.app&referrer=utm_source%3Dlanding";
+// App Android na Google Play. O referrer leva as UTMs da visita (o Play Console separa as
+// instalações por campanha); sem UTM fica utm_source=landing.
+const PLAY_BASE = "https://play.google.com/store/apps/details?id=com.plannerorganiza.app";
+const CAMPOS_REFERRER = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+function linkPlay(): string {
+  const o = origemDaVisita();
+  const ref = new URLSearchParams();
+  CAMPOS_REFERRER.forEach((k) => { if (o[k]) ref.set(k, o[k]); });
+  if (!ref.get("utm_source")) ref.set("utm_source", "landing");
+  return `${PLAY_BASE}&referrer=${encodeURIComponent(ref.toString())}`;
+}
 
 function irParaPlay(origem: string) {
   rastrear("abrir_google_play", "AbrirGooglePlay", { origem }, true);
@@ -13,7 +22,7 @@ function irParaPlay(origem: string) {
 // Botão no formato do selo oficial "Disponível no Google Play"
 function BotaoGooglePlay({ origem, claro = false }: { origem: string; claro?: boolean }) {
   return (
-    <a className={`lp-play${claro ? " claro" : ""}`} href={PLAY_URL} target="_blank" rel="noreferrer"
+    <a className={`lp-play${claro ? " claro" : ""}`} href={linkPlay()} target="_blank" rel="noreferrer"
        onClick={() => irParaPlay(origem)} aria-label="Baixar o app Planner Organiza no Google Play">
       <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true">
         <path d="M1.2.6 14.4 14 1.2 27.4c-.4-.3-.7-.9-.7-1.6V2.2c0-.7.3-1.3.7-1.6z" fill="#00D7FE" />
@@ -53,11 +62,22 @@ function VideoCelular({ nome, alt }: { nome: string; alt: string }) {
 }
 
 // App na App Store (iPhone). Mesmo formato do selo da Google Play.
-const APP_STORE_URL = "https://apps.apple.com/br/app/planner-organiza/id6832855561";
+// Link de campanha do App Store Connect: pt = ID do provedor (só números; aparece em
+// App Analytics > Aquisição > Gerar link de campanha) e ct = campanha (até 40 caracteres).
+// Sem o ID do provedor o link fica sem campanha.
+const APP_STORE_BASE = "https://apps.apple.com/br/app/planner-organiza/id6832855561";
+const APP_STORE_PROVIDER_ID = "129749082";
+function linkAppStore(): string {
+  const o = origemDaVisita();
+  const ct = (o.utm_campaign || o.utm_content || "").slice(0, 40);
+  if (!APP_STORE_PROVIDER_ID || !ct) return APP_STORE_BASE;
+  const q = new URLSearchParams({ pt: APP_STORE_PROVIDER_ID, ct, mt: "8" });
+  return `${APP_STORE_BASE}?${q.toString()}`;
+}
 
 function BotaoAppStore({ origem, claro = false }: { origem: string; claro?: boolean }) {
   return (
-    <a className={`lp-play${claro ? " claro" : ""}`} href={APP_STORE_URL} target="_blank" rel="noreferrer"
+    <a className={`lp-play${claro ? " claro" : ""}`} href={linkAppStore()} target="_blank" rel="noreferrer"
        onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem }, true)}
        aria-label="Baixar o app Planner Organiza na App Store">
       <svg width="24" height="28" viewBox="0 0 384 470" aria-hidden="true">
@@ -140,7 +160,7 @@ const TEMAS: Record<string, Tema> = {
 };
 
 // Origem da visita (tema + UTMs): guardada na primeira página e repassada ao app no cadastro
-const CAMPOS_ORIGEM = ["tema", "utm_source", "utm_medium", "utm_campaign", "utm_content"];
+const CAMPOS_ORIGEM = ["tema", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
 function origemDaVisita(): Record<string, string> {
   const atual: Record<string, string> = {};
   try {
@@ -832,8 +852,8 @@ export default function LandingPage() {
           <a href="/termos">Termos de Uso</a>
           <a href="/privacidade">Política de Privacidade</a>
           <a href="/excluir-conta">Excluir conta</a>
-          <a href={PLAY_URL} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
-          <a href={APP_STORE_URL} target="_blank" rel="noreferrer" onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem: "rodape_links" }, true)}>App iPhone</a>
+          <a href={linkPlay()} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
+          <a href={linkAppStore()} target="_blank" rel="noreferrer" onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem: "rodape_links" }, true)}>App iPhone</a>
           <a href="/suporte">Suporte</a>
           <a href="https://wa.me/5531987428641" target="_blank" rel="noreferrer">Contato</a>
         </div>
