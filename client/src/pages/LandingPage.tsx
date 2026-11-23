@@ -887,7 +887,7 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <div className="lp-footer-marca">
           <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
-          <span className="lp-footer-empresa">Candeia Tec · CNPJ 40.278.995/0001-71</span>
+          <span className="lp-footer-empresa">Tâmara Cavalcante · CNPJ 40.278.995/0001-71</span>
           <div className="lp-redes">
             <a href="https://www.instagram.com/plannerorganiza/" target="_blank" rel="noreferrer" aria-label="Instagram do Planner Organiza"
                onClick={() => rastrear("abrir_rede", "AbrirRede", { rede: "instagram" }, true)}>
