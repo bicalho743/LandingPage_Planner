@@ -1,3 +1,4 @@
+import DemoInterativa from "@/components/DemoInterativa";
 import { useState, useEffect, useRef } from "react";
 
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
@@ -328,6 +329,7 @@ export default function LandingPage() {
         </a>
         <nav className="lp-nav">
           <a href="#cleo" onClick={(e) => { e.preventDefault(); scrollTo("cleo"); }}>Cléo</a>
+          <a href="#experimente" onClick={(e) => { e.preventDefault(); scrollTo("experimente"); }}>Experimente</a>
           <a href="#funcionalidades" onClick={(e) => { e.preventDefault(); scrollTo("funcionalidades"); }}>Funcionalidades</a>
           <a href="#planos" onClick={(e) => { e.preventDefault(); scrollTo("planos"); }}>Planos</a>
           <a href="#compromissos" onClick={(e) => { e.preventDefault(); scrollTo("compromissos"); }}>Compromissos</a>
@@ -514,6 +516,11 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
+
+      {/* ── DEMONSTRAÇÃO INTERATIVA ── */}
+      <section className="lp-section lp-demo" id="experimente">
+        <DemoInterativa aoCadastrar={irParaCadastro} aoRastrear={rastrear} />
+      </section>
 
       {/* ── TOUR EM VÍDEO ── */}
       <section className="lp-section lp-tour" id="tour">
@@ -880,6 +887,7 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <div className="lp-footer-marca">
           <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
+          <span className="lp-footer-empresa">Candeia Tec · CNPJ 40.278.995/0001-71</span>
           <div className="lp-redes">
             <a href="https://www.instagram.com/plannerorganiza/" target="_blank" rel="noreferrer" aria-label="Instagram do Planner Organiza"
                onClick={() => rastrear("abrir_rede", "AbrirRede", { rede: "instagram" }, true)}>
