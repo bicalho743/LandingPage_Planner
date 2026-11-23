@@ -41,19 +41,18 @@ export default function Planos() {
             <br />no seu negócio
           </h2>
           <p className="lp-section-sub" style={{ margin: "0.75rem auto 0" }}>
-            Acesso completo a tudo, nos dois planos. Teste 7 dias grátis —
+            Acesso completo a tudo, em todos os planos. Teste 7 dias grátis —
             sem cartão de crédito. Cancele quando quiser.
           </p>
         </div>
 
-        <div className="lp-pricing-grid">
-          {/* Mensal */}
+        <div className="lp-pricing-grid tres">
           <div className="lp-pricing-card">
             <p className="lp-pricing-plan">Flexível</p>
             <h3>Mensal</h3>
-            <p className="lp-pricing-desc">Sem compromisso de longo prazo. Assine, use e cancele quando quiser.</p>
+            <p className="lp-pricing-desc">Sem fidelidade. Assine, use e cancele quando quiser.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>29,90</p>
+              <p className="lp-price-val"><sup>R$</sup>59,90</p>
               <p className="lp-price-period">por mês · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
@@ -63,24 +62,20 @@ export default function Planos() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>Cléo, assistente de voz (Prévia)</li>
-              <li>App Android + acesso web</li>
+              <li>App Android e iPhone + acesso web</li>
             </ul>
             <button className="lp-btn-plan outline" onClick={irParaApp}>
               Começar grátis
             </button>
           </div>
-
-          {/* Anual */}
-          <div className="lp-pricing-card featured">
-            <p className="lp-pricing-plan">Mais popular</p>
-            <h3>Anual</h3>
-            <span className="lp-badge-popular">★ Economize 2 meses</span>
-            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>
-              Equivale a R$ 16,66/mês. Um ano inteiro de negócio organizado.
-            </p>
+          <div className="lp-pricing-card">
+            <p className="lp-pricing-plan">Equilíbrio</p>
+            <h3>Trimestral</h3>
+            <span className="lp-badge-desconto">−17%</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>R$ 149,90 a cada 3 meses. R$ 30 a menos por trimestre.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>199,90</p>
-              <p className="lp-price-period">por ano · 7 dias grátis</p>
+              <p className="lp-price-val"><sup>R$</sup>49,97</p>
+              <p className="lp-price-period">por mês · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
               <li>Tudo do plano Mensal</li>
@@ -90,7 +85,30 @@ export default function Planos() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>Cléo, assistente de voz (Prévia)</li>
-              <li>App Android + acesso web</li>
+              <li>App Android e iPhone + acesso web</li>
+            </ul>
+            <button className="lp-btn-plan outline" onClick={irParaApp}>
+              Começar grátis
+            </button>
+          </div>
+          <div className="lp-pricing-card featured">
+            <p className="lp-pricing-plan">✦ Melhor preço</p>
+            <h3>Anual</h3>
+            <span className="lp-badge-popular">−33% · R$ 239 de economia no ano</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>R$ 479,90 por ano. Menos de R$ 1,35 por dia.</p>
+            <div className="lp-price-row">
+              <p className="lp-price-val"><sup>R$</sup>39,99</p>
+              <p className="lp-price-period">por mês · 7 dias grátis</p>
+            </div>
+            <ul className="lp-features-list">
+              <li>Tudo do plano Mensal</li>
+              <li>Clientes e propostas ilimitados</li>
+              <li>Propostas profissionais em PDF</li>
+              <li>Financeiro completo</li>
+              <li>Pós-organização e recontato</li>
+              <li>Relatórios e dashboards</li>
+              <li>Cléo, assistente de voz (Prévia)</li>
+              <li>App Android e iPhone + acesso web</li>
             </ul>
             <button className="lp-btn-plan solid" onClick={irParaApp}>
               Começar grátis por 7 dias

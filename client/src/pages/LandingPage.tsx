@@ -380,7 +380,7 @@ export default function LandingPage() {
               <span className="lp-stat-label">para sua 1ª proposta</span>
             </div>
             <div className="lp-stat-item">
-              <span className="lp-stat-num">R$ 16,66</span>
+              <span className="lp-stat-num">R$ 39,99</span>
               <span className="lp-stat-label">por mês no plano anual</span>
             </div>
           </div>
@@ -697,18 +697,18 @@ export default function LandingPage() {
           <div className="lp-section-eyebrow">Planos</div>
           <h2>Custa menos que <em>30 minutos</em><br />do seu trabalho por mês</h2>
           <p className="lp-section-sub" style={{ margin: "0 auto" }}>
-            Uma proposta a mais fechada no ano já paga o plano anual. Acesso completo nos dois planos e
-            7 dias grátis, sem cartão de crédito.
+            Acesso completo em todos os planos. A diferença está só no compromisso e no quanto você economiza.
+            Comece com 7 dias grátis, sem cartão de crédito.
           </p>
         </div>
-        <div className="lp-pricing-grid">
+        <div className="lp-pricing-grid tres">
           {/* Mensal */}
           <div className="lp-pricing-card lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
             <p className="lp-pricing-plan">Flexível</p>
             <h3>Mensal</h3>
-            <p className="lp-pricing-desc">Sem compromisso de longo prazo. Assine, use e cancele quando quiser.</p>
+            <p className="lp-pricing-desc">Sem fidelidade. Assine, use e cancele quando quiser.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>39,90</p>
+              <p className="lp-price-val"><sup>R$</sup>59,90</p>
               <p className="lp-price-period">por mês · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
@@ -725,15 +725,40 @@ export default function LandingPage() {
             </button>
           </div>
 
+          {/* Trimestral */}
+          <div className="lp-pricing-card lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+            <p className="lp-pricing-plan">Equilíbrio</p>
+            <h3>Trimestral</h3>
+            <span className="lp-badge-desconto">−17%</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>R$ 149,90 a cada 3 meses. R$ 30 a menos por trimestre.</p>
+            <div className="lp-price-row">
+              <p className="lp-price-val"><sup>R$</sup>49,97</p>
+              <p className="lp-price-period">por mês · 7 dias grátis</p>
+            </div>
+            <ul className="lp-features-list">
+              <li>Tudo do plano Mensal</li>
+              <li>Clientes e propostas ilimitados</li>
+              <li>Propostas profissionais em PDF</li>
+              <li>Financeiro completo</li>
+              <li>Pós-organização e recontato</li>
+              <li>Relatórios e dashboards</li>
+              <li>App Android e iPhone + acesso web</li>
+              <li>Cléo, assistente de voz <span className="lp-previa">Prévia</span></li>
+            </ul>
+            <button className="lp-btn-plan outline" onClick={() => irParaCadastro("plano_trimestral")}>
+              Começar grátis
+            </button>
+          </div>
+
           {/* Anual */}
           <div className="lp-pricing-card featured lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-            <p className="lp-pricing-plan">Melhor custo-benefício</p>
+            <p className="lp-pricing-plan">✦ Melhor preço</p>
             <h3>Anual</h3>
-            <span className="lp-badge-popular">★ 58% mais barato que o mensal</span>
-            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>Equivale a R$ 16,66/mês. Um ano inteiro de negócio organizado.</p>
+            <span className="lp-badge-popular">−33% · R$ 239 de economia no ano</span>
+            <p className="lp-pricing-desc" style={{ marginTop: "0.75rem" }}>R$ 479,90 por ano. Menos de R$ 1,35 por dia.</p>
             <div className="lp-price-row">
-              <p className="lp-price-val"><sup>R$</sup>199,90</p>
-              <p className="lp-price-period">por ano · 7 dias grátis</p>
+              <p className="lp-price-val"><sup>R$</sup>39,99</p>
+              <p className="lp-price-period">por mês · 7 dias grátis</p>
             </div>
             <ul className="lp-features-list">
               <li>Tudo do plano Mensal</li>
@@ -750,6 +775,12 @@ export default function LandingPage() {
             </button>
           </div>
         </div>
+
+        <div className="lp-sem-risco lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
+          <strong>7 dias grátis, sem cartão.</strong> Use o Planner completo com as suas clientes reais.
+          Se não fizer sentido, é só não assinar. Depois de assinar, você cancela quando quiser, sem multa e sem fidelidade.
+        </div>
+        <p className="lp-conta">Faça a conta: um orçamento a mais fechado no ano já paga o plano anual inteiro.</p>
       </section>
 
       {/* ── BAIXE O APP ── */}
@@ -827,7 +858,23 @@ export default function LandingPage() {
 
       {/* ── FOOTER ── */}
       <footer className="lp-footer">
-        <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
+        <div className="lp-footer-marca">
+          <span>© {new Date().getFullYear()} Planner Organiza. Feito com 💛 para personal organizers.</span>
+          <div className="lp-redes">
+            <a href="https://www.instagram.com/plannerorganiza/" target="_blank" rel="noreferrer" aria-label="Instagram do Planner Organiza"
+               onClick={() => rastrear("abrir_rede", "AbrirRede", { rede: "instagram" }, true)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.1.4-.3 1-.4 2.1C2.6 9.9 2.6 10.3 2.6 12s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.1 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.1-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.3-.4-.4-.8-.6-1.3-.8-.4-.1-1-.3-2.1-.4C15.5 4 15.1 4 12 4zm0 3.1a4.9 4.9 0 110 9.8 4.9 4.9 0 010-9.8zm0 8.1a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4zm6.2-8.3a1.1 1.1 0 11-2.3 0 1.1 1.1 0 012.3 0z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@plannerorganiza" target="_blank" rel="noreferrer" aria-label="TikTok do Planner Organiza"
+               onClick={() => rastrear("abrir_rede", "AbrirRede", { rede: "tiktok" }, true)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0115.5 3h-3.1v12.4a2.6 2.6 0 11-1.8-2.5V9.7a5.7 5.7 0 104.9 5.7V9.1a7.3 7.3 0 004.3 1.4V7.4a4.3 4.3 0 01-3.2-1.6z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@Plannerorganiza" target="_blank" rel="noreferrer" aria-label="YouTube do Planner Organiza"
+               onClick={() => rastrear("abrir_rede", "AbrirRede", { rede: "youtube" }, true)}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+            </a>
+          </div>
+        </div>
         <div className="lp-footer-links">
           <a href="/termos">Termos de Uso</a>
           <a href="/privacidade">Política de Privacidade</a>

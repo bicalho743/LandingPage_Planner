@@ -769,6 +769,16 @@ button, .button {
 .lp-footer a { color: rgba(255,255,255,.4); text-decoration: none; }
 .lp-footer a:hover { color: rgba(255,255,255,.8); }
 .lp-footer-links { display: flex; gap: 2rem; }
+.lp-footer-marca { display: flex; flex-direction: column; gap: 0.9rem; }
+.lp-redes { display: flex; gap: 1.1rem; align-items: center; }
+.lp-redes a { color: rgba(255,255,255,.65); display: inline-flex; transition: color .2s, transform .2s; }
+.lp-redes a:hover { color: #fff; transform: translateY(-2px); }
+.lp-pricing-grid.tres { grid-template-columns: repeat(3, 1fr); max-width: 1080px; }
+.lp-badge-desconto { display: inline-block; background: var(--sage-light, #EEF2EA); color: var(--sage-dark, #3F5A3A);
+  font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 20px; }
+.lp-sem-risco { max-width: 720px; margin: 2.5rem auto 0; padding: 1.25rem 1.5rem; border: 1px dashed var(--lp-border);
+  border-radius: 16px; background: #fff; font-size: 0.92rem; line-height: 1.6; color: var(--lp-text, #1f2937); }
+.lp-conta { margin-top: 1rem; font-size: 0.85rem; color: var(--lp-text-light); }
 
 /* WHATSAPP FLOAT */
 .lp-wa-float {
@@ -914,6 +924,8 @@ button, .button {
   .lp-nav { display: none; }
   .lp-trust-bar { flex-direction: column; gap: 0.75rem; text-align: center; padding: 1.1rem 2rem; }
   .lp-footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 3rem 2rem; }
+  .lp-pricing-grid.tres { grid-template-columns: 1fr; }
+  .lp-footer-marca { align-items: center; }
   .lp-footer-links { flex-wrap: wrap; justify-content: center; }
   .lp-pricing-card.featured { transform: none; }
   .lp-footer-cta-actions { flex-direction: column; align-items: center; }
