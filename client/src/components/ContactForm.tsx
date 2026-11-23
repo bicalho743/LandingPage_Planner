@@ -23,7 +23,7 @@ const contactInfo = [
   {
     icon: <Mail className="text-primary" />,
     title: "Email Us",
-    content: "info@modernbiz.com"
+    content: "contato@candeiatec.com.br"
   },
   {
     icon: <Phone className="text-primary" />,
