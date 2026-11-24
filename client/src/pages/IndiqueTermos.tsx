@@ -74,7 +74,6 @@ export default function IndiqueTermos() {
           <li>Só contam pagamentos em <b>reais (R$)</b>. Assinaturas pagas em outra moeda pelas lojas não geram comissão.</li>
           <li>O período de teste grátis (7 dias) não gera comissão, porque não há pagamento.</li>
           <li>A indicada não ganha desconto nem dias extras por usar o seu código, e você não pode prometer isso.</li>
-          <li>Exemplos pelo site: mensal R$ 59,90 gera cerca de R$ 17,14 por mês; anual R$ 479,90 gera cerca de R$ 138,11.</li>
         </ul>
 
         <h2 id="pagamento">5. Liberação e pagamento</h2>

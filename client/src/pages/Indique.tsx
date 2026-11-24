@@ -9,19 +9,26 @@ const ENTRAR = `${APP_URL}/?afiliada=1`;
 const CRIAR = `${APP_URL}/?cadastro=1&afiliada=1&utm_source=indique&utm_medium=landing`;
 const TERMOS = "/indique/termos";
 
-const PLANOS = [
-  { nome: "Mensal", preco: 59.9, vezes: 12 },
-  { nome: "Trimestral", preco: 149.9, vezes: 4 },
-  { nome: "Anual", preco: 479.9, vezes: 1 },
-];
-// mesmo cálculo de utils/afiliados.py: 30% do valor líquido (cartão no site: 3,99% + R$ 0,39)
-const liquido = (v: number) => Math.max(0, v * (1 - 0.0399) - 0.39);
-const comissaoAno = (p: { preco: number; vezes: number }) => liquido(p.preco) * 0.3 * p.vezes;
-const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const COR_TEXTO = "#0D1B2A";
+const IconeSite = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+    <path fill={COR_TEXTO} d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
+  </svg>
+);
+const IconeAndroid = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" aria-label="Android">
+    <path fill="#3DDC84" d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 0 0-.83.22l-1.88 3.24a11.43 11.43 0 0 0-8.94 0L5.65 5.67a.643.643 0 0 0-.87-.2c-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 0 0 1 18h22a10.78 10.78 0 0 0-5.4-8.52M7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5m10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5" />
+  </svg>
+);
+const IconeApple = () => (
+  <svg width="24" height="28" viewBox="0 0 384 470" aria-label="Apple">
+    <path fill={COR_TEXTO} d="M318.7 249.9c-.6-55.3 45.2-81.9 47.2-83.2-25.7-37.6-65.8-42.8-80.1-43.4-34.1-3.5-66.5 20.1-83.8 20.1-17.3 0-44-19.6-72.3-19.1-37.2.5-71.5 21.6-90.7 54.9-38.7 67.1-9.9 166.5 27.8 221 18.4 26.6 40.4 56.6 69.2 55.5 27.8-1.1 38.3-18 71.9-18s43.1 18 72.5 17.4c29.9-.5 48.9-27.1 67.2-53.9 21.2-30.9 29.9-60.8 30.4-62.4-.7-.3-58.3-22.4-58.9-88.9zM263.3 87.4c15.3-18.6 25.7-44.4 22.8-70.1-22.1.9-48.9 14.7-64.7 33.3-14.2 16.4-26.7 42.7-23.3 67.8 24.7 1.9 49.9-12.5 65.2-31z" />
+  </svg>
+);
 
 const CANAIS = [
   {
-    icone: "💻",
+    icone: <IconeSite />,
     titulo: "No site (computador ou navegador do celular)",
     passos: [
       "Ela abre o seu link: plannerorganiza.com.br/?ref=SEUCODIGO.",
@@ -31,7 +38,7 @@ const CANAIS = [
     nota: "Se o link não ligar, ela ainda pode digitar o seu código em Indique e ganhe, em até 7 dias depois de criar a conta.",
   },
   {
-    icone: "🤖",
+    icone: <IconeAndroid />,
     titulo: "No Android (Google Play)",
     passos: [
       "Ela baixa o Planner Organiza na Google Play.",
@@ -41,7 +48,7 @@ const CANAIS = [
     nota: "O link sozinho não chega até o app. Por isso, no celular, o código é o que vale: peça sempre para ela digitar.",
   },
   {
-    icone: "🍎",
+    icone: <IconeApple />,
     titulo: "No iPhone (App Store)",
     passos: [
       "Ela baixa o Planner Organiza na App Store.",
@@ -99,9 +106,7 @@ export function RodapeIndique() {
 
 export default function Indique() {
   const [aberta, setAberta] = useState<number | null>(0);
-  const [indicadas, setIndicadas] = useState(5);
   useEffect(() => { document.title = "Indique e ganhe 30% · Planner Organiza"; }, []);
-  const simulado = indicadas * comissaoAno(PLANOS[2]);
 
   return (
     <div className="lp-page lp-suporte lp-indique">
@@ -144,23 +149,6 @@ export default function Indique() {
               <small>{c.nota}</small>
             </div>
           ))}
-        </div>
-
-        <h2 className="ind-h2">Quanto dá para ganhar</h2>
-        <div className="ind-tabela">
-          {PLANOS.map(p => (
-            <div key={p.nome} className="ind-card">
-              <small>Indicada no plano {p.nome} ({brl(p.preco)})</small>
-              <b>{brl(comissaoAno(p))}</b>
-              <span>para você em 12 meses</span>
-            </div>
-          ))}
-        </div>
-        <div className="ind-sim">
-          <label htmlFor="ind-qtd">Se <b>{indicadas}</b> organizer{indicadas !== 1 ? "s" : ""} assinarem o plano anual pelo seu link:</label>
-          <input id="ind-qtd" type="range" min={1} max={30} value={indicadas} onChange={e => setIndicadas(Number(e.target.value))} />
-          <p>Você recebe cerca de <b>{brl(simulado)}</b> no ano.</p>
-          <small>Valores aproximados, para assinaturas pelo site (taxa do cartão de 3,99% + R$ 0,39). Pela App Store e pela Google Play a taxa da loja é maior, e a comissão fica um pouco menor.</small>
         </div>
 
         <h2 className="ind-h2">Perguntas frequentes</h2>
