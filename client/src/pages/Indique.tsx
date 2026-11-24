@@ -52,8 +52,8 @@ export default function Indique() {
         <div className="lp-section-eyebrow">Programa de afiliadas</div>
         <h1>Indique o Planner e <em>ganhe 30%</em> por 12 meses</h1>
         <p className="sup-intro">
-          Você conhece outras personal organizers. Indique o Planner Organiza, elas ganham <strong>30 dias grátis</strong>
-          {" "}e você recebe <strong>30% de cada pagamento</strong> delas durante um ano, por Pix, todo mês.
+          Você conhece outras personal organizers. Indique o Planner Organiza e receba <strong>30% de cada pagamento</strong>
+          {" "}delas durante um ano, por Pix, todo mês.
         </p>
         <div className="ind-ctas">
           <a className="lp-btn-primary" href={CRIAR} onClick={() => rastrear("afiliada_criar", "AfiliadaCriar")}>Quero ser afiliada</a>
@@ -64,7 +64,7 @@ export default function Indique() {
         <ol className="ind-passos">
           <li><b>Inscreva-se</b><span>Entre ou crie a sua conta e vá em <em>Indique e ganhe</em>. Informe CPF e chave Pix e escolha o seu código.</span></li>
           <li><b>Receba o seu link</b><span>Depois da aprovação, você ganha um link e um código, como <code>TAMARA</code>, para divulgar.</span></li>
-          <li><b>Ela testa 30 dias grátis</b><span>Quem entra pelo seu link ou usa o seu código tem 30 dias de teste em vez de 7.</span></li>
+          <li><b>Ela testa e assina</b><span>Quem entra pelo seu link ou usa o seu código testa grátis por 7 dias e fica ligada a você.</span></li>
           <li><b>Você ganha 30% por 12 meses</b><span>Cada pagamento dela, no site, no iPhone ou no Android, gera comissão no seu painel.</span></li>
           <li><b>Pix todo mês</b><span>A comissão é liberada 30 dias após o pagamento e paga por Pix a partir de R$ 50.</span></li>
         </ol>
