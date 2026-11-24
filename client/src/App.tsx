@@ -10,6 +10,7 @@ import LandingPage from "@/pages/LandingPage";
 import Planos from "@/pages/Planos";
 import Suporte from "@/pages/Suporte";
 import ExcluirConta from "@/pages/ExcluirConta";
+import Indique from "@/pages/Indique";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -42,6 +43,7 @@ function Router() {
         <Route path="/home" component={Home}/>
         <Route path="/planos" component={Planos}/>
         <Route path="/suporte" component={Suporte}/>
+        <Route path="/indique" component={Indique}/>
         <Route path="/excluir-conta" component={ExcluirConta}/>
         <Route path="/registro" component={Registro}/>
         <Route path="/checkout" component={Checkout}/>
