@@ -161,7 +161,7 @@ const TEMAS: Record<string, Tema> = {
 };
 
 // Origem da visita (tema + UTMs): guardada na primeira página e repassada ao app no cadastro
-const CAMPOS_ORIGEM = ["tema", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+const CAMPOS_ORIGEM = ["tema", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "ref"];
 function origemDaVisita(): Record<string, string> {
   const atual: Record<string, string> = {};
   try {
@@ -909,6 +909,7 @@ export default function LandingPage() {
           <a href="/excluir-conta">Excluir conta</a>
           <a href={linkPlay()} target="_blank" rel="noreferrer" onClick={() => irParaPlay("rodape_links")}>App Android</a>
           <a href={linkAppStore()} target="_blank" rel="noreferrer" onClick={() => rastrear("abrir_app_store", "AbrirAppStore", { origem: "rodape_links" }, true)}>App iPhone</a>
+          <a href={`${APP_URL}/?afiliada=1`} onClick={() => rastrear("abrir_afiliadas", "AbrirAfiliadas", { origem: "rodape" }, true)}>Indique e ganhe</a>
           <a href="/suporte">Suporte</a>
           <a href="https://wa.me/5531987428641" target="_blank" rel="noreferrer">Contato</a>
         </div>
