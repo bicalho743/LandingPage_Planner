@@ -1264,3 +1264,30 @@ ol.sup-passos { list-style: decimal; } ul.sup-passos { list-style: disc; }
 .lp-aviso-codigo b { color: #0D1B2A; }
 .lp-aviso-codigo.claro { background: rgba(255,255,255,.08); color: #E9E2D0; }
 .lp-aviso-codigo.claro b { color: #fff; }
+
+/* Indique e ganhe: resumo, canais (site, Android, iPhone) e termos */
+.ind-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: 0 0 1rem; }
+.ind-resumo div { background: var(--lp-dark); color: #fff; border-radius: 14px; padding: 1rem; text-align: center; }
+.ind-resumo b { display: block; font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; color: var(--gold); line-height: 1.1; }
+.ind-resumo span { font-size: .82rem; color: rgba(255,255,255,.8); }
+.ind-canais { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+.ind-canal { background: #fff; border: 1px solid var(--lp-border); border-radius: 14px; padding: 1rem 1.1rem; display: flex; flex-direction: column; }
+.ind-canal-topo { display: flex; align-items: center; gap: .6rem; margin-bottom: .5rem; }
+.ind-canal-topo span { font-size: 1.5rem; }
+.ind-canal-topo b { color: var(--lp-dark); font-size: .98rem; line-height: 1.3; }
+.ind-canal ol { margin: 0 0 .7rem 1.1rem; padding: 0; color: var(--lp-text-mid); font-size: .9rem; line-height: 1.55; display: grid; gap: .3rem; }
+.ind-canal small { margin-top: auto; color: var(--lp-text-light); font-size: .8rem; line-height: 1.45; border-top: 1px dashed var(--lp-border); padding-top: .6rem; }
+.ind-termos-link { margin-top: 1rem; font-size: .92rem; color: var(--lp-text-mid); }
+.ind-termos-link a, .ind-nota a, .ind-termos a { color: var(--terracota); text-decoration: underline; }
+.ind-termos ul { color: var(--lp-text-mid); line-height: 1.7; padding-left: 1.2rem; display: grid; gap: .35rem; }
+.ind-termos ul ul { margin-top: .3rem; }
+.ind-termos p { color: var(--lp-text-mid); line-height: 1.7; }
+.ind-termos h2 { scroll-margin-top: 90px; }
+.ind-indice { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem 1.2rem; background: #fff; border: 1px solid var(--lp-border);
+  border-radius: 14px; padding: 1rem 1.2rem; font-size: .9rem; }
+.ind-indice a { color: var(--lp-dark); text-decoration: none; }
+.ind-indice a:hover { color: var(--terracota); }
+@media (max-width: 720px) {
+  .ind-canais, .ind-indice { grid-template-columns: 1fr; }
+  .ind-resumo b { font-size: 1.5rem; }
+}
