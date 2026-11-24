@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { CabecalhoIndique, RodapeIndique } from "./Indique";
 
 // Termos do programa de afiliadas (plannerorganiza.com.br/indique/termos).
-// Precisam bater com utils/afiliados.py do PlannerOrganizer: 30% do líquido, 12 meses a contar do 1º pagamento,
+// Precisam bater com utils/afiliados.py do PlannerOrganizer: 25% do líquido, 10% de desconto no anual para a indicada, 12 meses a contar do 1º pagamento,
 // liberação em 30 dias, Pix mensal a partir de R$ 50, só pagamentos em reais, sem autoindicação.
-const ATUALIZADO = "24 de novembro de 2026";
+const ATUALIZADO = "24 de novembro de 2026 (comissão de 25% e desconto de 10% no anual para a indicada)";
 
 export default function IndiqueTermos() {
   useEffect(() => { document.title = "Termos do programa de afiliadas · Planner Organiza"; }, []);
@@ -24,6 +24,7 @@ export default function IndiqueTermos() {
           <a href="#inscricao">2. Inscrição e aprovação</a>
           <a href="#vinculo">3. Como a indicada fica ligada a você</a>
           <a href="#comissao">4. Quanto você ganha</a>
+          <a href="#desconto">4.1. Desconto para a indicada</a>
           <a href="#pagamento">5. Liberação e pagamento</a>
           <a href="#reembolso">6. Reembolso e cancelamento</a>
           <a href="#divulgacao">7. Como divulgar (e o que não pode)</a>
@@ -37,7 +38,7 @@ export default function IndiqueTermos() {
         <ul>
           <li>Pessoas maiores de 18 anos, com CPF e chave Pix em seu próprio nome.</li>
           <li>É preciso ter uma conta no Planner Organiza (criar a conta é grátis). Não é preciso ser assinante.</li>
-          <li>Cada pessoa pode ter apenas uma inscrição como afiliada.</li>
+          <li>Cada pessoa pode ter apenas uma inscrição como afiliada. Cada CPF e cada chave Pix só podem estar em uma inscrição.</li>
         </ul>
 
         <h2 id="inscricao">2. Inscrição e aprovação</h2>
@@ -62,7 +63,7 @@ export default function IndiqueTermos() {
 
         <h2 id="comissao">4. Quanto você ganha</h2>
         <ul>
-          <li>Você recebe <b>30% do valor líquido</b> de cada pagamento da indicada.</li>
+          <li>Você recebe <b>25% do valor líquido</b> de cada pagamento da indicada.</li>
           <li><b>Valor líquido</b> é o que de fato entra para o Planner Organiza:
             <ul>
               <li>no site (cartão, pelo Stripe): o valor pago menos a taxa do cartão (3,99% + R$ 0,39);</li>
@@ -73,7 +74,16 @@ export default function IndiqueTermos() {
           <li>Valem os planos mensal, trimestral e anual, inclusive as renovações dentro desses 12 meses.</li>
           <li>Só contam pagamentos em <b>reais (R$)</b>. Assinaturas pagas em outra moeda pelas lojas não geram comissão.</li>
           <li>O período de teste grátis (7 dias) não gera comissão, porque não há pagamento.</li>
-          <li>A indicada não ganha desconto nem dias extras por usar o seu código, e você não pode prometer isso.</li>
+          <li>A indicada não ganha dias extras de teste: o teste grátis é de 7 dias para todo mundo.</li>
+        </ul>
+
+        <h2 id="desconto">4.1. Desconto para a indicada</h2>
+        <ul>
+          <li>Quem fica ligada a você ganha <b>10% de desconto no plano anual</b>: R$ 431,90 por ano em vez de R$ 479,90 (preço no Brasil).</li>
+          <li>O desconto vale enquanto ela mantiver a assinatura anual. Os planos mensal e trimestral não têm desconto.</li>
+          <li><b>No site</b>, o anual com desconto aparece sozinho em Plano e cobrança para a conta indicada.</li>
+          <li><b>No iPhone e no Android</b>, o desconto chega na próxima versão do app. Até lá, a indicada pode assinar pelo site para ter o desconto.</li>
+          <li>A comissão é calculada sobre o valor que ela de fato pagou (já com o desconto).</li>
         </ul>
 
         <h2 id="pagamento">5. Liberação e pagamento</h2>
@@ -99,7 +109,7 @@ export default function IndiqueTermos() {
           <li>Indicar a si mesma, usar outra conta sua ou criar contas falsas para gerar comissão.</li>
           <li>Anunciar no Google, Meta ou em qualquer plataforma usando o nome "Planner Organiza" (ou parecido) como palavra-chave, nome de anúncio ou de página.</li>
           <li>Se passar pelo Planner Organiza, pela Tâmara ou pela equipe, ou criar perfis, sites e e-mails que pareçam oficiais.</li>
-          <li>Prometer descontos, dias grátis extras, recursos ou preços diferentes dos oficiais.</li>
+          <li>Prometer descontos, dias grátis extras, recursos ou preços diferentes dos oficiais (o único desconto é o do item 4.1).</li>
           <li>Enviar spam ou mensagens em massa para pessoas que não pediram.</li>
           <li>Usar conteúdo enganoso, ofensivo ou que desrespeite a lei.</li>
         </ul>

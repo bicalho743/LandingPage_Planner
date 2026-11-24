@@ -100,7 +100,7 @@ function BotoesApp({ origem, claro = false }: { origem: string; claro?: boolean 
       </div>
       {codigo && (
         <p className={`lp-aviso-codigo${claro ? " claro" : ""}`}>
-          Ao criar sua conta no app, toque em <b>Tenho um convite</b> e digite o código <b>{codigo}</b>.
+          Use o código <b>{codigo}</b> e ganhe <b>10% de desconto no plano anual</b>: ao criar sua conta no app, toque em <b>Tenho um convite</b> e digite o código.
         </p>
       )}
     </>

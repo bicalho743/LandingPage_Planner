@@ -61,8 +61,8 @@ const CANAIS = [
 
 const PERGUNTAS = [
   { q: "Preciso ser cliente do Planner?", a: "Você precisa de uma conta, que é onde ficam o seu link, o painel e as comissões. Criar a conta é grátis; você não precisa assinar para indicar." },
-  { q: "Quanto eu ganho exatamente?", a: "30% do valor líquido de cada pagamento da indicada, durante 12 meses contados do primeiro pagamento dela. Valor líquido é o que sobra depois da taxa do cartão (site) ou da taxa da loja (App Store e Google Play)." },
-  { q: "A indicada ganha algum desconto?", a: "Não. Ela testa grátis por 7 dias, como todo mundo, e paga o preço normal se assinar. Não prometa desconto nem dias extras." },
+  { q: "Quanto eu ganho exatamente?", a: "25% do valor líquido de cada pagamento da indicada, durante 12 meses contados do primeiro pagamento dela. Valor líquido é o que sobra depois da taxa do cartão (site) ou da taxa da loja (App Store e Google Play)." },
+  { q: "A indicada ganha algum desconto?", a: "Sim: 10% de desconto no plano anual (R$ 431,90 por ano em vez de R$ 479,90), enquanto mantiver a assinatura. É o melhor argumento para ela usar o seu link ou digitar o seu código. O teste grátis continua de 7 dias, como para todo mundo. No site o desconto já vale; nos apps do iPhone e do Android, chega na próxima versão." },
   { q: "Quando eu recebo?", a: "Cada comissão fica liberada 30 dias depois do pagamento da indicada (o prazo de reembolso). Todo mês, no início do mês, pagamos por Pix quem tem R$ 50 ou mais liberados. O que for menor fica acumulando para o mês seguinte." },
   { q: "E se a indicada pedir reembolso?", a: "A comissão daquele pagamento é cancelada, se ainda não tiver sido paga. As outras continuam valendo." },
   { q: "E se ela esquecer de digitar o código no app?", a: "No site, ela pode informar o código em Indique e ganhe em até 7 dias depois de criar a conta. Depois disso, ou se ela já estiver ligada a outra afiliada, não dá para trocar." },
@@ -106,7 +106,7 @@ export function RodapeIndique() {
 
 export default function Indique() {
   const [aberta, setAberta] = useState<number | null>(0);
-  useEffect(() => { document.title = "Indique e ganhe 30% · Planner Organiza"; }, []);
+  useEffect(() => { document.title = "Indique e ganhe 25% · Planner Organiza"; }, []);
 
   return (
     <div className="lp-page lp-suporte lp-indique">
@@ -114,10 +114,11 @@ export default function Indique() {
 
       <main className="sup-main ind-main">
         <div className="lp-section-eyebrow">Programa de afiliadas</div>
-        <h1>Indique o Planner e <em>ganhe 30%</em> por 12 meses</h1>
+        <h1>Indique o Planner e <em>ganhe 25%</em> por 12 meses</h1>
         <p className="sup-intro">
-          Você conhece outras personal organizers. Indique o Planner Organiza e receba <strong>30% de cada pagamento</strong>
-          {" "}delas durante um ano, no site, no iPhone ou no Android, <strong>por Pix, todo mês</strong>.
+          Você conhece outras personal organizers. Indique o Planner Organiza e receba <strong>25% de cada pagamento</strong>
+          {" "}delas durante um ano, no site, no iPhone ou no Android, <strong>por Pix, todo mês</strong>. E quem usa o seu
+          {" "}link ou código ganha <strong>10% de desconto no plano anual</strong>.
         </p>
         <div className="ind-ctas">
           <a className="lp-btn-primary" href={CRIAR} onClick={() => rastrear("afiliada_criar", "AfiliadaCriar")}>Quero ser afiliada</a>
@@ -125,8 +126,8 @@ export default function Indique() {
         </div>
 
         <div className="ind-resumo">
-          <div><b>30%</b><span>de cada pagamento</span></div>
-          <div><b>12 meses</b><span>por indicada</span></div>
+          <div><b>25%</b><span>de cada pagamento</span></div>
+          <div><b>10% off</b><span>no anual para quem você indica</span></div>
           <div><b>Pix</b><span>todo mês, a partir de R$ 50</span></div>
         </div>
 
@@ -135,7 +136,7 @@ export default function Indique() {
           <li><b>Inscreva-se</b><span>Crie a sua conta grátis (ou entre) e vá em <em>Indique e ganhe</em>. Informe nome, CPF e chave Pix e escolha o seu código.</span></li>
           <li><b>Aguarde a aprovação</b><span>A equipe do Planner confere a inscrição. Aprovada, o seu link e o seu código aparecem no painel, como <code>plannerorganiza.com.br/?ref=TAMARA</code>.</span></li>
           <li><b>Divulgue</b><span>Mande o link no direct, no WhatsApp, nos stories, no grupo de organizers. No celular, peça para ela digitar o seu código no app.</span></li>
-          <li><b>Ela testa e assina</b><span>A indicada testa grátis por 7 dias, como todo mundo. Se assinar, cada pagamento dela gera comissão para você.</span></li>
+          <li><b>Ela testa e assina com desconto</b><span>A indicada testa grátis por 7 dias e, se escolher o plano anual, paga 10% a menos. Cada pagamento dela, por 12 meses, gera comissão para você.</span></li>
           <li><b>Você recebe por Pix</b><span>A comissão é liberada 30 dias após o pagamento e paga no início de cada mês, a partir de R$ 50.</span></li>
         </ol>
 
