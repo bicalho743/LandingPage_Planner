@@ -186,6 +186,12 @@ function rastrear(ga: string, meta: string, params: Record<string, unknown> = {}
   try { w.fbq && w.fbq(custom ? "trackCustom" : "track", meta, p); } catch (e) { /* sem rastreamento */ }
 }
 
+// "Entrar" também leva a origem (código da afiliada e UTMs): quem entra e depois cria a conta não a perde
+function linkEntrar() {
+  const q = new URLSearchParams(origemDaVisita());
+  return q.toString() ? `${APP_URL}/?${q.toString()}` : APP_URL;
+}
+
 function irParaCadastro(origem: string) {
   rastrear("cta_cadastro", "CliqueCadastro", { origem }, true);
   window.location.href = linkCadastro();
@@ -337,7 +343,7 @@ export default function LandingPage() {
           <a href="#duvidas" onClick={(e) => { e.preventDefault(); scrollTo("duvidas"); }}>Dúvidas</a>
           <a href="#baixar" onClick={(e) => { e.preventDefault(); scrollTo("baixar"); }}>Baixar o app</a>
         </nav>
-        <a href={APP_URL} className="lp-header-cta" onClick={() => rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true)}>Entrar</a>
+        <a href={APP_URL} className="lp-header-cta" onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true); e.currentTarget.href = linkEntrar(); }}>Entrar</a>
       </header>
 
       {/* ── HERO ── */}
