@@ -90,11 +90,20 @@ function BotaoAppStore({ origem, claro = false }: { origem: string; claro?: bool
 }
 
 function BotoesApp({ origem, claro = false }: { origem: string; claro?: boolean }) {
+  // veio pelo link de uma afiliada: o código não segue até o app pela loja, então lembramos de digitá-lo
+  const codigo = (origemDaVisita().ref || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
   return (
-    <div className="lp-lojas">
-      <BotaoGooglePlay origem={origem} claro={claro} />
-      <BotaoAppStore origem={origem} claro={claro} />
-    </div>
+    <>
+      <div className="lp-lojas">
+        <BotaoGooglePlay origem={origem} claro={claro} />
+        <BotaoAppStore origem={origem} claro={claro} />
+      </div>
+      {codigo && (
+        <p className={`lp-aviso-codigo${claro ? " claro" : ""}`}>
+          Ao criar sua conta no app, toque em <b>Tenho um convite</b> e digite o código <b>{codigo}</b>.
+        </p>
+      )}
+    </>
   );
 }
 

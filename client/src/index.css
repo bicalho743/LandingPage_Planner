@@ -1257,3 +1257,10 @@ ol.sup-passos { list-style: decimal; } ul.sup-passos { list-style: disc; }
   background: none; border: 0; padding: .95rem 1.1rem; font-size: .98rem; font-weight: 600; color: var(--lp-dark); cursor: pointer; font-family: inherit; }
 .ind-item button span { color: var(--terracota); font-size: 1.3rem; }
 .ind-item p { padding: 0 1.1rem 1rem; margin: 0; font-size: .92rem !important; color: var(--lp-text-mid); line-height: 1.6; }
+
+/* aviso do código da afiliada perto dos botões das lojas (só quando veio por ?ref=) */
+.lp-aviso-codigo { margin: 10px 0 0; padding: 8px 12px; border: 1px dashed #C9A84C; border-radius: 10px;
+  background: #FBF6E9; color: #33507A; font-size: .86rem; line-height: 1.4; max-width: 420px; }
+.lp-aviso-codigo b { color: #0D1B2A; }
+.lp-aviso-codigo.claro { background: rgba(255,255,255,.08); color: #E9E2D0; }
+.lp-aviso-codigo.claro b { color: #fff; }
