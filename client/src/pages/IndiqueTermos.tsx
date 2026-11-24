@@ -79,7 +79,7 @@ export default function IndiqueTermos() {
 
         <h2 id="desconto">4.1. Desconto para a indicada</h2>
         <ul>
-          <li>Quem fica ligada a você ganha <b>10% de desconto no plano anual</b>: R$ 431,90 por ano em vez de R$ 479,90 (preço no Brasil).</li>
+          <li>Quem fica ligada a você ganha <b>10% de desconto no plano anual</b>: R$ 429,90 por ano em vez de R$ 479,90 (preço no Brasil).</li>
           <li>O desconto vale enquanto ela mantiver a assinatura anual. Os planos mensal e trimestral não têm desconto.</li>
           <li><b>No site</b>, o anual com desconto aparece sozinho em Plano e cobrança para a conta indicada.</li>
           <li><b>No iPhone e no Android</b>, o desconto chega na próxima versão do app. Até lá, a indicada pode assinar pelo site para ter o desconto.</li>
