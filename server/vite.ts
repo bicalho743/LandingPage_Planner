@@ -87,6 +87,7 @@ export function serveStatic(app: Express) {
     .replace(/(<meta property="og:description" content=")[^"]*/, "$1Programa de afiliadas: 25% de cada pagamento da indicada, por Pix todo mês. Quem usa o seu código ganha 10% off no plano anual.")
     .replace(/(<meta property="og:url" content=")[^"]*/, "$1https://plannerorganiza.com.br/indique")
     .replace(/(<meta property="og:image" content=")[^"]*/, "$1https://plannerorganiza.com.br/og-indique.jpg?v=1")
+    .replace(/(<meta property="og:image:secure_url" content=")[^"]*/, "$1https://plannerorganiza.com.br/og-indique.jpg?v=1")
     .replace(/(<meta property="og:image:alt" content=")[^"]*/, "$1Programa de afiliadas do Planner Organiza: ganhe 25% por 12 meses");
   app.get(/^\/indique\/?$/, (_req, res) => {
     res.type("html").send(htmlIndique);
