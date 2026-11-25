@@ -197,8 +197,9 @@ function rastrear(ga: string, meta: string, params: Record<string, unknown> = {}
 
 // "Entrar" também leva a origem (código da afiliada e UTMs): quem entra e depois cria a conta não a perde
 function linkEntrar() {
-  const q = new URLSearchParams(origemDaVisita());
-  return q.toString() ? `${APP_URL}/?${q.toString()}` : APP_URL;
+  // entrar=1: vai direto ao login (sem isso o app abre as boas-vindas para quem ainda não tem conta)
+  const q = new URLSearchParams({ entrar: "1", ...origemDaVisita() });
+  return `${APP_URL}/?${q.toString()}`;
 }
 
 function irParaCadastro(origem: string) {
@@ -352,7 +353,7 @@ export default function LandingPage() {
           <a href="#duvidas" onClick={(e) => { e.preventDefault(); scrollTo("duvidas"); }}>Dúvidas</a>
           <a href="#baixar" onClick={(e) => { e.preventDefault(); scrollTo("baixar"); }}>Baixar o app</a>
         </nav>
-        <a href={APP_URL} className="lp-header-cta" onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true); e.currentTarget.href = linkEntrar(); }}>Entrar</a>
+        <a href={`${APP_URL}/?entrar=1`} className="lp-header-cta" onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true); e.currentTarget.href = linkEntrar(); }}>Entrar</a>
       </header>
 
       {/* ── HERO ── */}
