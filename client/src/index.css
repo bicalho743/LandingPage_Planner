@@ -1378,3 +1378,37 @@ ol.sup-passos { list-style: decimal; } ul.sup-passos { list-style: disc; }
 }
 @keyframes lpcmaoM { 0% { left: 120px; top: 210px } 12% { left: 120px; top: 140px } 16% { transform: scale(.85) } 20% { transform: none; left: 120px; top: 140px }
   36% { left: 120px; top: 172px } 41% { transform: scale(.85) } 46% { transform: none; left: 120px; top: 172px } 70%,100% { left: 140px; top: 240px; opacity: 0 } }
+
+/* Fundo do topo em três fotos que se alternam (21 s) com a camada azul-marinho por cima.
+   Fotos do Unsplash: closet (Chastity Cortijo), despensa (Caroline Badran, Nova Marcenaria Brasileira),
+   quarto de vestir (mahmoud azmy). */
+.lp-hero-com-foto .lp-hero-foto { background: #0D1B2A; overflow: hidden; }
+.lp-hero-com-foto .lp-hero-foto::before { content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(90deg, rgba(13,27,42,.93) 0%, rgba(13,27,42,.80) 45%, rgba(13,27,42,.50) 100%); }
+.lp-slide { position: absolute; inset: 0; background-position: center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; animation: lpSlide 21s infinite; }
+.lp-slide.s1 { background-image: url('/hero-closet.jpg'); animation-delay: 0s; }
+.lp-slide.s2 { background-image: url('/hero-despensa.jpg'); animation-delay: 7s; }
+.lp-slide.s3 { background-image: url('/hero-closet2.jpg'); animation-delay: 14s; }
+@keyframes lpSlide { 0% { opacity: 0; transform: scale(1.04) } 5% { opacity: 1 } 33% { opacity: 1 } 38% { opacity: 0 } 100% { opacity: 0; transform: scale(1) } }
+@media (prefers-reduced-motion: reduce) { .lp-slide { animation: none; } .lp-slide.s1 { opacity: 1; } }
+@media (max-width: 900px) {
+  .lp-hero-com-foto .lp-hero-foto { background: #0D1B2A; }
+  .lp-hero-com-foto .lp-hero-foto::before {
+    background: linear-gradient(180deg, rgba(13,27,42,.70) 0%, rgba(13,27,42,.90) 45%, rgba(13,27,42,.96) 100%); }
+  .lp-slide { background-position: center top; }
+  .lp-slide.s1 { background-image: url('/hero-closet-m.jpg'); }
+  .lp-slide.s2 { background-image: url('/hero-despensa-m.jpg'); }
+  .lp-slide.s3 { background-image: url('/hero-closet2-m.jpg'); }
+}
+
+/* Telas largas: o conteúdo fica num miolo de até 1200 px, centralizado (sem texto colado na borda e
+   sem vazio no meio). O fundo continua de ponta a ponta. */
+@media (min-width: 901px) {
+  .lp-hero-com-foto { padding-left: max(0px, calc((100% - 1200px) / 2)); padding-right: max(0px, calc((100% - 1200px) / 2));
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+  .lp-hero-com-foto .lp-hero-left { padding: 4rem 2rem 4rem 2.5rem; }
+  .lp-hero-com-foto .lp-hero-right { padding: 4rem 2.5rem 4rem 1rem; }
+  .lp-cleo, .lp-pains, .lp-proposal-preview, .lp-footer {
+    padding-left: max(5rem, calc((100% - 1200px) / 2)); padding-right: max(5rem, calc((100% - 1200px) / 2)); }
+}

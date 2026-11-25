@@ -380,7 +380,10 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section className="lp-hero lp-hero-com-foto" id="inicio">
-        <div className="lp-hero-bg lp-hero-foto" role="img" aria-label="Closet organizado, com sapatos e bolsas em prateleiras iluminadas" />
+        {/* três ambientes organizados se alternando no fundo (fotos do Unsplash) */}
+        <div className="lp-hero-bg lp-hero-foto" role="img" aria-label="Ambientes organizados: closet, despensa e quarto de vestir">
+          <i className="lp-slide s1" /><i className="lp-slide s2" /><i className="lp-slide s3" />
+        </div>
 
         {/* Boas-vindas, iguais às do app e do site: celular animado, bordão, Continuar e "Já tem conta? Entrar" */}
         <div className="lp-hero-left lp-bv">
