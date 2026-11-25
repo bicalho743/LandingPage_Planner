@@ -1291,3 +1291,90 @@ ol.sup-passos { list-style: decimal; } ul.sup-passos { list-style: disc; }
   .ind-canais, .ind-indice { grid-template-columns: 1fr; }
   .ind-resumo b { font-size: 1.5rem; }
 }
+
+/* ── BOAS-VINDAS NO TOPO (iguais às do app e do site) ── */
+.lp-bv { align-items: flex-start; }
+.lp-bv-bem { font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9C7A22; margin-bottom: .9rem; }
+.lp-bv-bordao { font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(2.3rem, 4.4vw, 3.6rem); line-height: 1.08;
+  font-weight: 600; color: var(--lp-dark); margin: 0 0 1rem; text-wrap: balance; }
+.lp-bv-bordao em { font-style: normal; color: #B8943D; }
+.lp-bv-prova { font-size: 1rem; color: var(--lp-text-mid); margin: 0 0 1.6rem; }
+.lp-bv-prova b { color: var(--lp-dark); }
+.lp-bv-continuar { width: 100%; max-width: 420px; padding: 1.05rem 1.6rem; font-size: 1.05rem; }
+.lp-bv-entrar { display: block; width: 100%; max-width: 420px; text-align: center; margin: 1rem 0 2rem; color: var(--lp-text-mid);
+  font-size: .98rem; text-decoration: none; }
+.lp-bv-entrar b { color: #9C7A22; }
+.lp-cel { width: 290px; max-width: 74vw; background: #0D1B2A; border-radius: 40px; padding: 11px; position: relative;
+  box-shadow: 0 24px 60px rgba(13,27,42,.20); }
+.lp-cel-notch { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 80px; height: 18px; background: #0D1B2A;
+  border-radius: 0 0 14px 14px; z-index: 2; }
+.lp-cel-tela { background: #F7F5F0; border-radius: 30px; padding: 20px 15px 16px; height: 400px; overflow: hidden; position: relative; }
+.lp-cel-ey { font-size: .6rem; font-weight: 700; letter-spacing: .14em; color: #9C7A22; text-transform: uppercase; margin-top: 12px; }
+.lp-cel-tt { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; font-weight: 600; color: #0D1B2A; margin: 2px 0 10px; }
+.lp-cel-preco { background: #0D1B2A; border-radius: 16px; padding: 11px 13px; color: #fff; position: relative; height: 62px; }
+.lp-cel-preco small { font-size: .6rem; color: #C8D1DC; display: block; }
+.lp-cel-preco span { position: absolute; left: 13px; top: 24px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.8rem;
+  color: #C9A84C; opacity: 0; }
+.lp-cel-preco .p0 { animation: lpcp0 8s infinite; } .lp-cel-preco .p1 { animation: lpcp1 8s infinite; } .lp-cel-preco .p2 { animation: lpcp2 8s infinite; }
+.lp-cel-amb { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #E7E2D6;
+  border-radius: 12px; padding: 9px 12px; margin-top: 8px; font-size: .8rem; font-weight: 600; color: #0D1B2A; }
+.lp-cel-amb i { font-style: normal; font-size: .64rem; color: #6B7C94; background: #F2EFE7; border-radius: 999px; padding: 1px 8px; }
+.lp-cel-amb.a1 { animation: lpca1 8s infinite; } .lp-cel-amb.a2 { animation: lpca2 8s infinite; }
+.lp-cel-pdf { position: absolute; left: 15px; right: 15px; bottom: 16px; background: #E3F1E8; color: #2F6B4F; border-radius: 14px;
+  padding: 11px 12px; font-size: .76rem; font-weight: 700; opacity: 0; transform: translateY(10px); animation: lpcpdf 8s infinite; }
+.lp-cel-mao { position: absolute; width: 40px; height: 40px; left: 175px; top: 240px; animation: lpcmao 8s infinite;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.2)); }
+@keyframes lpcp0 { 0%,14% { opacity: 1 } 18%,100% { opacity: 0 } }
+@keyframes lpcp1 { 0%,15% { opacity: 0 } 19%,40% { opacity: 1 } 44%,100% { opacity: 0 } }
+@keyframes lpcp2 { 0%,41% { opacity: 0 } 45%,96% { opacity: 1 } 100% { opacity: 0 } }
+@keyframes lpca1 { 0%,14% { border-color: #E7E2D6; background: #fff } 17%,96% { border-color: #C9A84C; background: #FFFBEF } 100% { border-color: #E7E2D6; background: #fff } }
+@keyframes lpca2 { 0%,40% { border-color: #E7E2D6; background: #fff } 43%,96% { border-color: #C9A84C; background: #FFFBEF } 100% { border-color: #E7E2D6; background: #fff } }
+@keyframes lpcpdf { 0%,60% { opacity: 0; transform: translateY(10px) } 66%,94% { opacity: 1; transform: none } 100% { opacity: 0 } }
+@keyframes lpcmao { 0% { left: 175px; top: 290px } 12% { left: 175px; top: 196px } 16% { transform: scale(.85) } 20% { transform: none; left: 175px; top: 196px }
+  36% { left: 175px; top: 240px } 41% { transform: scale(.85) } 46% { transform: none; left: 175px; top: 240px } 70%,100% { left: 200px; top: 360px; opacity: 0 } }
+@media (prefers-reduced-motion: reduce) { .lp-cel * { animation: none !important; } .lp-cel-preco .p2, .lp-cel-pdf { opacity: 1; transform: none; } .lp-cel-mao { display: none; } }
+@media (max-width: 900px) {
+  .lp-hero .lp-hero-right { order: -1; padding-top: 1.5rem; padding-bottom: 0; }
+  .lp-bv { align-items: center; text-align: center; }
+  .lp-bv-continuar, .lp-bv-entrar { max-width: none; }
+}
+
+/* Foto de fundo do topo: closet organizado (Unsplash, foto de Chastity Cortijo) com camada azul-marinho */
+.lp-hero-com-foto .lp-hero-foto { top: 68px;
+  background: linear-gradient(90deg, rgba(13,27,42,.93) 0%, rgba(13,27,42,.80) 45%, rgba(13,27,42,.50) 100%),
+              url('/hero-closet.jpg') center / cover no-repeat; }
+.lp-hero-com-foto .lp-hero-foto::after { display: none; }
+.lp-hero-com-foto .lp-bv-bem { color: #D9B95E; }
+.lp-hero-com-foto .lp-bv-bordao { color: #FBF8F1; }
+.lp-hero-com-foto .lp-bv-bordao em { color: #D9B95E; }
+.lp-hero-com-foto .lp-bv-prova { color: #D3DAE3; }
+.lp-hero-com-foto .lp-bv-prova b { color: #fff; }
+.lp-hero-com-foto .lp-bv-entrar { color: #D3DAE3; }
+.lp-hero-com-foto .lp-bv-entrar b { color: #D9B95E; }
+.lp-hero-com-foto .lp-hero-app-baixar span { color: #D3DAE3; }
+.lp-hero-com-foto .lp-cel { box-shadow: 0 24px 60px rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.12); }
+@media (max-width: 900px) {
+  .lp-hero-com-foto .lp-hero-foto {
+    background: linear-gradient(180deg, rgba(13,27,42,.70) 0%, rgba(13,27,42,.90) 45%, rgba(13,27,42,.96) 100%),
+                url('/hero-closet-m.jpg') center top / cover no-repeat; }
+}
+@media (max-width: 900px) {
+  .lp-hero-com-foto { min-height: auto; }
+  .lp-hero-com-foto .lp-hero-right { padding: 1.2rem 1rem 0; }
+  .lp-hero-com-foto .lp-hero-left { padding: 1.2rem 1.25rem 2.5rem; }
+  .lp-cel { width: 200px; border-radius: 30px; padding: 8px; }
+  .lp-cel-notch { top: 8px; width: 60px; height: 13px; }
+  .lp-cel-tela { height: 255px; border-radius: 23px; padding: 14px 11px 12px; }
+  .lp-cel-ey { font-size: .5rem; margin-top: 8px; }
+  .lp-cel-tt { font-size: 1.05rem; margin-bottom: 7px; }
+  .lp-cel-preco { height: 48px; padding: 8px 10px; border-radius: 12px; }
+  .lp-cel-preco span { top: 19px; left: 10px; font-size: 1.35rem; }
+  .lp-cel-amb { padding: 6px 9px; margin-top: 6px; font-size: .68rem; border-radius: 9px; }
+  .lp-cel-pdf { font-size: .62rem; padding: 8px 9px; bottom: 11px; left: 11px; right: 11px; }
+  .lp-cel-mao { width: 30px; height: 30px; animation-name: lpcmaoM; }
+  .lp-bv-bem { margin-bottom: .5rem; }
+  .lp-bv-bordao { font-size: 2.05rem; margin-bottom: .7rem; }
+  .lp-bv-prova { font-size: .92rem; margin-bottom: 1.1rem; }
+}
+@keyframes lpcmaoM { 0% { left: 120px; top: 210px } 12% { left: 120px; top: 140px } 16% { transform: scale(.85) } 20% { transform: none; left: 120px; top: 140px }
+  36% { left: 120px; top: 172px } 41% { transform: scale(.85) } 46% { transform: none; left: 120px; top: 172px } 70%,100% { left: 140px; top: 240px; opacity: 0 } }

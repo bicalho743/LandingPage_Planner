@@ -202,6 +202,28 @@ function linkEntrar() {
   return `${APP_URL}/?${q.toString()}`;
 }
 
+// Celular da boas-vindas: a mãozinha toca nos ambientes, o preço sobe e a proposta sai pronta (8 s, em loop)
+function CelularAnimado() {
+  return (
+    <div className="lp-cel" aria-label="O Planner calculando o preço de um projeto e gerando a proposta">
+      <div className="lp-cel-notch" />
+      <div className="lp-cel-tela">
+        <div className="lp-cel-ey">Preço de um projeto</div>
+        <div className="lp-cel-tt">Quais ambientes?</div>
+        <div className="lp-cel-preco"><small>Preço sugerido</small>
+          <span className="p0">R$ 0</span><span className="p1">R$ 820</span><span className="p2">R$ 1.480</span></div>
+        <div className="lp-cel-amb a1">Cozinha <i>6 h</i></div>
+        <div className="lp-cel-amb a2">Closet <i>5 h</i></div>
+        <div className="lp-cel-amb">Quarto de casal <i>4 h</i></div>
+        <div className="lp-cel-pdf">✓ Proposta pronta em PDF, com a sua marca</div>
+      </div>
+      <svg className="lp-cel-mao" viewBox="0 0 24 24" fill="#fff" stroke="#0D1B2A" strokeWidth="1.3" strokeLinejoin="round">
+        <path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-.5V8.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-1.2a6 6 0 0 1-4.6-2.2L4.6 16a1.5 1.5 0 0 1 2.3-1.9L9 16.5V11" />
+      </svg>
+    </div>
+  );
+}
+
 function irParaCadastro(origem: string) {
   rastrear("cta_cadastro", "CliqueCadastro", { origem }, true);
   window.location.href = linkCadastro();
@@ -357,77 +379,31 @@ export default function LandingPage() {
       </header>
 
       {/* ── HERO ── */}
-      <section className="lp-hero" id="inicio">
-        <div className="lp-hero-bg" />
+      <section className="lp-hero lp-hero-com-foto" id="inicio">
+        <div className="lp-hero-bg lp-hero-foto" role="img" aria-label="Closet organizado, com sapatos e bolsas em prateleiras iluminadas" />
 
-        <div className="lp-hero-left">
-          <a href="#cleo" className="lp-novidade" onClick={(e) => { e.preventDefault(); rastrear("ver_cleo", "VerCleo", { origem: "hero" }, true); scrollTo("cleo"); }}>
-            <b>Novo</b> Fale e a Cléo preenche por você <span className="lp-previa">Prévia</span>
-          </a>
-          <div className="lp-eyebrow">{tema ? tema.eyebrow : "Para Personal Organizers"}</div>
+        {/* Boas-vindas, iguais às do app e do site: celular animado, bordão, Continuar e "Já tem conta? Entrar" */}
+        <div className="lp-hero-left lp-bv">
+          <div className="lp-bv-bem">Bem-vinda ao Planner Organiza</div>
           {tema ? (
-            <h1>{tema.titulo}<br /><em>{tema.destaque}</em></h1>
+            <h1 className="lp-bv-bordao">{tema.titulo} <em>{tema.destaque}</em></h1>
           ) : (
-            <h1>
-              Você organiza a vida<br />dos outros.<br />
-              <em>Quem organiza<br />o seu negócio?</em>
-            </h1>
+            <h1 className="lp-bv-bordao">A casa delas em <em>ordem</em>.<br />O seu negócio <em>também</em>.</h1>
           )}
-          <p className="lp-hero-sub">
-            {tema ? tema.sub : (
-              <>Propostas elegantes em minutos, clientes organizados, finanças sob controle.
-              Tudo que você precisava para se sentir tão profissional quanto você realmente é.</>
-            )}
-          </p>
-
-          <div className="lp-hero-capture">
-            <input
-              type="email"
-              placeholder="Seu melhor e-mail"
-              value={heroEmail}
-              onChange={(e) => setHeroEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleHeroSubmit()}
-            />
-            <button className="lp-btn-primary" onClick={handleHeroSubmit} disabled={heroSubmitting}>
-              {heroSubmitting ? "Enviando..." : "Começar grátis"}
-            </button>
-          </div>
-          {heroMsg && (
-            <p style={{ fontSize: "0.8rem", marginBottom: "0.75rem", color: heroMsg.startsWith("✅") ? "#28a745" : "#dc3545" }}>
-              {heroMsg}
-            </p>
-          )}
-          <p className="lp-hero-note">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            7 dias grátis — sem cartão de crédito
-          </p>
+          <p className="lp-bv-prova">Preço, proposta e clientes num lugar só · <b>7 dias grátis, sem cartão</b></p>
+          <button className="lp-btn-primary lp-bv-continuar" onClick={() => irParaCadastro("hero")}>Continuar</button>
+          <a className="lp-bv-entrar" href={`${APP_URL}/?entrar=1`}
+             onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "hero" }, true); e.currentTarget.href = linkEntrar(); }}>
+            Já tem conta? <b>Entrar</b>
+          </a>
           <div className="lp-hero-app-baixar">
             <span>Também no celular:</span>
-            <BotoesApp origem="hero" />
-          </div>
-
-          <div className="lp-hero-stats">
-            <div className="lp-stat-item">
-              <span className="lp-stat-num">7 dias</span>
-              <span className="lp-stat-label">de teste grátis</span>
-            </div>
-            <div className="lp-stat-item">
-              <span className="lp-stat-num">5 min</span>
-              <span className="lp-stat-label">para sua 1ª proposta</span>
-            </div>
-            <div className="lp-stat-item">
-              <span className="lp-stat-num">R$ 39,99</span>
-              <span className="lp-stat-label">por mês no plano anual</span>
-            </div>
+            <BotoesApp origem="hero" claro />
           </div>
         </div>
 
-        {/* Uma ação só no topo (Começar grátis): quem já tem conta usa o "Entrar" do cabeçalho */}
         <div className="lp-hero-right">
-          <img className="lp-hero-app" src="/hero-app.png" width="362" height="622"
-               alt="Tela inicial do Planner Organiza: lucro do mês, valores a receber e a pagar, e o que fazer hoje" />
+          <CelularAnimado />
         </div>
       </section>
 
