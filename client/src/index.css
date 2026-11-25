@@ -1412,3 +1412,109 @@ ol.sup-passos { list-style: decimal; } ul.sup-passos { list-style: disc; }
   .lp-cleo, .lp-pains, .lp-proposal-preview, .lp-footer {
     padding-left: max(5rem, calc((100% - 1200px) / 2)); padding-right: max(5rem, calc((100% - 1200px) / 2)); }
 }
+
+/* Toque em Continuar/Entrar: aviso na hora enquanto o app abre (antes parecia que nada tinha acontecido) */
+body.lp-abrindo::before {
+  content: ""; position: fixed; inset: 0; z-index: 9998; background: rgba(13, 27, 42, .72); backdrop-filter: blur(3px);
+}
+body.lp-abrindo::after {
+  content: "Abrindo o seu Planner…"; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 9999;
+  background: #fff; color: #0D1B2A; font-weight: 700; font-size: 1rem; padding: 48px 30px 20px; border-radius: 14px; text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .25); white-space: nowrap;
+}
+body.lp-abrindo { cursor: progress; }
+/* o giro fica sobre o lado esquerdo do aviso */
+.lp-abrindo-giro { display: none; position: fixed; left: 50%; top: 50%; z-index: 10000; width: 20px; height: 20px;
+  margin: -33px 0 0 -10px; border: 3px solid #E7E2D6; border-top-color: #C9A84C;
+  border-radius: 50%; animation: lp-giro .8s linear infinite; }
+body.lp-abrindo .lp-abrindo-giro { display: block; }
+@keyframes lp-giro { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .lp-abrindo-giro { animation-duration: 2.4s; } }
+
+/* ── Veja por dentro: telas reais em moldura de computador, Android e iPhone (components/TelasReais.tsx) ── */
+.tr-toggle button { padding: .55rem 1rem; }
+.tr-palco { justify-self: center; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1rem; min-width: 0; }
+.tr-pc { width: 100%; max-width: 760px; background: #fff; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 30px 60px rgba(13,27,42,.22), 0 0 0 1px rgba(13,27,42,.08); }
+.tr-pc-barra { display: flex; align-items: center; gap: 6px; padding: 9px 12px; background: #EEF0F3; border-bottom: 1px solid #E1E4E8; }
+.tr-pc-barra i { width: 10px; height: 10px; border-radius: 50%; background: #D0D5DD; }
+.tr-pc-barra i:nth-child(1) { background: #FF5F57; } .tr-pc-barra i:nth-child(2) { background: #FEBC2E; } .tr-pc-barra i:nth-child(3) { background: #28C840; }
+.tr-pc-barra span { margin-left: 10px; flex: 1; max-width: 300px; background: #fff; border-radius: 7px; padding: 3px 10px; font-size: .72rem; color: #667085;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr-pc-img { aspect-ratio: 1440 / 900; overflow: hidden; background: #F7F5F0; }
+.tr-pc-img img { width: 100%; height: auto; display: block; }
+.tr-pc-img.pdf { overflow-y: auto; background: #E9EAEC; padding: 18px 22%; }
+.tr-pc-img.pdf img { box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+
+.tr-cel { width: 300px; max-width: 82vw; background: #0B0F14; padding: 10px; box-shadow: 0 30px 60px rgba(13,27,42,.28); }
+.tr-cel.iphone { border-radius: 50px; padding: 11px; }
+.tr-cel.android { border-radius: 34px; padding: 8px; }
+.tr-cel-tela { background: #FAF8F3; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.tr-cel.iphone .tr-cel-tela { border-radius: 40px; }
+.tr-cel.android .tr-cel-tela { border-radius: 27px; }
+.tr-status { height: 34px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 22px 0 26px;
+  font: 600 .8rem/1 -apple-system, 'Segoe UI', Roboto, sans-serif; color: #101828; position: relative; background: #FAF8F3; }
+.tr-status.android { height: 28px; padding: 0 16px; font-weight: 500; font-size: .74rem; }
+.tr-ilha { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); width: 84px; height: 22px; border-radius: 12px; background: #0B0F14; }
+.tr-camera { position: absolute; left: 50%; top: 7px; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%; background: #0B0F14; }
+.tr-icones { display: inline-flex; gap: 5px; align-items: center; }
+.tr-icones svg { fill: currentColor; color: #101828; }
+.tr-status.android .tr-icones svg:last-child { width: 20px; }
+.tr-cel-img { aspect-ratio: 390 / 844; overflow: hidden; }
+.tr-cel-img img { width: 100%; height: auto; display: block; }
+.tr-cel-img.pdf { overflow-y: auto; background: #E9EAEC; padding: 14px 10px; }
+.tr-cel-img.pdf img { box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+.tr-cel-gesto { height: 18px; flex: none; display: flex; align-items: center; justify-content: center; background: #fff; }
+.tr-cel-gesto i { width: 34%; height: 4px; border-radius: 3px; background: #101828; opacity: .85; }
+.tr-cel.android .tr-cel-gesto i { width: 26%; height: 3.5px; opacity: .55; }
+.tr-cores { display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; justify-content: center; }
+.tr-cores button { width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: pointer; box-shadow: 0 0 0 3px #fff, 0 0 0 4px #D0D5DD; }
+.tr-cores button.on { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #0D1B2A; }
+.tr-cores button:focus-visible { outline: 2px solid #0D1B2A; outline-offset: 4px; }
+.tr-cores span { font-size: .85rem; color: var(--lp-text-mid); margin-left: .3rem; }
+@media (max-width: 900px) {
+  .tr-pc-img.pdf { padding: 12px 14%; }
+}
+
+/* ── Fotos de ambientes de alto padrão em mais seções (Unsplash), com camada azul-marinho para o texto ── */
+.lp-cleo {
+  background: linear-gradient(110deg, rgba(13,27,42,.94) 0%, rgba(13,27,42,.86) 45%, rgba(13,27,42,.62) 100%),
+              url('/secao-despensa.jpg') center / cover no-repeat;
+}
+.lp-pains-left {
+  background: linear-gradient(160deg, rgba(13,27,42,.88) 0%, rgba(13,27,42,.74) 100%),
+              url('/secao-lavanderia.jpg') center / cover no-repeat;
+}
+.lp-pains-left .lp-section-eyebrow { color: #D9B95E; }
+.lp-pains-left h2 { color: #fff; }
+.lp-pains-left h2 em { color: #D9B95E; }
+.lp-pains-left .lp-section-sub, .lp-pains-left p { color: rgba(255,255,255,.82); }
+.lp-proposal-preview {
+  background: linear-gradient(110deg, rgba(13,27,53,.93) 0%, rgba(13,27,53,.84) 50%, rgba(13,27,53,.7) 100%),
+              url('/secao-cozinha.jpg') center / cover no-repeat;
+}
+.lp-footer-cta {
+  background: linear-gradient(135deg, rgba(13,27,53,.9) 0%, rgba(26,48,96,.82) 55%, rgba(184,151,60,.78) 100%),
+              url('/secao-closet.jpg') center / cover no-repeat;
+}
+@media (max-width: 768px) {
+  .lp-cleo { background: linear-gradient(rgba(13,27,42,.9), rgba(13,27,42,.9)), url('/secao-despensa-m.jpg') center / cover no-repeat; }
+  .lp-pains-left { background: linear-gradient(rgba(13,27,42,.86), rgba(13,27,42,.86)), url('/secao-lavanderia-m.jpg') center / cover no-repeat; }
+  .lp-proposal-preview { background: linear-gradient(rgba(13,27,53,.9), rgba(13,27,53,.9)), url('/secao-cozinha-m.jpg') center / cover no-repeat; }
+  .lp-footer-cta { background: linear-gradient(135deg, rgba(13,27,53,.9), rgba(184,151,60,.8)), url('/secao-closet-m.jpg') center / cover no-repeat; }
+}
+
+/* Celular do topo com telas reais do app, trocando a cada 4 s */
+.lp-cel-real .lp-cel-tela { padding: 0; height: auto; aspect-ratio: 390 / 880; background: #FAF8F3; }
+.lp-cel-real .lp-cel-tela img { position: absolute; top: 30px; left: 0; width: 100%; height: calc(100% - 30px); object-fit: cover; object-position: top;
+  opacity: 0; animation: lpReal 12s infinite; }
+.lp-cel-real .lp-cel-tela img.r1 { animation-delay: 0s; }
+.lp-cel-real .lp-cel-tela img.r2 { animation-delay: 4s; }
+.lp-cel-real .lp-cel-tela img.r3 { animation-delay: 8s; }
+@keyframes lpReal { 0% { opacity: 0; } 4% { opacity: 1; } 33% { opacity: 1; } 37% { opacity: 0; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .lp-cel-real .lp-cel-tela img { animation: none; } .lp-cel-real .lp-cel-tela img.r1 { opacity: 1; } }
+.lp-cel-real .lp-cel-notch { z-index: 2; }
+.lp-proposal-real { margin: 0; max-width: 420px; justify-self: center; }
+.lp-proposal-real img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 30px 70px rgba(0,0,0,.45);
+  max-height: 560px; object-fit: cover; object-position: top; }
+.lp-proposal-real figcaption { margin-top: .8rem; font-size: .78rem; color: rgba(255,255,255,.7); text-align: center; }

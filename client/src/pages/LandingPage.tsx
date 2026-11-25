@@ -1,4 +1,4 @@
-import DemoInterativa from "@/components/DemoInterativa";
+import TelasReais from "@/components/TelasReais";
 import { useState, useEffect, useRef } from "react";
 
 // Aplicação principal — a conta é criada lá (7 dias grátis, sem cartão)
@@ -203,30 +203,50 @@ function linkEntrar(direto = true) {
   return `${APP_URL}/?${q.toString()}`;
 }
 
-// Celular da boas-vindas: a mãozinha toca nos ambientes, o preço sobe e a proposta sai pronta (8 s, em loop)
+// Celular da boas-vindas: telas REAIS do app (conta de exemplo) passando sozinhas — preço, proposta e o dia
 function CelularAnimado() {
   return (
-    <div className="lp-cel" aria-label="O Planner calculando o preço de um projeto e gerando a proposta">
+    <div className="lp-cel lp-cel-real" aria-label="Telas reais do app Planner Organiza: preço de um projeto, propostas e o Início">
       <div className="lp-cel-notch" />
       <div className="lp-cel-tela">
-        <div className="lp-cel-ey">Preço de um projeto</div>
-        <div className="lp-cel-tt">Quais ambientes?</div>
-        <div className="lp-cel-preco"><small>Preço sugerido</small>
-          <span className="p0">R$ 0</span><span className="p1">R$ 820</span><span className="p2">R$ 1.480</span></div>
-        <div className="lp-cel-amb a1">Cozinha <i>6 h</i></div>
-        <div className="lp-cel-amb a2">Closet <i>5 h</i></div>
-        <div className="lp-cel-amb">Quarto de casal <i>4 h</i></div>
-        <div className="lp-cel-pdf">✓ Proposta pronta em PDF, com a sua marca</div>
+        <img className="r1" src="/telas/app_precificacao.webp" alt="" width={390} height={844} />
+        <img className="r2" src="/telas/app_propostas.webp" alt="" width={390} height={844} loading="lazy" />
+        <img className="r3" src="/telas/app_inicio.webp" alt="" width={390} height={844} loading="lazy" />
       </div>
-      <svg className="lp-cel-mao" viewBox="0 0 24 24" fill="#fff" stroke="#0D1B2A" strokeWidth="1.3" strokeLinejoin="round">
-        <path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-.5V8.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-1.2a6 6 0 0 1-4.6-2.2L4.6 16a1.5 1.5 0 0 1 2.3-1.9L9 16.5V11" />
-      </svg>
     </div>
   );
 }
 
+// Resposta na hora do toque: enquanto o app abre, a tela mostra "Abrindo o seu Planner…" (sem isso parecia travado)
+function mostrarAbrindo() {
+  try { document.body.classList.add("lp-abrindo"); } catch (e) { /* sem efeito */ }
+}
+if (typeof window !== "undefined") {
+  // voltar pelo navegador devolve a landing da memória: tira o aviso
+  window.addEventListener("pageshow", () => document.body.classList.remove("lp-abrindo"));
+}
+
+// Baixa em segundo plano os arquivos do app (Streamlit): na primeira visita eram ~85 arquivos em duas levas antes da
+// 1ª tela. Com eles já no celular, "Continuar" abre o app bem mais rápido. Só depois que a landing terminou de carregar,
+// e não em conexão econômica.
+function preaquecerApp() {
+  const nav = navigator as any;
+  if (nav.connection && (nav.connection.saveData || /2g/.test(nav.connection.effectiveType || ""))) return;
+  const ir = () => fetch("/api/app-assets").then((r) => r.json()).then((d) => {
+    (d.arquivos || []).forEach((url: string) => {
+      const l = document.createElement("link");
+      l.rel = "prefetch";
+      l.href = url;   // sem crossorigin: assim o navegador reaproveita o arquivo quando o app abre (testado)
+      document.head.appendChild(l);
+    });
+  }).catch(() => {});
+  const w = window as any;
+  (w.requestIdleCallback ? (cb: () => void) => w.requestIdleCallback(cb, { timeout: 4000 }) : (cb: () => void) => setTimeout(cb, 2500))(ir);
+}
+
 function irParaCadastro(origem: string) {
   rastrear("cta_cadastro", "CliqueCadastro", { origem }, true);
+  mostrarAbrindo();
   window.location.href = linkCadastro();
 }
 
@@ -254,6 +274,11 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    if (document.readyState === "complete") preaquecerApp();
+    else window.addEventListener("load", preaquecerApp, { once: true });
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setHeaderScrolled(window.scrollY > 20);
@@ -308,7 +333,8 @@ export default function LandingPage() {
       setHeroEmail("");
       setHeroMsg("✅ Ótimo! Levando você para criar sua conta...");
       rastrear("generate_lead", "Lead", { origem: "hero" });
-      setTimeout(() => { window.location.href = linkCadastro(capturedEmail); }, 1200);
+      mostrarAbrindo();
+      setTimeout(() => { window.location.href = linkCadastro(capturedEmail); }, 300);
     } catch (err: any) {
       setHeroMsg("❌ " + (err?.message || "Ocorreu um erro. Tente novamente."));
     } finally {
@@ -368,7 +394,7 @@ export default function LandingPage() {
         </a>
         <nav className="lp-nav">
           <a href="#cleo" onClick={(e) => { e.preventDefault(); scrollTo("cleo"); }}>Cléo</a>
-          <a href="#experimente" onClick={(e) => { e.preventDefault(); scrollTo("experimente"); }}>Experimente</a>
+          <a href="#experimente" onClick={(e) => { e.preventDefault(); scrollTo("experimente"); }}>Telas reais</a>
           <a href="#funcionalidades" onClick={(e) => { e.preventDefault(); scrollTo("funcionalidades"); }}>Funcionalidades</a>
           <a href="#planos" onClick={(e) => { e.preventDefault(); scrollTo("planos"); }}>Planos</a>
           <a href="#compromissos" onClick={(e) => { e.preventDefault(); scrollTo("compromissos"); }}>Compromissos</a>
@@ -376,7 +402,7 @@ export default function LandingPage() {
           <a href="#duvidas" onClick={(e) => { e.preventDefault(); scrollTo("duvidas"); }}>Dúvidas</a>
           <a href="#baixar" onClick={(e) => { e.preventDefault(); scrollTo("baixar"); }}>Baixar o app</a>
         </nav>
-        <a href={`${APP_URL}/`} className="lp-header-cta" onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true); e.currentTarget.href = linkEntrar(false); }}>Entrar</a>
+        <a href={`${APP_URL}/`} className="lp-header-cta" onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "cabecalho" }, true); e.currentTarget.href = linkEntrar(false); mostrarAbrindo(); }}>Entrar</a>
       </header>
 
       {/* ── HERO ── */}
@@ -397,7 +423,7 @@ export default function LandingPage() {
           <p className="lp-bv-prova">Preço, proposta e clientes num lugar só · <b>7 dias grátis, sem cartão</b></p>
           <button className="lp-btn-primary lp-bv-continuar" onClick={() => irParaCadastro("hero")}>Continuar</button>
           <a className="lp-bv-entrar" href={`${APP_URL}/?entrar=1`}
-             onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "hero" }, true); e.currentTarget.href = linkEntrar(); }}>
+             onClick={(e) => { rastrear("entrar", "CliqueEntrar", { origem: "hero" }, true); e.currentTarget.href = linkEntrar(); mostrarAbrindo(); }}>
             Já tem conta? <b>Entrar</b>
           </a>
           <div className="lp-hero-app-baixar">
@@ -489,7 +515,7 @@ export default function LandingPage() {
             propostas no WhatsApp e finanças descontroladas te fazem sentir que não é profissional
             o suficiente — mesmo você sendo incrível no que faz.
           </p>
-          <p style={{ fontSize: "0.85rem", color: "var(--lp-text-light)", marginTop: "1.5rem" }}>
+          <p style={{ fontSize: "0.9rem", color: "#D9B95E", marginTop: "1.5rem", fontWeight: 600 }}>
             O Planner Organiza foi criado para resolver exatamente isso.
           </p>
         </div>
@@ -515,7 +541,7 @@ export default function LandingPage() {
 
       {/* ── DEMONSTRAÇÃO INTERATIVA ── */}
       <section className="lp-section lp-demo" id="experimente">
-        <DemoInterativa aoCadastrar={irParaCadastro} aoRastrear={rastrear} />
+        <TelasReais aoCadastrar={irParaCadastro} aoRastrear={rastrear} />
       </section>
 
       {/* ── TOUR EM VÍDEO ── */}
@@ -618,35 +644,11 @@ export default function LandingPage() {
         </div>
 
         <div className="lp-proposal-right lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
-          <div className="lp-proposal-mock">
-            <div className="lp-mock-header">
-              <span className="lp-mock-logo">Ana Lima Organizer</span>
-              <span className="lp-mock-badge">Proposta</span>
-            </div>
-            <div className="lp-mock-body">
-              <p className="lp-mock-title">Organização Residencial</p>
-              <p className="lp-mock-subtitle">Cliente: Fernanda Costa · São Paulo, SP</p>
-              <div className="lp-mock-section">
-                <p className="lp-mock-section-label">Escopo do Projeto</p>
-                <div className="lp-mock-line" style={{ width: "80%" }} />
-                <div className="lp-mock-line" style={{ width: "60%" }} />
-                <div className="lp-mock-line" style={{ width: "70%" }} />
-              </div>
-              <div className="lp-mock-section">
-                <p className="lp-mock-section-label">Etapas</p>
-                <div className="lp-mock-line" style={{ width: "40%" }} />
-                <div className="lp-mock-line" style={{ width: "60%" }} />
-                <div className="lp-mock-line" style={{ width: "50%" }} />
-              </div>
-              <div className="lp-mock-total">
-                <span>Investimento total</span>
-                <strong>R$ 2.400</strong>
-              </div>
-            </div>
-            <div className="lp-mock-footer">
-              Válido por 7 dias · Pagamento: 50% entrada + 50% conclusão
-            </div>
-          </div>
+          <figure className="lp-proposal-real">
+            <img src="/telas/pdf_dourado.webp" alt="Proposta em PDF real gerada pelo Planner Organiza, com o logotipo e a cor da organizer"
+                 width={780} height={1103} loading="lazy" decoding="async" />
+            <figcaption>PDF real gerado pelo Planner, com o logotipo e a cor da organizer</figcaption>
+          </figure>
         </div>
       </div>
 

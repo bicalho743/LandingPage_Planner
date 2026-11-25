@@ -69,6 +69,39 @@ app.use("/api/webhook-direto", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Arquivos do app (Streamlit) para a landing baixar em segundo plano: quem toca em "Continuar" já tem quase tudo no
+// celular e o app abre bem mais rápido na primeira visita. A lista vem do index.html do app (muda quando o Streamlit
+// é atualizado) e fica guardada por 15 minutos. O navegador guarda os arquivos por 1 ano (imutáveis).
+let appAssets: { em: number; lista: string[] } = { em: 0, lista: [] };
+app.get("/api/app-assets", async (_req: Request, res: Response) => {
+  try {
+    if (Date.now() - appAssets.em > 15 * 60 * 1000) {
+      const base = "https://app.plannerorganiza.com.br/";
+      const html = await (await fetch(base, { signal: AbortSignal.timeout(5000) })).text();
+      const achados = Array.from(html.matchAll(/(?:src|href)="\.\/(static\/(?:js|css|media)\/[^"]+\.(?:js|css|woff2))"/g))
+        .map((m) => base + m[1]);
+      // 2ª leva: as peças que o Streamlit só pede ao desenhar as boas-vindas (campos, botões, rótulos), achadas
+      // pelo nome dentro do arquivo principal do app
+      const principal = html.match(/src="\.\/(static\/js\/index\.[^"]+\.js)"/);
+      if (principal) {
+        const js = await (await fetch(base + principal[1], { signal: AbortSignal.timeout(5000) })).text();
+        const nomes = ["IFrame", "IFrameUtil", "rehype-raw", "hastscript", "web-namespaces", "TextInput", "Input",
+          "requiredField", "Autocomplete", "useFormValidation", "useTextField", "useFormReset", "useField",
+          "ErrorOutline.esm", "Cancel.esm", "WidgetLabel", "styled-components", "WidgetLabelHelpIcon",
+          "useBasicWidgetState", "useDebouncedCallback", "InputInstructions", "inputUtils", "useUpdateUiValue",
+          "Button", "Checkbox", "Radio", "ButtonGroup", "Selectbox"];
+        for (const m of Array.from(js.matchAll(/([A-Za-z0-9_.-]+)\.([A-Za-z0-9_-]{8})\.js/g))) {
+          if (nomes.includes(m[1])) achados.push(base + "static/js/" + m[0]);
+        }
+      }
+      if (achados.length) appAssets = { em: Date.now(), lista: Array.from(new Set(achados)) };
+    }
+    res.set("Cache-Control", "public, max-age=900").json({ arquivos: appAssets.lista });
+  } catch (e) {
+    res.json({ arquivos: appAssets.lista });
+  }
+});
+
 // Registrando os novos routers
 app.use(registerRouter);
 app.use(stripeWebhookRouter);
