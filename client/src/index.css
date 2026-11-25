@@ -1518,3 +1518,14 @@ body.lp-abrindo .lp-abrindo-giro { display: block; }
 .lp-proposal-real img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 30px 70px rgba(0,0,0,.45);
   max-height: 560px; object-fit: cover; object-position: top; }
 .lp-proposal-real figcaption { margin-top: .8rem; font-size: .78rem; color: rgba(255,255,255,.7); text-align: center; }
+
+/* Telas reais: no computador, texto e passos à esquerda e o aparelho à direita; no celular, o aparelho logo abaixo da
+   escolha Computador/Android/iPhone (antes ficava depois de todos os passos e a pessoa não via a tela mudar) */
+.tr-wrap { grid-template-areas: "intro palco" "lista palco"; align-items: start; row-gap: 0; }
+.tr-wrap .tr-intro { grid-area: intro; align-self: end; }
+.tr-wrap .tr-lista { grid-area: lista; }
+.tr-wrap .tr-palco { grid-area: palco; align-self: center; }
+@media (max-width: 900px) {
+  .tr-wrap { grid-template-areas: "intro" "palco" "lista"; row-gap: 1.2rem; }
+  .tr-wrap .tr-cel { width: 260px; }
+}

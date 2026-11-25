@@ -3,7 +3,7 @@
  * de demonstração de uma organizer de exemplo (PlannerOrganizer/scripts/telas_reais). Sete passos clicáveis; no passo
  * do PDF, as cores trocam o PDF real da proposta. As imagens ficam em /telas (app_*.webp, web_*.webp, pdf_*.webp).
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Aparelho = "computador" | "android" | "iphone";
 type Props = {
@@ -60,8 +60,16 @@ export default function TelasReais({ aoCadastrar, aoRastrear }: Props) {
   useEffect(() => { setAparelho(aparelhoInicial()); }, []);
 
   const passo = PASSOS[ativo];
+  const palcoRef = useRef<HTMLDivElement | null>(null);
   const abrir = (i: number) => {
     setAtivo(i);
+    // no celular o aparelho fica acima da lista de passos: rola até ele para a pessoa ver a tela mudar
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches && palcoRef.current) {
+      const r = palcoRef.current.getBoundingClientRect();
+      if (r.top < 70 || r.bottom > window.innerHeight) {
+        window.scrollTo({ top: window.scrollY + r.top - 80, behavior: "smooth" });
+      }
+    }
     setVistos((v) => v.map((x, j) => x || j === i));
     aoRastrear("demo_passo", "DemoPasso", { passo: i + 1, aparelho }, true);
   };
@@ -71,8 +79,8 @@ export default function TelasReais({ aoCadastrar, aoRastrear }: Props) {
     `Tela ${passo.titulo.toLowerCase()} no ${celular ? "app Planner Organiza" : "Planner Organiza no computador"}`;
 
   return (
-    <div className="dm-wrap">
-      <div className="dm-esq">
+    <div className="dm-wrap tr-wrap">
+      <div className="dm-esq tr-intro">
         <div className="lp-section-eyebrow">Telas reais</div>
         <h2>O Planner de verdade. <em>Antes de criar a conta.</em></h2>
         <p className="lp-section-sub">
@@ -86,6 +94,9 @@ export default function TelasReais({ aoCadastrar, aoRastrear }: Props) {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="dm-esq tr-lista">
         <ol className="dm-passos">
           {PASSOS.map((p, i) => (
             <li key={p.id}>
@@ -107,7 +118,7 @@ export default function TelasReais({ aoCadastrar, aoRastrear }: Props) {
         <p className="dm-nota">Clientes, valores e telefones da conta de exemplo são fictícios.</p>
       </div>
 
-      <div className="tr-palco">
+      <div className="tr-palco" ref={palcoRef}>
         {celular ? (
           <div className={`tr-cel ${aparelho}`}>
             <div className="tr-cel-tela">
