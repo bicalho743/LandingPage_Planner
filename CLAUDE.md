@@ -1,37 +1,44 @@
-# Planner Organiza: landing e cadastro (plannerorganiza.com.br)
+# Planner Organiza: página de vendas (landing)
 
-Responda em português, passo a passo e sem jargão.
-
+Responda em português, passo a passo e sem jargão. O README.md tem as seções da página e a medição.
 Trabalho no PC: ver bicalho743/meu-enxoval-em-dia/docs/CLAUDE-NO-PC.md
 
 ## O que é
-- **Tipo:** site React (Vite, `client/`) com servidor Node/Express (`server/`). Não é app de loja (o app fica em
-  `bicalho743/planner-app`; a API e o sistema web em `bicalho743/PlannerOrganizer`).
-- **Publicação:** Render, serviço `plannerorganiza` (`render.yaml`: `npm run build` e `npm run start`). Conferir no
-  painel do Render se o autoDeploy está ligado antes de mexer na `main`.
-- **E-mails:** pelo Brevo. API em `server/brevo.ts` (remetente) e SMTP em `server/routes.ts` (e-mail de boas-vindas).
-- **Banco:** Postgres no Neon (`DATABASE_URL`). Pagamento: Stripe. Login: Firebase.
-- Expo, Codemagic, RevenueCat e lojas: não se aplicam a este repositório.
+- **Site** (não é app de loja): React + Vite (TypeScript) com servidor Express (`server/index.ts`).
+  Página única em `client/src/pages/LandingPage.tsx`, estilos em `client/src/index.css`.
+- Domínio: **plannerorganiza.com.br** (e www). Os botões levam ao sistema em **app.plannerorganiza.com.br**
+  (repositório bicalho743/PlannerOrganizer).
+- Render: serviço `srv-d0jkn5l6ubrc73aijqgg` (workspace `tea-cvupfb7diees73e9o96g`). **Publica sozinho a cada push na
+  `main`**: avise a dona antes, porque vai ao ar na hora.
+- Sem RevenueCat, Supabase ou Expo aqui. Medição: Google Analytics e Pixel do Meta em `client/index.html`.
 
-## Textos e artes
-- Páginas em `client/src/pages/` (Suporte, ExcluirConta, cancelado etc.) e componentes em `client/src/components/`.
-- Vídeos e imagens da demonstração em `client/public/`.
+## Rodar
+- `npm install` e `npm run dev` (porta do Express). Build de produção: `npm run build` e `npm run start`.
+- `GET /api/app-assets` (server/index.ts): lista os arquivos do Streamlit para a landing pré-carregar o app.
+
+## Peças principais
+- `client/src/components/TelasReais.tsx`: demonstração com telas reais (Computador · Android · iPhone), 7 passos e o
+  PDF real em 6 cores. Imagens em `client/public/telas/` (app_*, web_*, pdf_*.webp).
+- Fotos de fundo das seções: `client/public/secao-*.jpg` (Unsplash). Vídeos: `client/public/videos/` e o tour de
+  1min30 (deitado e em pé).
+- Abertura do app: `preaquecerApp` (baixa os arquivos do app antes) e o aviso "Abrindo o seu Planner…" ao tocar.
+- Todos os botões de cadastro abrem as boas-vindas completas do app (decisão da dona, 25/11/2026).
+- Como as telas reais e o vídeo são gerados: PlannerOrganizer/scripts/telas_reais/LEIAME.md.
 
 ## Onde paramos (26/11/2026)
-- **URGENTE: senha do banco exposta.** `server/db.ts` (linha 8) e alguns `.md` de instruções do Render trazem a
-  `DATABASE_URL` do Neon com a senha, e o repositório é **público**. Falta: trocar a senha no Neon, colocar a nova só
-  na variável `DATABASE_URL` do Render e tirar a senha do código (ela continua no histórico do Git, por isso a troca é
-  obrigatória).
-- **Remetente novo dos e-mails:** branch `claude/remetente-candeiatec` (fora da `main`) troca o remetente de
-  `contato@plannerorganiza.com.br` (API) e `suporte@plannerpro.com` (SMTP, domínio que não é nosso) para
-  `contato@candeiatec.com.br`. **Só levar para a `main` depois** de o remetente estar verificado no Brevo (e, de
-  preferência, o domínio candeiatec.com.br autenticado), senão os e-mails param.
-- **19/11:** contatos públicos (Suporte, Excluir conta, rodapé, cancelamento, formulário) trocados para
-  `contato@candeiatec.com.br`; saíram e-mails de modelo de outros domínios.
-- **Brevo pela API:** a chave salva na nuvem foi recusada ("Key not found"); provavelmente era a chave SMTP
-  (`xsmtpsib-`) e não a de API (`xkeysib-`). No PC, usar o site do Brevo pelo Chrome.
-- **Decisões pendentes:** autenticar candeiatec.com.br no Brevo; quando publicar o remetente novo.
+- Tudo publicado na `main` (igual à branch `claude/dreamy-bohr-1tib91`). Nada em andamento.
+- Planos na página já com os preços de 23/11/2026: mensal R$ 59,90, trimestral R$ 149,90 e anual R$ 479,90.
+  (O README ainda cita os antigos R$ 39,90 / R$ 199,90: vale o código.)
+- Páginas /indique e /indique/termos (programa de afiliadas, 25% por 12 meses) estão no ar.
+- **URGENTE (segurança):** `server/db.ts` (linha 8) e alguns `.md` de instruções do Render trazem a `DATABASE_URL`
+  do Neon **com a senha**, e o repositório é **público**. Falta: trocar a senha no Neon, colocar a nova só na variável
+  `DATABASE_URL` do Render e tirar a senha do código (ela continua no histórico do Git, por isso a troca é obrigatória).
+- **Remetente dos e-mails (pendente):** a branch `claude/remetente-candeiatec` (fora da `main`) troca o remetente de
+  `contato@plannerorganiza.com.br` (API do Brevo, `server/brevo.ts`) e `suporte@plannerpro.com` (SMTP,
+  `server/routes.ts`, domínio que não é nosso) para `contato@candeiatec.com.br`. **Só levar para a `main` depois** de o
+  remetente estar verificado no Brevo (de preferência com o domínio candeiatec.com.br autenticado), senão os e-mails param.
+- 19/11: contatos públicos (Suporte, Excluir conta, rodapé, cancelamento, formulário) passaram a usar
+  `contato@candeiatec.com.br`, o contato único dos apps da Candeia Tec.
 
 ## Regras
 - Repositório público: nunca colocar chaves, senhas ou dados de clientes.
-- Mudança na `main` pode ir ao ar na hora (Render): avisar antes.
