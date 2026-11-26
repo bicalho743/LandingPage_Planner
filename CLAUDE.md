@@ -1,33 +1,44 @@
-# Planner Organiza: página de vendas (site)
+# Planner Organiza: página de vendas (landing)
 
-Responda em português, passo a passo e sem jargão. O README.md tem as seções da página em detalhe.
+Responda em português, passo a passo e sem jargão. O README.md tem as seções da página e a medição.
+Trabalho no PC: ver bicalho743/meu-enxoval-em-dia/docs/CLAUDE-NO-PC.md
 
-Trabalho no PC: ver bicalho743/meu-enxoval-em-dia/docs/CLAUDE-NO-PC.md (guia de migração para o Claude Code do PC Windows "Notebook_Solano").
+## O que é
+- **Site** (não é app de loja): React + Vite (TypeScript) com servidor Express (`server/index.ts`).
+  Página única em `client/src/pages/LandingPage.tsx`, estilos em `client/src/index.css`.
+- Domínio: **plannerorganiza.com.br** (e www). Os botões levam ao sistema em **app.plannerorganiza.com.br**
+  (repositório bicalho743/PlannerOrganizer).
+- Render: serviço `srv-d0jkn5l6ubrc73aijqgg` (workspace `tea-cvupfb7diees73e9o96g`). **Publica sozinho a cada push na
+  `main`**: avise a dona antes, porque vai ao ar na hora.
+- Sem RevenueCat, Supabase ou Expo aqui. Medição: Google Analytics e Pixel do Meta em `client/index.html`.
 
-## Tipo e ids
-- **Site** React + Vite (TypeScript) com servidor Express (`server/index.ts`). Página única em
-  `client/src/pages/LandingPage.tsx`, estilos em `client/src/index.css`. Não tem app de loja (o app é bicalho743/planner-app;
-  o sistema e a API são bicalho743/PlannerOrganizer).
-- Domínio: plannerorganiza.com.br (e www); `promo.plannerorganiza.com.br` redireciona (301) para o domínio principal.
-- Render: serviço `Pagina_de_vendas_planner` = srv-d0jkn5l6ubrc73aijqgg (workspace tea-cvupfb7diees73e9o96g),
-  **publica sozinho a cada push na `main`**. Avise sempre que mudar algo, pois vai ao ar na hora.
-- Variáveis no Render (só os nomes): STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY/ANNUAL/LIFETIME
-  (e as _TEST), DATABASE_URL, FIREBASE_ADMIN_CREDENTIALS, BREVO_API_KEY, SMTP_USER, SMTP_PASS; no build VITE_FIREBASE_*.
-- Firebase: `planner-organizer-68a23`. Codemagic, Expo, RevenueCat e Supabase: não usa.
+## Rodar
+- `npm install` e `npm run dev` (porta do Express). Build de produção: `npm run build` e `npm run start`.
+- `GET /api/app-assets` (server/index.ts): lista os arquivos do Streamlit para a landing pré-carregar o app.
 
-## Rodar e publicar
-- `npm install` e `npm run dev` (local); `npm run build` gera `dist/`. Publicar = push na `main` (Render faz o resto).
-- Trabalhe numa branch e leve para a `main` quando estiver conferido no celular e no computador.
-
-## Textos e artes
-- Imagens e vídeos da página: `client/public/` (vídeos de tela em `client/public/videos/`). Prints da landing e imagens
-  de origem: bicalho743/planner-app, pasta `marketing/site/`.
-- Prévia de link (WhatsApp/redes): tags og no topo do `<head>` e prévia própria para `/indique`.
+## Peças principais
+- `client/src/components/TelasReais.tsx`: demonstração com telas reais (Computador · Android · iPhone), 7 passos e o
+  PDF real em 6 cores. Imagens em `client/public/telas/` (app_*, web_*, pdf_*.webp).
+- Fotos de fundo das seções: `client/public/secao-*.jpg` (Unsplash). Vídeos: `client/public/videos/` e o tour de
+  1min30 (deitado e em pé).
+- Abertura do app: `preaquecerApp` (baixa os arquivos do app antes) e o aviso "Abrindo o seu Planner…" ao tocar.
+- Todos os botões de cadastro abrem as boas-vindas completas do app (decisão da dona, 25/11/2026).
+- Como as telas reais e o vídeo são gerados: PlannerOrganizer/scripts/telas_reais/LEIAME.md.
 
 ## Onde paramos (26/11/2026)
-- **No ar (25/11):** telas reais (app Android/iPhone e site) na demonstração e no Como funciona; vídeo de 1min30 refeito;
-  topo com fotos de ambientes se alternando; "Entrar" abre as boas-vindas do app e "Já tem conta? Entrar" vai ao login.
-- **Nada em andamento** (main limpa em fd84730).
-- **Decidir:** o README ainda diz planos R$ 39,90 / R$ 199,90; o app registra preços novos desde 23/11 (mensal R$ 59,90,
-  trimestral R$ 149,90, anual R$ 479,90) e a indicação usa anual R$ 429,90 (24/11). Conferir o que a página mostra e
-  atualizar o README.
+- Tudo publicado na `main` (igual à branch `claude/dreamy-bohr-1tib91`). Nada em andamento.
+- Planos na página já com os preços de 23/11/2026: mensal R$ 59,90, trimestral R$ 149,90 e anual R$ 479,90.
+  (O README ainda cita os antigos R$ 39,90 / R$ 199,90: vale o código.)
+- Páginas /indique e /indique/termos (programa de afiliadas, 25% por 12 meses) estão no ar.
+- **URGENTE (segurança):** `server/db.ts` (linha 8) e alguns `.md` de instruções do Render trazem a `DATABASE_URL`
+  do Neon **com a senha**, e o repositório é **público**. Falta: trocar a senha no Neon, colocar a nova só na variável
+  `DATABASE_URL` do Render e tirar a senha do código (ela continua no histórico do Git, por isso a troca é obrigatória).
+- **Remetente dos e-mails (pendente):** a branch `claude/remetente-candeiatec` (fora da `main`) troca o remetente de
+  `contato@plannerorganiza.com.br` (API do Brevo, `server/brevo.ts`) e `suporte@plannerpro.com` (SMTP,
+  `server/routes.ts`, domínio que não é nosso) para `contato@candeiatec.com.br`. **Só levar para a `main` depois** de o
+  remetente estar verificado no Brevo (de preferência com o domínio candeiatec.com.br autenticado), senão os e-mails param.
+- 19/11: contatos públicos (Suporte, Excluir conta, rodapé, cancelamento, formulário) passaram a usar
+  `contato@candeiatec.com.br`, o contato único dos apps da Candeia Tec.
+
+## Regras
+- Repositório público: nunca colocar chaves, senhas ou dados de clientes.
