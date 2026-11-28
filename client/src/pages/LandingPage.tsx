@@ -345,7 +345,7 @@ export default function LandingPage() {
   const faqItems = [
     {
       q: "O que é a Cléo?",
-      a: "É a assistente de voz do app, em versão de testes (Prévia), incluída no Plano Pro (mensal ou anual). Você fala, por exemplo, \"marca a Ana na sexta às 14h\", e ela abre o compromisso já preenchido. Também faz propostas, lançamentos e cadastro de clientes. Ela não grava nada sozinha: você confere na tela e diz \"salvar\". Para entender o pedido, o texto do que você falou e os nomes das suas clientes são enviados a um serviço de inteligência artificial.",
+      a: "É a assistente de voz do app, em versão de testes (Prévia), incluída no Plano Pro (mensal ou anual). Você fala, por exemplo, \"marca a Ana na sexta às 14h\", e ela abre o compromisso já preenchido. Por voz, ela cuida só da Agenda: propostas, financeiro e clientes continuam pelas telas do app. Ela não grava nada sozinha: você confere na tela e diz \"salvar\". Para entender o pedido, o texto do que você falou e os nomes das suas clientes são enviados a um serviço de inteligência artificial.",
     },
     {
       q: "Preciso ter experiência com tecnologia?",
@@ -449,19 +449,19 @@ export default function LandingPage() {
       <section className="lp-cleo" id="cleo">
         <div className="lp-cleo-texto lp-reveal" ref={(el) => addRevealRef(el, revealIdx++)}>
           <div className="lp-section-eyebrow">Novidade no app <span className="lp-previa">Prévia</span></div>
-          <h2>Fale com a <em>Cléo</em>.<br />Ela preenche para você.</h2>
+          <h2>Fale com a <em>Cléo</em>.<br />Ela marca na sua agenda.</h2>
           <p className="lp-section-sub">
-            A Cléo é a assistente de voz do Planner Organiza. Você pede do jeito que fala, ela abre a tela certa
-            e deixa o formulário pronto. Você só confere e diz <strong>"salvar"</strong>.
+            A Cléo é a assistente de voz da Agenda do Planner Organiza. Você fala o compromisso do jeito que fala com
+            uma amiga, ela deixa tudo preenchido. Você só confere e diz <strong>"salvar"</strong>.
           </p>
           <ul className="lp-cleo-frases">
             <li>“Marca a Ana na sexta às 14h”</li>
-            <li>“Nova proposta para a Carla, cozinha, 3 mil, sinal de mil”</li>
-            <li>“Lança uma despesa de 80 reais de material”</li>
-            <li>“Cadastra a Marina, aniversário dia 14 de junho”</li>
+            <li>“Visita na casa da Carla amanhã às 9h”</li>
+            <li>“Retorno com a Bia dia 10 às 16h”</li>
+            <li>“Reunião com a arquiteta quinta às 11h”</li>
           </ul>
           <ul className="lp-proposal-points">
-            <li>Abre compromisso, proposta, lançamento ou cliente já preenchido</li>
+            <li>Abre o compromisso já preenchido: dia, hora, cliente e local</li>
             <li>Corrige por voz: “muda o valor para 500”, “passa para as 15h”</li>
             <li>Nada é gravado sem a sua confirmação</li>
             <li>Em português, no celular, com o microfone do próprio aparelho</li>
@@ -743,7 +743,7 @@ export default function LandingPage() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>App Android e iPhone + acesso web</li>
-              <li>Cléo, assistente de voz <span className="lp-previa">Prévia</span></li>
+              <li>Cléo, agenda por voz <span className="lp-previa">Prévia</span></li>
             </ul>
             <button className="lp-btn-plan outline" onClick={() => irParaCadastro("plano_mensal")}>
               Começar grátis
@@ -768,7 +768,7 @@ export default function LandingPage() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>App Android e iPhone + acesso web</li>
-              <li>Cléo, assistente de voz <span className="lp-previa">Prévia</span></li>
+              <li>Cléo, agenda por voz <span className="lp-previa">Prévia</span></li>
             </ul>
             <button className="lp-btn-plan outline" onClick={() => irParaCadastro("plano_trimestral")}>
               Começar grátis
@@ -793,7 +793,7 @@ export default function LandingPage() {
               <li>Pós-organização e recontato</li>
               <li>Relatórios e dashboards</li>
               <li>App Android e iPhone + acesso web</li>
-              <li>Cléo, assistente de voz <span className="lp-previa">Prévia</span></li>
+              <li>Cléo, agenda por voz <span className="lp-previa">Prévia</span></li>
             </ul>
             <button className="lp-btn-plan solid" onClick={() => irParaCadastro("plano_anual")}>
               Começar grátis por 7 dias
